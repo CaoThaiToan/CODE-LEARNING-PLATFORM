@@ -1,0 +1,563 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
+/* ===== RESET & ROOT ===== */
+:root {
+    --primary: #7c3aed;
+    --primary-hover: #6d28d9;
+    --primary-light: rgba(124, 58, 237, 0.15);
+    --bg-main: #111827;
+    --bg-sidebar: #0d1117;
+    --bg-card: #1a2236;
+    --bg-topbar: #161d2e;
+    --text-white: #f1f5f9;
+    --text-muted: #8b95a8;
+    --border: #1f2d42;
+    --tip-bg: #1e1654;
+    --tip-border: #4c1d95;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg-main);
+    color: var(--text-white);
+    overflow: auto;
+}
+
+/* ===== LAYOUT ===== */
+.lesson-layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 370px;
+    min-width: 370px;
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.sidebar-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+.back-btn:hover { color: var(--text-white); }
+.back-btn i { font-size: 0.75rem; }
+
+.course-info {
+    padding: 22px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.course-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text-white);
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+}
+
+.progress-bar {
+    height: 5px;
+    background: #1f2d42;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+}
+
+.progress-text {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* Lesson list scrollable */
+.lesson-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+.lesson-list-scroll::-webkit-scrollbar { width: 4px; }
+.lesson-list-scroll::-webkit-scrollbar-track { background: transparent; }
+.lesson-list-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+.lesson-list {
+    list-style: none;
+    padding: 6px 12px;
+}
+
+.lesson-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 4px;
+}
+.lesson-item:hover:not(.active) { background: rgba(255,255,255,0.04); }
+
+.lesson-item.active {
+    background: var(--primary);
+}
+
+.lesson-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.05);
+}
+
+.lesson-item.active .lesson-icon {
+    border-color: rgba(255,255,255,0.5);
+    color: var(--text-white);
+}
+
+.lesson-icon.completed {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.lesson-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.lesson-name {
+    font-size: 0.87rem;
+    font-weight: 600;
+    color: var(--text-white);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lesson-item:not(.active) .lesson-name { color: var(--text-muted); }
+.lesson-item:hover:not(.active) .lesson-name { color: var(--text-white); }
+
+.lesson-duration {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.45);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.lesson-item.active .lesson-duration { color: rgba(255,255,255,0.7); }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-main);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Top bar */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    height: 60px;
+    background: var(--bg-topbar);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.close-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255,255,255,0.07);
+    border-radius: 50%;
+    color: var(--text-muted);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.close-btn:hover { background: rgba(255,255,255,0.15); color: var(--text-white); }
+
+.topbar-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+}
+
+.qa-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+.qa-btn:hover { color: var(--text-white); }
+
+/* Content scroll area */
+.content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+.content-scroll::-webkit-scrollbar { width: 5px; }
+.content-scroll::-webkit-scrollbar-track { background: transparent; }
+.content-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+/* ===== VIDEO PLAYER ===== */
+.video-wrapper {
+    padding: 24px 30px 0;
+}
+
+.video-player {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.video-thumb {
+    width: 100%;
+    height: 420px;
+    object-fit: cover;
+    display: block;
+    opacity: 0.85;
+}
+
+.play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.play-btn-big {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--primary);
+    box-shadow: 0 0 0 10px rgba(124,58,237,0.25);
+    position: relative;
+}
+.play-btn-big::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    border-left: 22px solid #fff;
+    border-top: 13px solid transparent;
+    border-bottom: 13px solid transparent;
+}
+
+/* Video controls bar */
+.video-controls {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 20px 16px 14px;
+}
+
+.video-progress {
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    position: relative;
+    cursor: pointer;
+}
+
+.video-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 10px;
+    position: relative;
+}
+
+.progress-dot {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px var(--primary);
+}
+
+.video-time {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.play-btn-small {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.play-btn-small:hover { color: var(--primary); }
+
+/* ===== LESSON DETAIL ===== */
+.lesson-detail {
+    padding: 28px 30px 40px;
+}
+
+.lesson-detail-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+}
+
+.lesson-detail-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-white);
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.lesson-update {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.lesson-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-white);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Be Vietnam Pro', sans-serif;
+}
+.action-btn:hover {
+    background: rgba(255,255,255,0.13);
+    border-color: rgba(255,255,255,0.25);
+}
+
+/* Lesson body text */
+.lesson-body {
+    color: var(--text-muted);
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+.lesson-body p {
+    margin-bottom: 22px;
+    color: #b0bac8;
+}
+
+.lesson-body h4 {
+    color: var(--text-white);
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.lesson-body ul {
+    list-style: none;
+    margin-bottom: 28px;
+    padding: 0;
+}
+
+.lesson-body ul li {
+    position: relative;
+    padding-left: 22px;
+    margin-bottom: 12px;
+    color: #b0bac8;
+}
+
+.lesson-body ul li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Tip box */
+.tip-box {
+    background: var(--tip-bg);
+    border: 1px solid var(--tip-border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 10px;
+}
+
+.tip-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px !important;
+}
+
+.tip-icon { font-size: 1.1rem; }
+
+.tip-label strong {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.3px;
+}
+
+.tip-box p:last-child {
+    margin-bottom: 0 !important;
+    font-size: 0.93rem;
+    line-height: 1.75;
+}
+
+/* ===== LESSON NAVIGATION ===== */
+.lesson-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    letter-spacing: 0.3px;
+}
+
+.nav-prev {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text-white);
+}
+.nav-prev:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.nav-next {
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(124, 58, 237, 0.35);
+}
+.nav-next:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(124, 58, 237, 0.45);
+}
+
+/* ===== FLOATING HELP BUTTON ===== */
+.help-btn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-white);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    backdrop-filter: blur(10px);
+}
+.help-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    transform: scale(1.1);
+}

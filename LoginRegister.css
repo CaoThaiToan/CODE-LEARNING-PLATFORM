@@ -1,0 +1,590 @@
+/* =========================================
+   === IMPORT FONTS ===
+   ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+/* =========================================
+   === RESET & BASE ===
+   ========================================= */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --purple-light: #c084fc;
+    --purple-mid:   #8b5cf6;
+    --purple-dark:  #6d28d9;
+    --purple-deep:  #4c1d95;
+    --cyan:         #06b6d4;
+    --white:        #ffffff;
+    --glass-bg:     rgba(255, 255, 255, 0.75);
+    --shadow-card:  0 24px 60px rgba(109, 40, 217, 0.12);
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: #08080f;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: #333;
+    transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================================
+   === TRẠNG THÁI TẮT / BẬT ĐÈN ===
+   ========================================= */
+body.light-off {
+    background: #08080f;
+}
+body.light-off .main-interface {
+    opacity: 0;
+    transform: scale(0.94) translateY(10px);
+    pointer-events: none;
+    filter: blur(4px);
+}
+body.light-off .lamp-glow-floor { opacity: 0; }
+body.light-off .particles-container { opacity: 0; }
+body.light-off .lamp-shade {
+    background: #2d2d3a;
+    box-shadow: none;
+}
+
+body:not(.light-off) {
+    background: #f0f0fa;
+}
+body:not(.light-off) .main-interface {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+}
+body:not(.light-off) .lamp-shade {
+    background: var(--purple-mid);
+    box-shadow:
+        0 0 30px rgba(139, 92, 246, 0.8),
+        0 0 80px rgba(139, 92, 246, 0.4),
+        0 0 150px rgba(139, 92, 246, 0.2);
+}
+body:not(.light-off) .lamp-glow-floor { opacity: 1; }
+body:not(.light-off) .particles-container { opacity: 1; }
+
+/* =========================================
+   === WRAPPER ĐÈN ===
+   ========================================= */
+.lamp-wrapper {
+    position: fixed;
+    top: 50%;
+    left: 7%;
+    transform: translateY(-50%);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =========================================
+   === CÂY ĐÈN CHÍNH ===
+   ========================================= */
+.lamp-container {
+    width: 160px;
+    height: 380px;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: lamp-sway 6s ease-in-out infinite;
+    transform-origin: bottom center;
+}
+
+.lamp-container:hover {
+    animation: lamp-sway-fast 1.5s ease-in-out infinite;
+}
+
+/* =========================================
+   === CHAO ĐÈN (SHADE) ===
+   ========================================= */
+.lamp-shade {
+    width: 130px;
+    height: 110px;
+    background: #2d2d3a;
+    border-radius: 65px 65px 28px 28px;
+    position: relative;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+    flex-shrink: 0;
+    overflow: visible;
+    z-index: 10;
+}
+
+/* Viền sáng trên chao đèn */
+.lamp-shade::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    border-radius: 65px 65px 0 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Highlight dưới chao đèn */
+.lamp-shade::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 10%;
+    width: 80%;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+/* =========================================
+   === KHUÔN MẶT ĐÈN ===
+   ========================================= */
+.lamp-face {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -48%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- MẮT --- */
+.eyes-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+}
+
+.eye {
+    width: 26px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    transition: transform 0.2s ease;
+}
+
+/* Con ngươi */
+.eye .pupil {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    background: #1a1a2e;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+    will-change: transform;
+}
+
+/* Ánh sáng trên con ngươi */
+.eye .pupil::after {
+    content: '';
+    position: absolute;
+    top: 2px; right: 2px;
+    width: 3px; height: 3px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50%;
+}
+
+/* Nhắm mắt khi blink */
+.lamp-container.blinking .eye {
+    transform: scaleY(0.1);
+}
+
+/* --- MIỆNG --- */
+.mouth {
+    width: 30px;
+    height: 13px;
+    border: 3px solid rgba(255,255,255,0.9);
+    border-top: none;
+    border-radius: 0 0 15px 15px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 6px rgba(255,255,255,0.2);
+}
+
+.lamp-container:hover .mouth {
+    width: 36px;
+    height: 18px;
+    border-radius: 0 0 18px 18px;
+}
+
+/* Buồn khi đèn tắt */
+body.light-off .mouth {
+    border-bottom: none;
+    border-top: 3px solid rgba(255,255,255,0.3);
+    border-radius: 15px 15px 0 0;
+    margin-top: 4px;
+}
+
+body.light-off .eye {
+    background: rgba(255,255,255,0.15);
+    box-shadow: none;
+}
+body.light-off .eye .pupil {
+    background: rgba(0,0,0,0.3);
+}
+
+/* =========================================
+   === CÁC HẠT SÁNG XUNG QUANH ĐÈN ===
+   ========================================= */
+.particles-container {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 200px;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--purple-light);
+    animation: particle-float linear infinite;
+    opacity: 0;
+}
+
+.particle:nth-child(1)  { width:5px; height:5px; left:20%; animation-duration:2.8s; animation-delay:0s;    }
+.particle:nth-child(2)  { width:4px; height:4px; left:75%; animation-duration:3.2s; animation-delay:0.4s;  }
+.particle:nth-child(3)  { width:6px; height:6px; left:50%; animation-duration:2.5s; animation-delay:0.8s;  }
+.particle:nth-child(4)  { width:3px; height:3px; left:30%; animation-duration:3.6s; animation-delay:1.2s;  }
+.particle:nth-child(5)  { width:5px; height:5px; left:65%; animation-duration:2.9s; animation-delay:1.6s;  }
+.particle:nth-child(6)  { width:4px; height:4px; left:10%; animation-duration:3.1s; animation-delay:2.0s;  }
+.particle:nth-child(7)  { width:6px; height:6px; left:85%; animation-duration:2.7s; animation-delay:0.6s;  }
+.particle:nth-child(8)  { width:3px; height:3px; left:40%; animation-duration:3.4s; animation-delay:1.0s;  }
+
+/* =========================================
+   === THANH THÂN ĐÈN ===
+   ========================================= */
+.lamp-stand {
+    width: 8px;
+    flex: 1;
+    background: linear-gradient(180deg, #3a3a4a 0%, #222230 100%);
+    border-radius: 4px;
+    position: relative;
+    margin-top: -2px;
+}
+
+.lamp-stand::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 2px;
+    width: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1px;
+}
+
+/* =========================================
+   === ĐẾ ĐÈN ===
+   ========================================= */
+.lamp-base {
+    width: 110px;
+    height: 18px;
+    background: linear-gradient(180deg, #3a3a4a 0%, #1e1e2e 100%);
+    border-radius: 9px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    flex-shrink: 0;
+    position: relative;
+}
+
+.lamp-base::before {
+    content: '';
+    position: absolute;
+    top: 3px; left: 15%;
+    width: 70%; height: 4px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+}
+
+/* =========================================
+   === LUỒNG ÁNH SÁNG XUỐNG SÀN ===
+   ========================================= */
+.lamp-glow-floor {
+    position: absolute;
+    bottom: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 120px;
+    background: radial-gradient(ellipse at top, rgba(139,92,246,0.35) 0%, transparent 70%);
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+    border-radius: 50%;
+    filter: blur(10px);
+}
+
+/* =========================================
+   === NÚT BẬT TẮT ĐÈN (TOOLTIP) ===
+   ========================================= */
+.lamp-hint {
+    margin-top: 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    transition: color 0.4s ease;
+    pointer-events: none;
+}
+
+body:not(.light-off) .lamp-hint {
+    color: rgba(109, 40, 217, 0.5);
+}
+
+/* =========================================
+   === ANIMATIONS ===
+   ========================================= */
+
+/* Đèn lắc lư */
+@keyframes lamp-sway {
+    0%, 100% { transform: rotate(0deg); }
+    20%       { transform: rotate(1.5deg); }
+    40%       { transform: rotate(-1deg); }
+    60%       { transform: rotate(1deg); }
+    80%       { transform: rotate(-1.5deg); }
+}
+
+@keyframes lamp-sway-fast {
+    0%, 100% { transform: rotate(0deg); }
+    25%       { transform: rotate(3deg); }
+    75%       { transform: rotate(-3deg); }
+}
+
+/* Hạt sáng bay lên */
+@keyframes particle-float {
+    0%   { transform: translateY(80px) translateX(0) scale(0); opacity: 0; }
+    15%  { opacity: 0.8; }
+    85%  { opacity: 0.4; }
+    100% { transform: translateY(-60px) translateX(20px) scale(1.2); opacity: 0; }
+}
+
+/* =========================================
+   === GIAO DIỆN CHÍNH ===
+   ========================================= */
+.main-interface {
+    width: 100%;
+    height: 100vh;
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.phantom-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(ellipse at 60% 40%, #ede9fe 0%, #f0f0fa 50%, #e8eaf6 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ORBs trang trí */
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.25;
+    pointer-events: none;
+}
+.orb-1 { width: 500px; height: 500px; background: #8b5cf6; top: -150px; left: -100px; animation: orb-drift 10s ease-in-out infinite; }
+.orb-2 { width: 350px; height: 350px; background: #06b6d4; bottom: -80px; right: -60px;  animation: orb-drift 13s ease-in-out infinite reverse; }
+.orb-3 { width: 200px; height: 200px; background: #f472b6; top: 60%; left: 55%; animation: orb-drift 8s ease-in-out infinite 2s; }
+
+@keyframes orb-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%       { transform: translate(30px, -20px) scale(1.05); }
+}
+
+/* =========================================
+   === CARD KÍNH ===
+   ========================================= */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 44px 48px;
+    border-radius: 32px;
+    width: 460px;
+    box-shadow: var(--shadow-card), inset 0 1px 0 rgba(255,255,255,0.8);
+    z-index: 10;
+    text-align: center;
+    animation: card-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(20px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Logo & Brand */
+.brand-logo-img {
+    height: 80px;
+    width: auto;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 4px 12px rgba(109,40,217,0.3));
+}
+
+.brand-name {
+    display: block;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--purple-dark);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.card-header p {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 6px;
+}
+
+/* =========================================
+   === FORM ===
+   ========================================= */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 32px;
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--purple-mid);
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 46px;
+    border-radius: 14px;
+    border: 1.5px solid #e2e8f0;
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    color: #374151;
+    background: rgba(255,255,255,0.9);
+    transition: all 0.3s ease;
+}
+
+.input-group input::placeholder { color: #b0bec5; }
+
+.input-group input:focus {
+    border-color: var(--purple-mid);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12);
+    background: #fff;
+}
+
+.input-group input:focus + i,
+.input-group:focus-within i {
+    color: var(--purple-dark);
+}
+
+/* =========================================
+   === BUTTON ===
+   ========================================= */
+.btn-main {
+    background: linear-gradient(135deg, var(--purple-mid) 0%, var(--purple-dark) 100%);
+    color: white;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(109,40,217,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    border-radius: inherit;
+}
+
+.btn-main:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(109,40,217,0.45);
+}
+
+.btn-main:active {
+    transform: translateY(0);
+}
+
+/* =========================================
+   === FOOTER FORM ===
+   ========================================= */
+.form-footer {
+    margin-top: 20px;
+    font-size: 0.88rem;
+    color: #94a3b8;
+}
+
+.form-footer a {
+    color: var(--purple-dark);
+    text-decoration: none;
+    font-weight: 800;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.form-footer a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0;
+    width: 0; height: 2px;
+    background: var(--purple-mid);
+    transition: width 0.3s ease;
+    border-radius: 1px;
+}
+
+.form-footer a:hover::after { width: 100%; }
+.form-footer a:hover { color: var(--purple-mid); }
+
+/* =========================================
+   === UTILITY ===
+   ========================================= */
+.hidden { display: none !important; }

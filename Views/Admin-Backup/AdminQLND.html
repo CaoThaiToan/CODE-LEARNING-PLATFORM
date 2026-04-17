@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý người dùng - Phantom Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../Public/Css/Admin/AdminQLND.css">
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="header-left">
+            <div class="brand-logo">
+                <img src="../../images/logo_phantom.png" alt="Logo Phantom" class="logo-img">
+                <div class="brand-text">
+                    <span class="t-purple">CODE E-LEARNING</span>
+                    <span class="t-black">PHANTOM</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Admin</span>
+            </div>
+            <button class="btn-logout">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-info">
+                <h2 class="panel-title">ADMIN PANEL</h2>
+                <p class="panel-desc">Quản lý Code E-learning Phantom</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="AdminDS.html" class="nav-item">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span>Danh sách khóa học</span>
+                </a>
+                <a href="AdminThemKH.html" class="nav-item">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <span>Thêm khóa học</span>
+                </a>
+                <a href="AdminThemVD.html" class="nav-item">
+                    <i class="fa-solid fa-video"></i>
+                    <span>Thêm bài học</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>Danh sách người dùng</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <div class="content-header">
+                    <div class="header-titles">
+                        <h1 class="main-title">QUẢN LÝ NGƯỜI DÙNG</h1>
+                        <p class="sub-title">Danh sách các tài khoản đang hoạt động trên hệ thống.</p>
+                    </div>
+                </div>
+
+                <div class="user-table-container">
+                    <table class="user-table">
+                        <thead>
+                            <tr>
+                                <th>TÊN USER</th>
+                                <th>EMAIL</th>
+                                <th>VAI TRÒ (ROLE)</th>
+                                <th class="text-center">THAO TÁC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="user-info-cell">
+                                        <div class="avatar av-purple">N</div>
+                                        <span class="user-name">Nguyễn Văn A</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">nguyenvana@gmail.com</td>
+                                <td><span class="badge badge-admin">ADMIN</span></td>
+                                <td class="text-center">
+                                    <button class="view-btn"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info-cell">
+                                        <div class="avatar av-blue">T</div>
+                                        <span class="user-name">Trần Thị B</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">tranthib@gmail.com</td>
+                                <td><span class="badge badge-user">USER</span></td>
+                                <td class="text-center">
+                                    <button class="view-btn"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="user-info-cell">
+                                        <div class="avatar av-cyan">L</div>
+                                        <span class="user-name">Lê Văn C</span>
+                                    </div>
+                                </td>
+                                <td class="user-email">levanc@gmail.com</td>
+                                <td><span class="badge badge-user">USER</span></td>
+                                <td class="text-center">
+                                    <button class="view-btn"><i class="fa-regular fa-eye"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

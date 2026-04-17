@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm khóa học mới - Phantom Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../Css/Admin/AdminThemKH.css">
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="header-left">
+            <div class="brand-logo">
+                <img src="../../images/logo_phantom.png" alt="Logo Phantom" class="logo-img">
+                <div class="brand-text">
+                    <span class="t-purple">CODE E-LEARNING</span>
+                    <span class="t-black">PHANTOM</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Admin</span>
+            </div>
+            <button class="btn-logout">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-info">
+                <h2 class="panel-title">ADMIN PANEL</h2>
+                <p class="panel-desc">Quản lý Code E-learning Phantom</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="Admin.html" class="nav-item">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span>Danh sách khóa học</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <span>Thêm khóa học</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-video"></i>
+                    <span>Thêm bài học</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>Danh sách người dùng</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper form-center">
+                <div class="form-container-card">
+                    <h1 class="form-title">THÊM KHÓA HỌC MỚI</h1>
+                    <p class="form-subtitle">Khởi tạo một khóa học lập trình mới trên hệ thống.</p>
+
+                    <form class="add-course-form">
+                        <div class="form-group">
+                            <label>Tên khóa học</label>
+                            <input type="text" placeholder="VD: Lập trình ReactJS nâng cao">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mô tả khóa học</label>
+                            <textarea placeholder="Cung cấp mô tả ngắn gọn về những gì học viên sẽ đạt được..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Link Hình ảnh (URL)</label>
+                            <input type="text" placeholder="https://images.unsplash.com/...">
+                        </div>
+
+                        <button type="submit" class="btn-submit-form">
+                            <i class="fa-solid fa-circle-plus"></i> TẠO KHÓA HỌC NGAY
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

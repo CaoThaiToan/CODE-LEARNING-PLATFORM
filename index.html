@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CODE E-LEARNING PHANTOM</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="Public/Css/User/TrangChu.css">
+    <link rel="stylesheet" href="Public/Css/User/KhoaHoc.css">
+    <link rel="stylesheet" href="Public/Css/User/ChiTietKH.css">
+    <link rel="stylesheet" href="Public/Css/User/LoginRegister.css">
+    <link rel="stylesheet" href="Public/Css/User/BeginKH.css">
+    <link rel="stylesheet" href="Public/Css/User/KHVIP.css">        
+    <link rel="stylesheet" href="Public/Css/User/ThanhToan.css">
+</head>
+<body>
+
+    <!-- NAVBAR - ĐÃ SỬA ĐỂ KHỚP CSS -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <img src="Public/images/logo_phantom.png" alt="Logo" class="logo-img">
+                <div class="logo-text">
+                    <strong>CODE E-LEARNING</strong>
+                    <span>PHANTOM</span>
+                </div>
+            </div>
+
+            <div class="nav-links">
+                <a href="#" class="nav-item" data-page="trang-chu.html">Trang chủ</a>
+                <a href="#" class="nav-item" data-page="khoa-hoc.html">Khóa học lập trình</a>
+                <a href="#" class="nav-item" data-page="khoa-hoc-vip.html">Khóa học VIP <i class="fas fa-crown"></i></a>
+            </div>
+
+            <!-- Search box + Auth buttons -->
+            <div class="nav-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm khóa học...">
+                </div>
+                
+                <!-- Phần này sẽ được JS thay đổi động (Đăng nhập / Đăng ký / User) -->
+                <div id="auth-buttons"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NỘI DUNG ĐỘNG -->
+    <div id="dynamic-content"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="Public/images/logo_phantom.png" alt="Logo" class="footer-logo-img">
+                    <div class="logo-text-footer">PHANTOM</div>
+                </div>
+                <p>Giải mã tri thức. Học lập trình từ cơ bản đến nâng cao trong môi trường tối ưu dành cho sinh viên mới bắt đầu.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>MENU NHANH</h4>
+                <ul>
+                    <li><a href="#" data-page="trang-chu.html">Trang chủ</a></li>
+                    <li><a href="#" data-page="khoa-hoc.html">Khóa học</a></li>
+                    <li><a href="#" data-page="chi-tiet-kh.html">Bài học</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>LIÊN HỆ</h4>
+                <ul class="contact-info">
+                    <li><i class="fas fa-envelope"></i> 34.11t1caothaitoancvt@gmail.com</li>
+                    <li><i class="fas fa-phone"></i> 0916 887 224</li>
+                    <li><i class="fas fa-map-marker-alt"></i> TP. HCM, Việt Nam</li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 Code E-learning Phantom. Build with passion.</p>
+        </div>
+    </footer>
+
+    <script src="Public/JS/main.js"></script>
+</body>
+</html>

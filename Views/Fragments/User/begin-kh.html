@@ -1,0 +1,178 @@
+<div class="lesson-layout">
+
+    <!-- SIDEBAR giữ nguyên -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="back-btn" data-page="chi-tiet-kh.html">
+                <i class="fas fa-chevron-left"></i>
+                <span>TRỞ VỀ KHÓA HỌC</span>
+            </a>
+        </div>
+
+        <div class="course-info">
+            <h3 class="course-title">LẬP TRÌNH WEB CƠ BẢN (HTML/CSS)</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 20%"></div>
+            </div>
+            <p class="progress-text">Hoàn thành 2/10 bài học (20%)</p>
+        </div>
+
+        <div class="lesson-list-scroll">
+            <ul class="lesson-list">
+                <li class="lesson-item active">
+                    <div class="lesson-icon completed"><i class="fas fa-check"></i></div>
+                    <div class="lesson-info">
+                        <span class="lesson-name">1. Giới thiệu HTML/CSS</span>
+                        <span class="lesson-duration"><i class="far fa-clock"></i> 15:20</span>
+                    </div>
+                </li>
+                <!-- Các bài học khác giữ nguyên -->
+            </ul>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <div class="topbar">
+            <button class="close-btn" data-page="chi-tiet-kh.html"><i class="fas fa-times"></i></button>
+            <h2 class="topbar-title">GIỚI THIỆU HTML/CSS</h2>
+            <a href="#" class="qa-btn"><i class="far fa-comment-dots"></i> Hỏi đáp</a>
+        </div>
+
+        <div class="content-scroll">
+
+            <!-- Video Player -->
+            <div class="video-wrapper">
+                <div class="video-player">
+                    <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=900&q=80" alt="Video thumbnail" class="video-thumb" />
+                    <div class="play-overlay">
+                        <div class="play-btn-big"></div>
+                    </div>
+                    <div class="video-controls">
+                        <div class="video-progress">
+                            <div class="video-progress-fill" style="width: 34%">
+                                <div class="progress-dot"></div>
+                            </div>
+                        </div>
+                        <div class="video-time">
+                            <button class="play-btn-small"><i class="fas fa-play"></i></button>
+                            <span>05:12 / 15:20</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Description -->
+            <div class="lesson-detail">
+                <div class="lesson-detail-header">
+                    <div>
+                        <h1 class="lesson-detail-title">GIỚI THIỆU HTML/CSS</h1>
+                        <p class="lesson-update">Cập nhật tháng 10, 2023</p>
+                    </div>
+                    <div class="lesson-actions">
+                        <button class="action-btn"><i class="far fa-thumbs-up"></i> Thích</button>
+                        <button class="action-btn"><i class="fas fa-share-nodes"></i> Chia sẻ</button>
+                    </div>
+                </div>
+
+                <div class="lesson-body">
+                    <p>Trong bài học này, chúng ta sẽ cùng tìm hiểu về các khái niệm cơ bản nhất của HTML và CSS...</p>
+
+                    <h4>Nội dung chính:</h4>
+                    <ul>
+                        <li>Khái niệm HTML là gì?</li>
+                        <li>Cách hoạt động của trình duyệt (Browser)</li>
+                        <li>Mối quan hệ giữa HTML, CSS và JavaScript</li>
+                        <li>Cài đặt môi trường lập trình (VS Code)</li>
+                    </ul>
+
+                    <div class="tip-box">
+                        <p class="tip-label"><span class="tip-icon">💡</span> <strong>LỜI KHUYÊN:</strong></p>
+                        <p>Hãy vừa xem video vừa thực hành trên máy tính của bạn.</p>
+                    </div>
+                </div>
+
+                <!-- ==================== PHẦN TRẮC NGHIỆM NỔI BẬT ==================== -->
+                <div class="quiz-section" style="margin-top:50px; padding:35px; background:#1e1654; border-radius:20px; color:#fff;">
+                    <h3 style="margin-bottom:25px; color:#a78bfa; font-size:22px;">
+                        📝 Kiểm tra kiến thức
+                    </h3>
+
+                    <div class="quiz-question" id="q1">
+                        <p><strong>1. HTML là viết tắt của gì?</strong></p>
+                        <label><input type="radio" name="q1" value="a"> Hyper Text Markup Language</label><br>
+                        <label><input type="radio" name="q1" value="b"> High Text Machine Language</label><br>
+                        <label><input type="radio" name="q1" value="c"> Hyper Tool Markup Language</label>
+                    </div>
+
+                    <div class="quiz-question" id="q2" style="margin-top:30px;">
+                        <p><strong>2. CSS dùng để làm gì?</strong></p>
+                        <label><input type="radio" name="q2" value="a"> Xây dựng cấu trúc trang web</label><br>
+                        <label><input type="radio" name="q2" value="b"> Thiết kế giao diện và kiểu dáng</label><br>
+                        <label><input type="radio" name="q2" value="c"> Xử lý logic lập trình</label>
+                    </div>
+
+                    <div style="margin-top:40px; display:flex; gap:15px;">
+                        <button onclick="submitQuiz()" class="btn-submit-form" style="flex:1; background:#a78bfa;">Kiểm tra kết quả</button>
+                        <button onclick="resetQuiz()" class="btn-submit-form" style="flex:1; background:#64748b;">Làm lại</button>
+                    </div>
+
+                    <div id="quiz-result" style="margin-top:30px; display:none; padding:20px; border-radius:12px; background:#2a1f4d;"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="lesson-nav">
+                <button class="nav-btn nav-prev"><i class="fas fa-chevron-left"></i> Bài trước</button>
+                <button class="nav-btn nav-next">BÀI TIẾP THEO <i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <button class="help-btn"><i class="fas fa-question"></i></button>
+</div>
+
+<script>
+// Trắc nghiệm nổi bật
+function submitQuiz() {
+    const resultDiv = document.getElementById('quiz-result');
+    let score = 0;
+    let feedbackHTML = '';
+
+    // Câu 1
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    if (q1 && q1.value === 'a') {
+        score++;
+        feedbackHTML += `<p style="color:#22c55e;">✅ Câu 1: Đúng</p>`;
+    } else {
+        feedbackHTML += `<p style="color:#ef4444;">❌ Câu 1: Sai. Đáp án đúng là: Hyper Text Markup Language</p>`;
+    }
+
+    // Câu 2
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    if (q2 && q2.value === 'b') {
+        score++;
+        feedbackHTML += `<p style="color:#22c55e;">✅ Câu 2: Đúng</p>`;
+    } else {
+        feedbackHTML += `<p style="color:#ef4444;">❌ Câu 2: Sai. Đáp án đúng là: Thiết kế giao diện và kiểu dáng</p>`;
+    }
+
+    const percent = Math.round((score / 2) * 100);
+
+    resultDiv.style.display = 'block';
+    resultDiv.innerHTML = `
+        <div style="text-align:center; margin-bottom:20px;">
+            <h2 style="font-size:42px; margin:0; color:#a78bfa;">${percent}%</h2>
+            <p style="margin:0; color:#c4b5fd;">${score}/2 câu đúng</p>
+        </div>
+        ${feedbackHTML}
+        <p style="margin-top:20px; font-size:15px;">${percent === 100 ? '🎉 Xuất sắc! Bạn đã nắm vững bài học.' : 'Hãy ôn lại phần chưa nắm chắc nhé!'}</p>
+    `;
+}
+
+function resetQuiz() {
+    document.getElementById('quiz-result').style.display = 'none';
+    document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+}
+</script>

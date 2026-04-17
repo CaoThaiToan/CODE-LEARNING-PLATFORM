@@ -1,0 +1,130 @@
+<div class="form-center">
+    <div class="form-container-card">
+        <h1 class="form-title">THÊM BÀI HỌC VIDEO</h1>
+        <p class="form-subtitle">Tạo video bài giảng và câu hỏi trắc nghiệm.</p>
+
+        <form id="lessonForm">
+            <div class="form-group">
+                <label>Tên bài học</label>
+                <input type="text" id="lessonName" placeholder="Ví dụ: Giới thiệu HTML/CSS" required>
+            </div>
+
+            <div class="form-group">
+                <label>Thuộc khóa học</label>
+                <select class="form-select" id="courseSelect">
+                    <option value="">-- Chọn khóa học --</option>
+                    <option value="1">Lập trình Web cơ bản (HTML/CSS)</option>
+                    <option value="2">Làm chủ JavaScript từ A-Z</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Link YouTube (URL)</label>
+                <div class="input-with-icon">
+                    <i class="fa-brands fa-youtube"></i>
+                    <input type="text" id="youtubeLink" placeholder="https://www.youtube.com/watch?v=...">
+                </div>
+            </div>
+
+            <hr style="margin:30px 0;">
+
+            <h3 style="margin-bottom:15px;">📝 Câu hỏi trắc nghiệm</h3>
+
+            <div id="quizContainer">
+                <!-- Câu hỏi mẫu mặc định -->
+            </div>
+
+            <button type="button" onclick="addQuestionField()" class="btn-submit-form" style="background:#64748b; margin:20px 0;">
+                + Thêm câu hỏi mới
+            </button>
+
+            <button type="button" onclick="saveLessonWithQuiz()" class="btn-submit-form">
+                <i class="fa-solid fa-cloud-upload"></i> LƯU BÀI HỌC & CÂU HỎI
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+// Thêm một câu hỏi mới
+function addQuestionField() {
+    const container = document.getElementById('quizContainer');
+    const index = container.children.length + 1;
+
+    const html = `
+        <div class="question-block" style="background:#f8f0ff; padding:20px; border-radius:12px; margin-bottom:20px;">
+            <label><strong>Câu ${index}:</strong></label>
+            <input type="text" class="question-text" placeholder="Nhập câu hỏi ở đây..." style="width:100%; margin:10px 0; padding:12px; border:1px solid #d1d5db; border-radius:8px;">
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
+                <div>
+                    <label>A.</label>
+                    <input type="text" class="option" placeholder="Đáp án A" style="width:100%; padding:10px;">
+                </div>
+                <div>
+                    <label>B.</label>
+                    <input type="text" class="option" placeholder="Đáp án B" style="width:100%; padding:10px;">
+                </div>
+                <div>
+                    <label>C.</label>
+                    <input type="text" class="option" placeholder="Đáp án C" style="width:100%; padding:10px;">
+                </div>
+                <div>
+                    <label>D.</label>
+                    <input type="text" class="option" placeholder="Đáp án D" style="width:100%; padding:10px;">
+                </div>
+            </div>
+
+            <label style="margin-top:15px; display:block; font-weight:600;">Đáp án đúng:</label>
+            <select class="correct-answer" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:8px;">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+            </select>
+        </div>
+    `;
+
+    container.innerHTML += html;
+}
+
+// Lưu bài học + tất cả câu hỏi
+function saveLessonWithQuiz() {
+    const lessonName = document.getElementById('lessonName').value;
+    const questions = [];
+
+    document.querySelectorAll('.question-block').forEach(block => {
+        const questionText = block.querySelector('.question-text').value.trim();
+        const options = Array.from(block.querySelectorAll('.option')).map(input => input.value.trim());
+        const correct = block.querySelector('.correct-answer').value;
+
+        if (questionText) {
+            questions.push({
+                question: questionText,
+                options: options,
+                correct: correct
+            });
+        }
+    });
+
+    if (!lessonName) {
+        alert("Vui lòng nhập tên bài học!");
+        return;
+    }
+    if (questions.length === 0) {
+        alert("Vui lòng thêm ít nhất 1 câu hỏi trắc nghiệm!");
+        return;
+    }
+
+    alert(`✅ Đã lưu bài học "${lessonName}" với ${questions.length} câu hỏi trắc nghiệm!`);
+    
+    // Reset form
+    document.getElementById('lessonForm').reset();
+    document.getElementById('quizContainer').innerHTML = '';
+}
+
+// Thêm 1 câu hỏi mẫu khi load trang
+window.onload = function() {
+    addQuestionField();   // Tự động thêm 1 câu hỏi mẫu
+};
+</script>

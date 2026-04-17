@@ -1,0 +1,329 @@
+/* --- Variables & Reset --- */
+:root {
+    --primary-orange: #ff8c00;
+    --primary-blue: #0ea5e9;
+    --primary-pink: #ec4899;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --text-green: #22c55e;
+    --bg-body: #f4f5f9;
+    --bg-white: #ffffff;
+    --border-color: #e5e7eb;
+    --bg-yellow-light: #fffdf4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* --- Layout --- */
+.checkout-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.checkout-header {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: var(--text-main);
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+/* --- Left Box (Payment Info) --- */
+.checkout-box {
+    background-color: var(--bg-white);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: var(--text-main);
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group .required {
+    color: #ef4444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--primary-blue);
+}
+
+.divider {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 25px 0;
+}
+
+/* Payment Methods (Radio Cards) */
+.payment-method {
+    display: block;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.payment-method input[type="radio"] {
+    display: none;
+}
+
+.method-card {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* Custom Radio Dot */
+.radio-custom {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    margin-right: 15px;
+    position: relative;
+}
+
+/* Checked State Styling */
+.payment-method input[type="radio"]:checked + .method-card.momo-active {
+    border-color: var(--primary-pink);
+    background-color: #fff9fc;
+}
+
+.payment-method input[type="radio"]:checked + .method-card .radio-custom {
+    border-color: var(--primary-blue);
+}
+
+.payment-method input[type="radio"]:checked + .method-card .radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background-color: var(--primary-blue);
+    border-radius: 50%;
+}
+
+/* Method Icons */
+.method-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+    font-size: 18px;
+}
+
+.bg-pink { background-color: #fce7f3; }
+.text-pink { color: var(--primary-pink); }
+.bg-blue { background-color: #e0f2fe; }
+.text-blue { color: #3b82f6; }
+.bg-purple { background-color: #f3e8ff; }
+.text-purple { color: #8b5cf6; }
+
+.method-info h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.method-info p {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Submit Button */
+.btn-pay {
+    width: 100%;
+    padding: 16px;
+    margin-top: 15px;
+    background: linear-gradient(to right, #8b5cf6, #0ea5e9);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    transition: opacity 0.3s;
+}
+
+.btn-pay:hover {
+    opacity: 0.9;
+}
+
+.security-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 15px;
+}
+
+.security-note i {
+    color: var(--text-green);
+    margin-right: 5px;
+}
+
+/* --- Right Box (Order Summary) --- */
+.summary-box {
+    background-color: var(--bg-yellow-light);
+    border: 1px solid #fef08a;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.product-item {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.product-item img {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.product-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.badge-orange {
+    background-color: var(--primary-orange);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-bottom: 5px;
+}
+
+.product-details h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.product-details .old-price {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+}
+
+.divider-dashed {
+    height: 1px;
+    border-bottom: 1px dashed #d1d5db;
+    margin: 20px 0;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.text-green { color: var(--text-green); }
+.text-muted { color: var(--text-muted); }
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 25px;
+}
+
+.total-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.total-label .main {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.total-label .sub {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.total-price {
+    color: var(--primary-orange);
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-grid {
+        grid-template-columns: 1fr;
+    }
+}

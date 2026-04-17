@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm bài học mới - Phantom Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../../Css/Admin/AdminThemVD.css">
+</head>
+<body>
+
+    <header class="admin-header">
+        <div class="header-left">
+            <div class="brand-logo">
+                <img src="../../images/logo_phantom.png" alt="Logo Phantom" class="logo-img">
+                <div class="brand-text">
+                    <span class="t-purple">CODE E-LEARNING</span>
+                    <span class="t-black">PHANTOM</span>
+                </div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Admin</span>
+            </div>
+            <button class="btn-logout">Đăng xuất</button>
+        </div>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-info">
+                <h2 class="panel-title">ADMIN PANEL</h2>
+                <p class="panel-desc">Quản lý Code E-learning Phantom</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="Admin.html" class="nav-item">
+                    <i class="fa-solid fa-list-ul"></i>
+                    <span>Danh sách khóa học</span>
+                </a>
+                <a href="ThemKhoaHoc.html" class="nav-item">
+                    <i class="fa-solid fa-circle-plus"></i>
+                    <span>Thêm khóa học</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-video"></i>
+                    <span>Thêm bài học</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-users-gear"></i>
+                    <span>Danh sách người dùng</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-wrapper form-center">
+                <div class="form-container-card">
+                    <h1 class="form-title">THÊM BÀI HỌC VIDEO</h1>
+                    <p class="form-subtitle">Tạo nội dung video bài giảng cho khóa học đã tạo.</p>
+
+                    <form class="add-course-form">
+                        <div class="form-group">
+                            <label>Tên bài học</label>
+                            <input type="text" placeholder="VD: Bài 1: Cài đặt môi trường">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Thuộc khóa học</label>
+                            <select class="form-select">
+                                <option value="">-- Chọn khóa học --</option>
+                                <option value="1">Lập trình Web cơ bản (HTML/CSS)</option>
+                                <option value="2">Làm chủ JavaScript từ A-Z</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Link YouTube (URL)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-video"></i>
+                                <input type="text" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit-form">
+                            <i class="fa-solid fa-floppy-disk"></i> LƯU BÀI HỌC
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+</body>
+</html>

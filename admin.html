@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - CODE E-LEARNING PHANTOM</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Load tất cả CSS Admin 1 lần -->
+    <link rel="stylesheet" href="Public/Css/Admin/AdminDS.css">
+    <link rel="stylesheet" href="Public/Css/Admin/AdminQLND.css">
+    <link rel="stylesheet" href="Public/Css/Admin/AdminThemKH.css">
+    <link rel="stylesheet" href="Public/Css/Admin/AdminThemVD.css">
+
+</head>
+<body>
+    <!-- HEADER GIỮ NGUYÊN -->
+    <div class="admin-header">
+        <div class="brand-logo">
+            <img src="Public/images/logo_phantom.png" alt="Logo" class="logo-img">
+            <div class="brand-text">
+                <span class="t-purple">CODE E-LEARNING</span>
+                <span class="t-black">PHANTOM</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="user-profile">
+                <span>👤</span>
+                <span>Admin</span>
+            </div>
+            <button class="btn-logout">Đăng xuất</button>
+        </div>
+    </div>
+
+    <div class="admin-layout">
+        <!-- SIDEBAR GIỮ NGUYÊN -->
+        <div class="sidebar">
+            <div class="panel-title">ADMIN PANEL</div>
+            <div class="panel-desc">Quản lý Code E-learning Phantom</div>
+            
+            <div class="sidebar-nav">
+                <!-- Các mục cũ -->
+        <a href="#" class="nav-item active" data-page="danh-sach-kh.html">
+            📋 Danh sách khóa học
+        </a>
+        <a href="#" class="nav-item" data-page="them-kh.html">
+            ➕ Thêm khóa học
+        </a>
+
+        <!-- MỚI: Khóa học VIP -->
+        <a href="#" class="nav-item" data-page="vip-danh-sach.html">
+            👑 Quản lý Khóa học VIP
+        </a>
+
+        <!-- Mục cũ -->
+        <a href="#" class="nav-item" data-page="them-vd.html">
+            📹 Thêm bài học / Video
+        </a>
+
+        <a href="#" class="nav-item" data-page="AdminQLND.html">
+            👥 Quản lý Người dùng
+        </a>
+
+        <!-- MỚI: Đơn hàng & Thanh toán -->
+        <a href="#" class="nav-item" data-page="don-hang.html">
+            💰 Quản lý Đơn hàng & Thanh toán
+        </a>
+            </div>
+        </div>
+
+        <!-- NỘI DUNG ĐỘNG -->
+        <div class="main-content">
+            <div id="dynamic-content" class="content-wrapper">
+                <!-- Nội dung sẽ được load vào đây -->
+            </div>
+        </div>
+    </div>
+
+    <script src="Public/JS/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<div class="form-center">
+    <div class="form-container-card">
+        <h1 class="form-title">THÊM KHÓA HỌC MỚI</h1>
+        <p class="form-subtitle">Khởi tạo một khóa học lập trình mới trên hệ thống.</p>
+
+        <form>
+            <div class="form-group">
+                <label>Loại khóa học</label>
+                <select id="courseType" class="form-select" onchange="togglePriceField()">
+                    <option value="normal">Khóa học thường</option>
+                    <option value="vip">Khóa học VIP</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Tên khóa học</label>
+                <input type="text" placeholder="Ví dụ: Lập trình Web cơ bản (HTML/CSS)">
+            </div>
+
+            <div class="form-group">
+                <label>Mô tả khóa học</label>
+                <textarea placeholder="Mô tả ngắn gọn về khóa học..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Link Hình ảnh (URL)</label>
+                <input type="text" placeholder="https://...">
+            </div>
+
+            <!-- Phần giá chỉ hiện khi chọn VIP -->
+            <div id="priceField" class="form-group" style="display:none;">
+                <label>Giá khóa học VIP (đơn vị: VNĐ)</label>
+                <input type="text" placeholder="1.500.000" id="vipPrice">
+            </div>
+
+            <button type="button" class="btn-submit-form">
+                <i class="fa-solid fa-check"></i> TẠO KHÓA HỌC NGAY
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+function togglePriceField() {
+    const type = document.getElementById('courseType').value;
+    const priceField = document.getElementById('priceField');
+    priceField.style.display = (type === 'vip') ? 'block' : 'none';
+}
+</script>
