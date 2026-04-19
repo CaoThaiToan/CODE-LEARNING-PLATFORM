@@ -1,0 +1,26 @@
+-- ==========================================================
+-- THÔNG TIN THỰC TẾ DATABASE: code_learning_db
+-- ==========================================================
+-- File này chỉ để THAM KHẢO schema hiện có.
+-- KHÔNG chạy file này - database và bảng đã tồn tại sẵn!
+--
+-- Tables:
+--   users         -> id, role_id(FK->roles), username, password, email, full_name, created_at
+--   roles         -> id, role_name('Admin'|'User'), description, created_at
+--   courses       -> id, author_id(FK->users), title, description, price, status('draft'|'published'), created_at
+--   enrollments   -> id, user_id, course_id, status, enrolled_at, valid_until, progress_percent, last_accessed_at
+--   lessons       -> id, course_id, title, content_type, video_url, theory_md, order_index, deadline
+--   problems      -> id, lesson_id, title, description, difficulty, exercise_type, base_code, points
+--   submissions   -> id, user_id, problem_id, submitted_code, status, created_at
+--   test_cases    -> id, problem_id, input_data, expected_out, is_hidden
+--   user_progress -> user_id, lesson_id, is_completed, updated_at
+--   orders        -> id, user_id, total_amount, discount_amount, final_amount, status, created_at
+--   order_items   -> id, order_id, course_id, price_at_purchase
+--   payments      -> id, order_id, expected_amount, transaction_code, actual_amount, gateway_txn_id, payment_method, payment_content, status, created_at, completed_at
+--   attachments   -> id, lesson_id, file_name, file_url
+--   webhook_logs  -> id, gateway_name, raw_json, received_at
+--
+-- Default roles (đã có sẵn):
+--   id=1  role_name='Admin'
+--   id=2  role_name='User'
+-- ==========================================================
