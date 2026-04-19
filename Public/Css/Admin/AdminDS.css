@@ -61,7 +61,7 @@
     text-decoration: none; color: #4a5568; font-weight: 600; border-radius: 12px; transition: 0.2s;
 }
 .nav-item.active { background: var(--primary-bg); color: var(--primary); }
-.nav-item:hover:not(.active) { background: #f8fafc; color: var(--primary); }
+.nav-item:hover:not(.active) { background: var(--primary-bg); color: var(--primary); }
 
 /* VÙNG NỘI DUNG */
 .main-content {
