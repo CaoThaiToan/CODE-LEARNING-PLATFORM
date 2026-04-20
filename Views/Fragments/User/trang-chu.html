@@ -39,51 +39,9 @@
             <h2>KHÓA HỌC NỔI BẬT</h2>
             <p>Chọn khóa học phù hợp để bắt đầu hành trình lập trình của bạn</p>
         </div>
-        <div class="grid-3">
-            <div class="card">
-                <div class="card-img" style="background: #ff7675;">
-                    <span class="badge">CƠ BẢN</span>
-                    <i class="fab fa-html5 card-icon"></i>
-                </div>
-                <div class="card-body">
-                    <h3>Khóa học HTML cho người mới</h3>
-                    <p>Học HTML từ cơ bản đến nâng cao, xây dựng nền tảng vững chắc...</p>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 25 bài học</span>
-                        <span><i class="far fa-clock"></i> 5 giờ</span>
-                    </div>
-                    <a href="#" class="btn-block" data-page="chi-tiet-kh.html">XEM CHI TIẾT <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background: #2d3436;">
-                    <span class="badge">CƠ BẢN</span>
-                    <i class="fab fa-css3-alt card-icon" style="color: #74b9ff;"></i>
-                </div>
-                <div class="card-body">
-                    <h3>Khóa học CSS cơ bản</h3>
-                    <p>Làm chủ CSS để tạo giao diện web đẹp mắt và responsive...</p>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 30 bài học</span>
-                        <span><i class="far fa-clock"></i> 6 giờ</span>
-                    </div>
-                    <a href="#" class="btn-block" data-page="chi-tiet-kh.html">XEM CHI TIẾT <i class="fas fa-arrow-right"></i></a>
-                </div>
-            </div>
-            <div class="card">
-                <div class="card-img" style="background: #74b9ff;">
-                    <span class="badge badge-purple">TRUNG BÌNH</span>
-                    <i class="fab fa-js card-icon" style="color: #fdcb6e;"></i>
-                </div>
-                <div class="card-body">
-                    <h3>Khóa học JavaScript từ đầu</h3>
-                    <p>Nắm vững JavaScript, ngôn ngữ lập trình phổ biến nhất...</p>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 45 bài học</span>
-                        <span><i class="far fa-clock"></i> 10 giờ</span>
-                    </div>
-                    <a href="#" class="btn-block" data-page="chi-tiet-kh.html">XEM CHI TIẾT <i class="fas fa-arrow-right"></i></a>
-                </div>
+        <div class="grid-3" id="home-courses-grid">
+            <div style="width:100%; text-align:center; padding:50px; color:#6d28d9; grid-column: 1 / -1;">
+                <i class="fa-solid fa-spinner fa-spin"></i> Đang tải khóa học...
             </div>
         </div>
         <div class="center-btn">
@@ -133,3 +91,67 @@
         </div>
     </div>
 </section>
+
+<script>
+(async function initHomeCourses() {
+    const grid = document.getElementById('home-courses-grid');
+
+    function renderHomeCard(course) {
+        const isVip = course.price > 0;
+        const badge = isVip 
+            ? `<span class="badge" style="background:#ff8c00;color:white;">VIP</span>`
+            : `<span class="badge">MIỄN PHÍ</span>`;
+        
+        const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
+        const colors = ['#ff7675', '#74b9ff', '#a29bfe', '#ffeaa7', '#55efc4'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        
+        return `
+        <div class="card">
+            <div class="card-img" style="background: ${randomColor}; background-image: url('${thumb}'); background-size: cover; background-position: center; position: relative;">
+                <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
+                <div style="position:relative; z-index:2;">
+                    ${badge}
+                </div>
+            </div>
+            <div class="card-body">
+                <h3 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${course.title}</h3>
+                <p style="height:45px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">${course.description || 'Chưa có mô tả'}</p>
+                ${isVip ? `<div style="color:#ef4444; font-weight:800; font-size: 1.1rem; margin-bottom:16px; margin-top:8px;">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '<div style="margin-bottom:16px; margin-top:8px;">&nbsp;</div>'}
+                ${isVip 
+                    ? `<div style="display:flex; gap:10px;">
+                           <a href="#" class="btn-block btn-detail-home" data-id="${course.id}" style="flex:1; padding: 10px 0; background: transparent; border: 1.5px solid var(--primary); color: var(--primary);">CHI TIẾT</a>
+                           <a href="#" class="btn-block" onclick="alert('Tính năng thanh toán đang được phát triển!'); return false;" style="flex:1; padding: 10px 0; background: linear-gradient(135deg, #ff9800 0%, #f97316 100%); border: none; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);">MUA <i class="fas fa-cart-plus"></i></a>
+                       </div>`
+                    : `<a href="#" class="btn-block btn-detail-home" data-id="${course.id}">XEM CHI TIẾT <i class="fas fa-arrow-right"></i></a>`
+                }
+            </div>
+        </div>`;
+    }
+
+    try {
+        const allCourses = await window.loadCourses('published');
+        
+        if (!allCourses || allCourses.length === 0) {
+            grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#64748b;">Hiện chưa có khóa học nào.</div>';
+            return;
+        }
+
+        // Lấy tối đa 3 khóa học mới nhất
+        const topCourses = allCourses.slice(0, 3);
+        grid.innerHTML = topCourses.map(renderHomeCard).join('');
+
+        grid.querySelectorAll('.btn-detail-home').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.selectedCourseId = btn.getAttribute('data-id');
+                window.loadPage('chi-tiet-kh.html');
+            });
+        });
+
+    } catch (err) {
+        console.error(err);
+        grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#ef4444;">Lỗi tải dữ liệu.</div>';
+    }
+})();
+</script>

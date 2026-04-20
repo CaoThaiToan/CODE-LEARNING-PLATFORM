@@ -102,13 +102,26 @@
             // Xử lý nút đăng xuất
             const logoutBtn = document.getElementById('admin-logout-btn');
             if (logoutBtn) {
-                logoutBtn.addEventListener('click', async () => {
-                    try {
-                        await fetch('http://localhost:3000/api/auth/logout', { method: 'POST' });
-                    } catch {}
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('currentUser');
-                    window.location.href = 'login-register.html';
+                logoutBtn.addEventListener('click', () => {
+                    if (window.showConfirmDialog) {
+                        window.showConfirmDialog({
+                            title: 'Đăng xuất',
+                            message: 'Bạn có chắc chắn muốn rời khỏi hệ thống?',
+                            icon: 'fa-right-from-bracket',
+                            confirmText: 'Đăng xuất',
+                            onConfirm: async () => {
+                                try { await fetch('http://localhost:3000/api/auth/logout', { method: 'POST' }); } catch {}
+                                localStorage.removeItem('token');
+                                localStorage.removeItem('currentUser');
+                                window.location.replace('login-register.html');
+                            }
+                        });
+                    } else {
+                        if (!confirm('Bạn có chắc chắn muốn đăng xuất?')) return;
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('currentUser');
+                        window.location.replace('login-register.html');
+                    }
                 });
             }
         })();
