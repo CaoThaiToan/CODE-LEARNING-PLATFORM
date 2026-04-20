@@ -112,6 +112,19 @@
     </div>
 
     <script>
+        /* === KIỂM TRA ĐĂNG NHẬP (TRÁNH BACK LẠI TRANG NÀY) === */
+        (function checkAuth() {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('currentUser');
+            if (token && userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    // Nếu đã đăng nhập, thay thế URL hiện tại bằng trang dashboard
+                    window.location.replace(user.role_id === 1 ? 'admin.html' : 'index.html');
+                } catch (e) { }
+            }
+        })();
+
         /* === BẬT / TẮT ĐÈN === */
         function toggleLight() { document.body.classList.toggle('light-off'); }
 
@@ -154,8 +167,8 @@
                 } else {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    // role_id=1 → Admin, role_id=2 → User (theo bảng roles)
-                    window.location.href = data.user.role_id === 1 ? 'admin.html' : 'index.html';
+                    // Sử dụng replace để xóa trang đăng nhập khỏi lịch sử Back của trình duyệt
+                    window.location.replace(data.user.role_id === 1 ? 'admin.html' : 'index.html');
                 }
             } catch {
                 errEl.textContent = 'Không kết nối được server. Vui lòng thử lại.';
@@ -249,5 +262,3 @@
         scheduleBlink();
     </script>
 </body>
-
-</html>

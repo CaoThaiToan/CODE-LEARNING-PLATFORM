@@ -1,50 +1,151 @@
-
 <div class="content-header">
     <div class="header-titles">
         <h1 class="main-title">QUẢN LÝ KHÓA HỌC</h1>
         <p class="sub-title">Xem, chỉnh sửa và xóa các khóa học hiện có.</p>
     </div>
-    <button class="btn-add-shortcut">
+    <button class="btn-add-shortcut" id="btn-add-course">
         <i class="fa-solid fa-circle-plus"></i> Thêm mới
     </button>
 </div>
 
-<div class="course-list-container">
-    <div class="course-item-card">
-        <div class="course-thumb">
-            <img src="../../images/img_TrangChu.png" alt="HTML CSS">
-        </div>
-        <div class="course-info">
-            <h3>Lập trình Web cơ bản (HTML/CSS)</h3>
-            <p>Nắm vững nền tảng thiết kế web với HTML5 và CSS3 hiện đại.</p>
-            <span class="mock-tag">0 bài học (Mock)</span>
-        </div>
-        <div class="course-hover-actions">
-            <button class="act-btn edit-btn" title="Chỉnh sửa">
-                <i class="fa-regular fa-pen-to-square"></i>
-            </button>
-            <button class="act-btn delete-btn" title="Xóa">
-                <i class="fa-regular fa-trash-can"></i>
-            </button>
-        </div>
-    </div>
+<!-- Thông báo toast -->
+<div id="ds-toast" style="display:none; background:#10b981; color:#fff; padding:12px 22px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
 
-    <div class="course-item-card">
-        <div class="course-thumb">
-            <img src="../../images/img_TrangChu.png" alt="JavaScript">
-        </div>
-        <div class="course-info">
-            <h3>Làm chủ JavaScript từ A-Z</h3>
-            <p>Từ cơ bản đến nâng cao, xây dựng ứng dụng tương tác.</p>
-            <span class="mock-tag">0 bài học (Mock)</span>
-        </div>
-        <div class="course-hover-actions">
-            <button class="act-btn edit-btn" title="Chỉnh sửa">
-                <i class="fa-regular fa-pen-to-square"></i>
-            </button>
-            <button class="act-btn delete-btn" title="Xóa">
-                <i class="fa-regular fa-trash-can"></i>
-            </button>
-        </div>
+<div class="course-list-container" id="course-list-container">
+    <!-- Danh sách sẽ được render động -->
+    <div style="padding:60px; text-align:center; color:#7c3aed; font-size:16px;">
+        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách khóa học...
     </div>
 </div>
+
+<script>
+(async function initCourseList() {
+    const container = document.getElementById('course-list-container');
+    const toast     = document.getElementById('ds-toast');
+
+    // ── Helper: Hiện toast thông báo ────────────────────────
+    function showToast(msg, isError = false) {
+        toast.textContent = msg;
+        toast.style.background = isError ? '#ef4444' : '#10b981';
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // ── Helper: Render HTML cho 1 thẻ khóa học ──────────────
+    function renderCard(course) {
+        const thumb = course.thumbnail_url
+            ? course.thumbnail_url
+            : '../../images/img_TrangChu.png';
+
+        const priceTag = course.price > 0
+            ? `<span class="mock-tag" style="background:#fef3c7;color:#b45309;">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
+            : `<span class="mock-tag">Miễn phí</span>`;
+
+        const statusTag = course.status === 'published'
+            ? `<span class="mock-tag" style="background:#dcfce7;color:#16a34a;margin-left:8px;">Đã xuất bản</span>`
+            : `<span class="mock-tag" style="background:#f1f5f9;color:#64748b;margin-left:8px;">Nháp</span>`;
+
+        return `
+        <div class="course-item-card" data-id="${course.id}">
+            <div class="course-thumb">
+                <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='Public/images/img_TrangChu.png';">
+            </div>
+            <div class="course-info">
+                <h3>${course.title}</h3>
+                <p>${course.description || 'Chưa có mô tả.'}</p>
+                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                    ${priceTag}
+                    ${statusTag}
+                </div>
+            </div>
+            <div class="course-hover-actions">
+                <button class="act-btn lessons-btn" title="Quản lý bài học" data-action="lessons" data-id="${course.id}" data-title="${course.title}">
+                    <i class="fa-solid fa-book-open"></i>
+                </button>
+                <button class="act-btn edit-btn" title="Chỉnh sửa" data-action="edit" data-id="${course.id}">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="act-btn delete-btn" title="Xóa" data-action="delete" data-id="${course.id}">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </div>
+        </div>`;
+    }
+
+    // ── Helper: Render toàn bộ danh sách ────────────────────
+    async function renderList() {
+        container.innerHTML = `<div style="padding:60px;text-align:center;color:#7c3aed;font-size:16px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+
+        const courses = await window.loadCourses();
+
+        if (!courses || courses.length === 0) {
+            container.innerHTML = `
+                <div style="padding:80px;text-align:center;color:#94a3b8;">
+                    <i class="fa-solid fa-box-open" style="font-size:48px;margin-bottom:16px;display:block;"></i>
+                    <p style="font-size:16px;font-weight:600;">Chưa có khóa học nào. Hãy thêm mới!</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = courses.map(renderCard).join('');
+
+        // Gắn sự kiện sau khi đã render xong
+        container.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id     = btn.getAttribute('data-id');
+                const action = btn.getAttribute('data-action');
+
+                if (action === 'lessons') {
+                    window.selectedCourseId    = id;
+                    window.selectedCourseTitle = btn.getAttribute('data-title');
+                    window.loadPage('danh-sach-bai-hoc.html');
+                }
+
+                if (action === 'delete') {
+                    if (window.showConfirmDialog) {
+                        window.showConfirmDialog({
+                            title: 'Xóa khóa học',
+                            message: 'Bạn có chắc muốn xóa khóa học này không? Hành động này không thể hoàn tác!',
+                            icon: 'fa-trash-can',
+                            confirmText: 'Xóa',
+                            onConfirm: async () => {
+                                const res = await window.deleteCourse(id);
+                                if (res.success) {
+                                    showToast('✅ Xóa khóa học thành công!');
+                                    await renderList();
+                                } else {
+                                    showToast('❌ ' + (res.message || 'Xóa thất bại!'), true);
+                                }
+                            }
+                        });
+                    } else {
+                        if (!confirm('Bạn có chắc muốn xóa khóa học này không?\nHành động này không thể hoàn tác!')) return;
+                        const res = await window.deleteCourse(id);
+                        if (res.success) {
+                            showToast('✅ Xóa khóa học thành công!');
+                            await renderList();
+                        } else {
+                            showToast('❌ ' + (res.message || 'Xóa thất bại!'), true);
+                        }
+                    }
+                }
+
+                if (action === 'edit') {
+                    window.editingCourseId = id;
+                    window.loadPage('them-kh.html');
+                }
+            });
+        });
+    }
+
+    // ── Nút Thêm mới ──────────────────────────────────────
+    document.getElementById('btn-add-course').addEventListener('click', () => {
+        window.editingCourseId = null;
+        window.loadPage('them-kh.html');
+    });
+
+    // ── Khởi chạy ─────────────────────────────────────────
+    renderList();
+})();
+</script>

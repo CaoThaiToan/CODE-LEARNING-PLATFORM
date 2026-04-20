@@ -5,7 +5,7 @@ const getAllCourses = async (req, res) => {
     try {
         const { status } = req.query; // ?status=published | ?status=draft
         let query = `
-            SELECT c.id, c.title, c.description, c.price, c.status, c.created_at,
+            SELECT c.id, c.title, c.description, c.thumbnail_url, c.price, c.status, c.created_at,
                    u.username AS author_username, u.full_name AS author_name
             FROM courses c
             LEFT JOIN users u ON u.id = c.author_id
@@ -29,7 +29,8 @@ const getAllCourses = async (req, res) => {
 const getCourseById = async (req, res) => {
     try {
         const [rows] = await db.query(
-            `SELECT c.*, u.username AS author_username, u.full_name AS author_name
+            `SELECT c.*, u.username AS author_username, u.full_name AS author_name,
+                    (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) AS student_count
              FROM courses c LEFT JOIN users u ON u.id = c.author_id
              WHERE c.id = ?`,
             [req.params.id]
@@ -47,20 +48,21 @@ const getCourseById = async (req, res) => {
 // ── POST /api/courses  [Admin only] ──────────────────────
 const createCourse = async (req, res) => {
     try {
-        const { title, description, price, status } = req.body;
+        const { title, description, thumbnail_url, price, status } = req.body;
 
         if (!title) {
             return res.status(400).json({ success: false, message: 'Tên khóa học không được để trống.' });
         }
 
         const [result] = await db.query(
-            'INSERT INTO courses (author_id, title, description, price, status) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO courses (author_id, title, description, thumbnail_url, price, status) VALUES (?, ?, ?, ?, ?, ?)',
             [
                 req.user.id,
                 title,
                 description || null,
-                price       || 0,
-                status      || 'draft'
+                thumbnail_url || null,
+                price || 0,
+                status || 'draft'
             ]
         );
 
@@ -78,10 +80,10 @@ const createCourse = async (req, res) => {
 // ── PUT /api/courses/:id  [Admin only] ───────────────────
 const updateCourse = async (req, res) => {
     try {
-        const { title, description, price, status } = req.body;
+        const { title, description, thumbnail_url, price, status } = req.body;
         const [result] = await db.query(
-            'UPDATE courses SET title=?, description=?, price=?, status=? WHERE id=?',
-            [title, description, price, status, req.params.id]
+            'UPDATE courses SET title=?, description=?, thumbnail_url=?, price=?, status=? WHERE id=?',
+            [title, description, thumbnail_url || null, price, status, req.params.id]
         );
         if (result.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'Khóa học không tồn tại.' });

@@ -3,61 +3,153 @@
         <h1 class="main-title">QUẢN LÝ KHÓA HỌC VIP</h1>
         <p class="sub-title">Xem, chỉnh sửa và xóa các khóa học Premium VIP.</p>
     </div>
-    <button class="btn-add-shortcut" data-page="vip-them.html">
+    <button class="btn-add-shortcut" id="btn-add-vip-course">
         <i class="fa-solid fa-circle-plus"></i> Thêm khóa học VIP
     </button>
 </div>
 
-<div class="course-list-container">
+<!-- Thông báo toast -->
+<div id="vip-toast" style="display:none; background:#10b981; color:#fff; padding:12px 22px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
 
-    <div class="course-item-card">
-        <div class="course-thumb">
-            <img src="../../../Public/images/img_TrangChu.png" alt="ReactJS VIP">
-            <span class="mock-tag" style="background:#ff8c00;color:white;">VIP</span>
-        </div>
-        <div class="course-info">
-            <h3>Master ReactJS & NextJS Pro</h3>
-            <p>Khóa học chuyên sâu ReactJS & NextJS cho lập trình viên muốn lên level chuyên gia.</p>
-            <div style="margin-top:10px; font-size:13px; color:#6d28d9;">
-                120 bài học • 60 giờ • 340 học viên
-            </div>
-            <div style="margin-top:12px;">
-                <span style="color:#ef4444; font-weight:700; font-size:18px;">1.500.000 đ</span>
-            </div>
-        </div>
-        <div class="course-hover-actions">
-            <button class="act-btn edit-btn" title="Chỉnh sửa">
-                <i class="fa-regular fa-pen-to-square"></i>
-            </button>
-            <button class="act-btn delete-btn" title="Xóa" onclick="if(confirm('Xóa khóa học VIP này?')) alert('Đã xóa (demo)')">
-                <i class="fa-regular fa-trash-can"></i>
-            </button>
-        </div>
+<div class="course-list-container" id="vip-course-list-container">
+    <!-- Danh sách sẽ được render động -->
+    <div style="padding:60px; text-align:center; color:#7c3aed; font-size:16px;">
+        <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách khóa học VIP...
     </div>
-
-    <div class="course-item-card">
-        <div class="course-thumb">
-            <img src="../../../Public/images/img_TrangChu.png" alt="NodeJS VIP">
-            <span class="mock-tag" style="background:#ff8c00;color:white;">VIP</span>
-        </div>
-        <div class="course-info">
-            <h3>Fullstack Node.js & Microservices</h3>
-            <p>Xây dựng backend chuyên nghiệp với Node.js, Express và kiến trúc Microservices.</p>
-            <div style="margin-top:10px; font-size:13px; color:#6d28d9;">
-                150 bài học • 80 giờ • 215 học viên
-            </div>
-            <div style="margin-top:12px;">
-                <span style="color:#ef4444; font-weight:700; font-size:18px;">2.000.000 đ</span>
-            </div>
-        </div>
-        <div class="course-hover-actions">
-            <button class="act-btn edit-btn" title="Chỉnh sửa">
-                <i class="fa-regular fa-pen-to-square"></i>
-            </button>
-            <button class="act-btn delete-btn" title="Xóa" onclick="if(confirm('Xóa khóa học VIP này?')) alert('Đã xóa (demo)')">
-                <i class="fa-regular fa-trash-can"></i>
-            </button>
-        </div>
-    </div>
-
 </div>
+
+<script>
+(async function initVipCourseList() {
+    const container = document.getElementById('vip-course-list-container');
+    const toast     = document.getElementById('vip-toast');
+
+    // ── Helper: Hiện toast thông báo ────────────────────────
+    function showToast(msg, isError = false) {
+        toast.textContent = msg;
+        toast.style.background = isError ? '#ef4444' : '#10b981';
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    // ── Helper: Render HTML cho 1 thẻ khóa học ──────────────
+    function renderCard(course) {
+        const thumb = course.thumbnail_url
+            ? course.thumbnail_url
+            : '../../images/img_TrangChu.png';
+
+        const priceTag = course.price > 0
+            ? `<span class="mock-tag" style="background:#fef3c7;color:#b45309;">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
+            : `<span class="mock-tag">Miễn phí</span>`;
+
+        const statusTag = course.status === 'published'
+            ? `<span class="mock-tag" style="background:#dcfce7;color:#16a34a;margin-left:8px;">Đã xuất bản</span>`
+            : `<span class="mock-tag" style="background:#f1f5f9;color:#64748b;margin-left:8px;">Nháp</span>`;
+
+        return `
+        <div class="course-item-card" data-id="${course.id}">
+            <div class="course-thumb">
+                <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='Public/images/img_TrangChu.png';">
+                <span class="mock-tag" style="background:#ff8c00;color:white;position:absolute;top:10px;left:10px;font-size:12px;">VIP</span>
+            </div>
+            <div class="course-info">
+                <h3>${course.title}</h3>
+                <p>${course.description || 'Chưa có mô tả.'}</p>
+                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                    ${priceTag}
+                    ${statusTag}
+                </div>
+            </div>
+            <div class="course-hover-actions">
+                <button class="act-btn lessons-btn" title="Quản lý bài học" data-action="lessons" data-id="${course.id}" data-title="${course.title}">
+                    <i class="fa-solid fa-book-open"></i>
+                </button>
+                <button class="act-btn edit-btn" title="Chỉnh sửa" data-action="edit" data-id="${course.id}">
+                    <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+                <button class="act-btn delete-btn" title="Xóa" data-action="delete" data-id="${course.id}">
+                    <i class="fa-regular fa-trash-can"></i>
+                </button>
+            </div>
+        </div>`;
+    }
+
+    // ── Helper: Render toàn bộ danh sách ────────────────────
+    async function renderList() {
+        container.innerHTML = `<div style="padding:60px;text-align:center;color:#7c3aed;font-size:16px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+
+        const allCourses = await window.loadCourses();
+        const courses = allCourses ? allCourses.filter(c => c.price > 0) : [];
+
+        if (!courses || courses.length === 0) {
+            container.innerHTML = `
+                <div style="padding:80px;text-align:center;color:#94a3b8;">
+                    <i class="fa-solid fa-box-open" style="font-size:48px;margin-bottom:16px;display:block;"></i>
+                    <p style="font-size:16px;font-weight:600;">Chưa có khóa học VIP nào. Hãy thêm mới!</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = courses.map(renderCard).join('');
+
+        // Gắn sự kiện sau khi đã render xong
+        container.querySelectorAll('[data-action]').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const id     = btn.getAttribute('data-id');
+                const action = btn.getAttribute('data-action');
+
+                if (action === 'lessons') {
+                    window.selectedCourseId    = id;
+                    window.selectedCourseTitle = btn.getAttribute('data-title');
+                    window.loadPage('danh-sach-bai-hoc.html');
+                }
+
+                if (action === 'delete') {
+                    if (window.showConfirmDialog) {
+                        window.showConfirmDialog({
+                            title: 'Xóa khóa học VIP',
+                            message: 'Bạn có chắc muốn xóa khóa học VIP này không? Hành động này không thể hoàn tác!',
+                            icon: 'fa-trash-can',
+                            confirmText: 'Xóa',
+                            onConfirm: async () => {
+                                const res = await window.deleteCourse(id);
+                                if (res.success) {
+                                    showToast('✅ Xóa khóa học VIP thành công!');
+                                    await renderList();
+                                } else {
+                                    showToast('❌ ' + (res.message || 'Xóa thất bại!'), true);
+                                }
+                            }
+                        });
+                    } else {
+                        if (!confirm('Bạn có chắc muốn xóa khóa học VIP này không?\nHành động này không thể hoàn tác!')) return;
+                        const res = await window.deleteCourse(id);
+                        if (res.success) {
+                            showToast('✅ Xóa khóa học thành công!');
+                            await renderList();
+                        } else {
+                            showToast('❌ ' + (res.message || 'Xóa thất bại!'), true);
+                        }
+                    }
+                }
+
+                if (action === 'edit') {
+                    window.editingCourseId = id;
+                    window.defaultCourseType = 'vip'; // So it comes back here
+                    window.loadPage('them-kh.html');
+                }
+            });
+        });
+    }
+
+    // ── Nút Thêm mới VIP ──────────────────────────────────
+    document.getElementById('btn-add-vip-course').addEventListener('click', () => {
+        window.editingCourseId = null;
+        window.defaultCourseType = 'vip'; // Đặt cờ để auto-select VIP
+        window.loadPage('them-kh.html');
+    });
+
+    // ── Khởi chạy ─────────────────────────────────────────
+    renderList();
+})();
+</script>

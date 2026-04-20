@@ -3,8 +3,10 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-const authRoutes = require('./Routes/authRoutes');
+const authRoutes   = require('./Routes/authRoutes');
 const courseRoutes = require('./Routes/courseRoutes');
+const lessonRoutes = require('./Routes/lessonRoutes');
+const userRoutes   = require('./Routes/userRoutes');
 
 const app = express();
 
@@ -24,6 +26,8 @@ app.use('/views', express.static(path.join(__dirname, '..', 'Views')));
 // ── API Routes ────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/users', userRoutes);
 
 // ── Serve index.html for all non-API GET requests ─────────
 app.get(/^(?!\/api).*/, (req, res) => {

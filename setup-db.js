@@ -6,8 +6,8 @@
  */
 
 const mysql = require('mysql2/promise');
-const fs    = require('fs');
-const path  = require('path');
+const fs = require('fs');
+const path = require('path');
 
 const password = process.argv[2] ?? '';
 
@@ -17,9 +17,9 @@ async function setupDatabase() {
 
     try {
         connection = await mysql.createConnection({
-            host:     '127.0.0.1',
-            port:     3306,
-            user:     'root',
+            host: '127.0.0.1',
+            port: 3306,
+            user: 'root',
             password: password,
             multipleStatements: true
         });
@@ -28,18 +28,14 @@ async function setupDatabase() {
 
         // Read and execute init.sql
         const sqlPath = path.join(__dirname, 'Src', 'Config', 'init.sql');
-        const sql     = fs.readFileSync(sqlPath, 'utf8');
+        const sql = fs.readFileSync(sqlPath, 'utf8');
 
         console.log('📦 Đang chạy init.sql...');
         await connection.query(sql);
 
         console.log('✅ Database và bảng đã được tạo thành công!');
         console.log('📋 Bảng đã tạo: users, courses');
-        console.log('👤 Tài khoản admin mặc định:');
-        console.log('   Email   : admin@phantom.edu.vn');
-        console.log('   Password: Admin@123');
         console.log('\n🚀 Bây giờ hãy cập nhật file .env với mật khẩu MySQL của bạn, rồi chạy: npm start\n');
-
     } catch (err) {
         console.error('\n❌ Lỗi:', err.message);
         if (err.code === 'ER_ACCESS_DENIED_ERROR') {

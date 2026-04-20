@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const db = require('../Config/db');
 
 /**
  * Verify JWT from Authorization header.
@@ -21,16 +22,22 @@ const verifyToken = (req, res, next) => {
     }
 };
 
-/**
- * Only allow users with role 'Admin' (matches roles table: role_name = 'Admin').
- * Must be used AFTER verifyToken.
- */
-const requireAdmin = (req, res, next) => {
-    // role_id = 1 hoặc role = 'Admin' theo bảng roles hiện có
-    if (req.user?.role_id !== 1 && req.user?.role !== 'Admin') {
-        return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này.' });
+const requireAdmin = async (req, res, next) => {
+    try {
+        if (!req.user || !req.user.id) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này.' });
+        }
+
+        const [rows] = await db.query('SELECT role_id FROM users WHERE id = ?', [req.user.id]);
+        if (rows.length === 0 || rows[0].role_id !== 1) {
+            return res.status(403).json({ success: false, message: 'Bạn không có quyền thực hiện hành động này.' });
+        }
+
+        next();
+    } catch (err) {
+        console.error('[requireAdmin]', err);
+        return res.status(500).json({ success: false, message: 'Lỗi kiểm tra quyền hạn.' });
     }
-    next();
 };
 
 module.exports = { verifyToken, requireAdmin };

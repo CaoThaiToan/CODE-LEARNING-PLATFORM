@@ -1,49 +1,163 @@
 <div class="form-center">
     <div class="form-container-card">
-        <h1 class="form-title">THÊM KHÓA HỌC MỚI</h1>
-        <p class="form-subtitle">Khởi tạo một khóa học lập trình mới trên hệ thống.</p>
+        <h1 class="form-title" id="form-kh-title">THÊM KHÓA HỌC MỚI</h1>
+        <p class="form-subtitle" id="form-kh-subtitle">Khởi tạo một khóa học lập trình mới trên hệ thống.</p>
 
-        <form>
+        <div id="form-toast" style="display:none; background:#10b981; color:#fff; padding:12px 20px; border-radius:10px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
+
+        <form id="form-kh" autocomplete="off">
             <div class="form-group">
                 <label>Loại khóa học</label>
                 <select id="courseType" class="form-select" onchange="togglePriceField()">
-                    <option value="normal">Khóa học thường</option>
-                    <option value="vip">Khóa học VIP</option>
+                    <option value="free">Khóa học thường (Miễn phí)</option>
+                    <option value="vip">Khóa học VIP (Có phí)</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label>Tên khóa học</label>
-                <input type="text" placeholder="Ví dụ: Lập trình Web cơ bản (HTML/CSS)">
+                <input id="courseTitle" type="text" placeholder="Ví dụ: Lập trình Web cơ bản (HTML/CSS)" required>
             </div>
 
             <div class="form-group">
                 <label>Mô tả khóa học</label>
-                <textarea placeholder="Mô tả ngắn gọn về khóa học..."></textarea>
+                <textarea id="courseDesc" placeholder="Mô tả ngắn gọn về khóa học..."></textarea>
             </div>
 
             <div class="form-group">
                 <label>Link Hình ảnh (URL)</label>
-                <input type="text" placeholder="https://...">
+                <input id="courseThumbnail" type="text" placeholder="https://...">
             </div>
 
-            <!-- Phần giá chỉ hiện khi chọn VIP -->
+            <!-- Giá chỉ hiện khi chọn VIP -->
             <div id="priceField" class="form-group" style="display:none;">
                 <label>Giá khóa học VIP (đơn vị: VNĐ)</label>
-                <input type="text" placeholder="1.500.000" id="vipPrice">
+                <input type="number" id="vipPrice" placeholder="1500000" min="0">
             </div>
 
-            <button type="button" class="btn-submit-form">
-                <i class="fa-solid fa-check"></i> TẠO KHÓA HỌC NGAY
-            </button>
+            <div class="form-group">
+                <label>Trạng thái</label>
+                <select id="courseStatus" class="form-select">
+                    <option value="draft">Nháp (chưa công khai)</option>
+                    <option value="published">Xuất bản (công khai)</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button type="button" class="btn-submit-form" id="btn-submit-kh">
+                    <i class="fa-solid fa-check"></i> <span id="btn-label">TẠO KHÓA HỌC NGAY</span>
+                </button>
+                <button type="button" id="btn-back-list" style="background:transparent;border:2px solid #6d28d9;color:#6d28d9;padding:12px 24px;border-radius:12px;font-weight:700;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#6d28d9';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#6d28d9'">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+                </button>
+            </div>
         </form>
     </div>
 </div>
 
 <script>
-function togglePriceField() {
-    const type = document.getElementById('courseType').value;
-    const priceField = document.getElementById('priceField');
-    priceField.style.display = (type === 'vip') ? 'block' : 'none';
-}
+(async function initKhoaHocForm() {
+    const isEditing  = !!window.editingCourseId;
+    const courseId   = window.editingCourseId;
+    const toast      = document.getElementById('form-toast');
+    const btnLabel   = document.getElementById('btn-label');
+    const formTitle  = document.getElementById('form-kh-title');
+    const formSub    = document.getElementById('form-kh-subtitle');
+
+    // ── Helper hiện toast ──────────────────────────────────
+    function showToast(msg, isError = false) {
+        toast.textContent = msg;
+        toast.style.background = isError ? '#ef4444' : '#10b981';
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+
+    // ── Toggle trường Giá VIP ──────────────────────────────
+    window.togglePriceField = function() {
+        const type = document.getElementById('courseType').value;
+        document.getElementById('priceField').style.display = (type === 'vip') ? 'block' : 'none';
+    };
+
+    // ── Nút quay lại danh sách ────────────────────────────
+    document.getElementById('btn-back-list').addEventListener('click', () => {
+        window.editingCourseId = null;
+        const returnPage = window.defaultCourseType === 'vip' ? 'vip-danh-sach.html' : 'danh-sach-kh.html';
+        window.defaultCourseType = null;
+        window.loadPage(returnPage);
+    });
+
+    // ── Nếu đang Chỉnh sửa: tải dữ liệu cũ vào form ─────
+    if (isEditing) {
+        formTitle.textContent = 'CHỈNH SỬA KHÓA HỌC';
+        formSub.textContent   = 'Cập nhật thông tin khóa học hiện có.';
+        btnLabel.textContent  = 'LƯU THAY ĐỔI';
+        toast.textContent = '⏳ Đang tải thông tin khóa học...';
+        toast.style.background = '#6d28d9';
+        toast.style.display = 'block';
+
+        const course = await window.getCourseById(courseId);
+        toast.style.display = 'none';
+
+        if (course) {
+            document.getElementById('courseTitle').value     = course.title     || '';
+            document.getElementById('courseDesc').value      = course.description || '';
+            document.getElementById('courseThumbnail').value = course.thumbnail_url || '';
+            document.getElementById('courseStatus').value    = course.status    || 'draft';
+
+            if (course.price > 0) {
+                document.getElementById('courseType').value  = 'vip';
+                document.getElementById('vipPrice').value    = course.price;
+                document.getElementById('priceField').style.display = 'block';
+            }
+        } else {
+            showToast('❌ Không tìm thấy khóa học!', true);
+        }
+    } else {
+        if (window.defaultCourseType === 'vip') {
+            document.getElementById('courseType').value = 'vip';
+            window.togglePriceField();
+        }
+    }
+
+    // ── Xử lý Submit form (Thêm mới HOẶC Cập nhật) ────────
+    document.getElementById('btn-submit-kh').addEventListener('click', async () => {
+        const title    = document.getElementById('courseTitle').value.trim();
+        const desc     = document.getElementById('courseDesc').value.trim();
+        const thumb    = document.getElementById('courseThumbnail').value.trim();
+        const status   = document.getElementById('courseStatus').value;
+        const type     = document.getElementById('courseType').value;
+        const priceRaw = document.getElementById('vipPrice').value;
+        const price    = type === 'vip' ? (parseFloat(priceRaw) || 0) : 0;
+
+        if (!title) {
+            showToast('⚠️ Vui lòng nhập tên khóa học!', true);
+            return;
+        }
+
+        const payload = { title, description: desc, thumbnail_url: thumb, price, status };
+        const btn = document.getElementById('btn-submit-kh');
+        btn.disabled = true;
+
+        let res;
+        if (isEditing) {
+            res = await window.updateCourse(courseId, payload);
+        } else {
+            res = await window.handleAddCourse(payload);
+        }
+
+        btn.disabled = false;
+
+        if (res && res.success) {
+            showToast(isEditing ? '✅ Cập nhật khóa học thành công!' : '✅ Tạo khóa học thành công!');
+            setTimeout(() => {
+                window.editingCourseId = null;
+                const returnPage = window.defaultCourseType === 'vip' ? 'vip-danh-sach.html' : 'danh-sach-kh.html';
+                window.defaultCourseType = null;
+                window.loadPage(returnPage);
+            }, 1500);
+        } else {
+            showToast('❌ ' + (res?.message || 'Có lỗi xảy ra. Vui lòng thử lại!'), true);
+        }
+    });
+})();
 </script>

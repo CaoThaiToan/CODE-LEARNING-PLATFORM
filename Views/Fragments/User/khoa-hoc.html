@@ -7,151 +7,100 @@
         </p>
 
         <div class="filter-tabs">
-            <button class="tab active">TẤT CẢ</button>
-            <button class="tab">CƠ BẢN</button>
-            <button class="tab">TRUNG CẤP</button>
-            <button class="tab">NÂNG CAO</button>
-            <button class="tab">THIẾT KẾ</button>
+            <button class="tab active" data-filter="all">TẤT CẢ</button>
+            <button class="tab" data-filter="vip">KHÓA HỌC VIP</button>
         </div>
     </div>
 </div>
 
 <div class="courses-section">
     <div class="container">
-        <div class="courses-grid">
-
-            <!-- Card 1 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="./Public/images/img_TrangChu.png" alt="Lập trình Web cơ bản">
-                    <span class="badge badge-dark">CƠ BẢN</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.8</span>
-                        <span class="students"><i class="fas fa-users"></i> 1.205</span>
-                    </div>
-                    <h3 class="card-title">Lập trình Web cơ bản (HTML/CSS)</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 45 bài học</span>
-                        <span><i class="far fa-clock"></i> 20 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
+        <div class="courses-grid" id="user-courses-grid">
+            <div style="width:100%; text-align:center; padding:50px; color:#6d28d9; grid-column: 1 / -1;">
+                <i class="fa-solid fa-spinner fa-spin"></i> Đang tải khóa học...
             </div>
-
-            <!-- Card 2 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=600&q=80" alt="JavaScript từ A-Z">
-                    <span class="badge badge-purple">TRUNG CẤP</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.9</span>
-                        <span class="students"><i class="fas fa-users"></i> 954</span>
-                    </div>
-                    <h3 class="card-title">Làm chủ JavaScript từ A-Z</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 68 bài học</span>
-                        <span><i class="far fa-clock"></i> 35 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?w=600&q=80" alt="ReactJS">
-                    <span class="badge badge-teal">NÂNG CAO</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.7</span>
-                        <span class="students"><i class="fas fa-users"></i> 732</span>
-                    </div>
-                    <h3 class="card-title">Xây dựng website với ReactJS</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 85 bài học</span>
-                        <span><i class="far fa-clock"></i> 40 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=600&q=80" alt="Python">
-                    <span class="badge badge-dark">CƠ BẢN</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.6</span>
-                        <span class="students"><i class="fas fa-users"></i> 2.140</span>
-                    </div>
-                    <h3 class="card-title">Lập trình Python cho người mới</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 52 bài học</span>
-                        <span><i class="far fa-clock"></i> 25 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&q=80" alt="NodeJS">
-                    <span class="badge badge-purple">TRUNG CẤP</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.8</span>
-                        <span class="students"><i class="fas fa-users"></i> 618</span>
-                    </div>
-                    <h3 class="card-title">Backend với Node.js & Express</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 60 bài học</span>
-                        <span><i class="far fa-clock"></i> 30 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="course-card">
-                <div class="card-thumb">
-                    <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&q=80" alt="MySQL">
-                    <span class="badge badge-dark">CƠ BẢN</span>
-                </div>
-                <div class="card-body">
-                    <div class="card-stats">
-                        <span class="rating"><i class="fas fa-star"></i> 4.5</span>
-                        <span class="students"><i class="fas fa-users"></i> 880</span>
-                    </div>
-                    <h3 class="card-title">MySQL & Quản lý cơ sở dữ liệu</h3>
-                    <div class="card-meta">
-                        <span><i class="fas fa-book-open"></i> 28 bài học</span>
-                        <span><i class="far fa-clock"></i> 12 giờ</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html">XEM CHI TIẾT</a>
-                </div>
-            </div>
-
-        </div><!-- end courses-grid -->
+        </div>
     </div>
 </div>
+
+<script>
+(async function initUserCourses() {
+    const grid = document.getElementById('user-courses-grid');
+    const tabs = document.querySelectorAll('.filter-tabs .tab');
+
+    function renderCard(course) {
+        const isVip = course.price > 0;
+        const badge = isVip 
+            ? `<span class="badge" style="background:#ff8c00;color:white;">VIP</span>`
+            : `<span class="badge badge-dark">MIỄN PHÍ</span>`;
+        
+        const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
+        
+        return `
+        <div class="course-card">
+            <div class="card-thumb">
+                <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='./Public/images/img_TrangChu.png';">
+                ${badge}
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">${course.title}</h3>
+                <p style="font-size:14px; color:#64748b; margin-bottom:12px;">${course.description || 'Chưa có mô tả'}</p>
+                ${isVip ? `<div style="color:#ef4444; font-weight:800; margin-bottom:4px; font-size: 1.1rem;">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : ''}
+            </div>
+            ${isVip 
+                ? `
+                <div class="card-footer" style="display:flex; gap:12px; padding: 16px 20px;">
+                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html" data-id="${course.id}" style="flex:1; justify-content:center; border: 1px solid #7c3aed; padding: 8px 0; border-radius: 8px;">CHI TIẾT</a>
+                    <a href="#" class="btn-buy" onclick="alert('Tính năng thanh toán đang được phát triển!'); return false;" style="flex:1; justify-content:center; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, #ff9800 0%, #f97316 100%); color:white; font-weight:700; font-size:0.85rem; padding: 8px 0; border-radius: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);">MUA <i class="fas fa-shopping-cart"></i></a>
+                </div>`
+                : `
+                <div class="card-footer">
+                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html" data-id="${course.id}">XEM CHI TIẾT</a>
+                </div>`
+            }
+        </div>`;
+    }
+
+    try {
+        // Chỉ lấy khóa học đã xuất bản
+        const allCourses = await window.loadCourses('published');
+        
+        const renderGrid = (filter) => {
+            let filtered = allCourses;
+            if (filter === 'vip') {
+                filtered = allCourses.filter(c => c.price > 0);
+            }
+            
+            if (!filtered || filtered.length === 0) {
+                grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#64748b;">Không có khóa học nào.</div>';
+                return;
+            }
+            grid.innerHTML = filtered.map(renderCard).join('');
+
+            // Attach event for detail
+            grid.querySelectorAll('.btn-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.selectedCourseId = btn.getAttribute('data-id');
+                    window.loadPage('chi-tiet-kh.html');
+                });
+            });
+        };
+
+        renderGrid('all');
+
+        // Tab events
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                renderGrid(tab.getAttribute('data-filter'));
+            });
+        });
+
+    } catch (err) {
+        console.error(err);
+        grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#ef4444;">Lỗi khi tải khóa học.</div>';
+    }
+})();
+</script>

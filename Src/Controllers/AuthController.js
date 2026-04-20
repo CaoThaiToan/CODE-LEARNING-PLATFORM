@@ -53,6 +53,7 @@ const login = async (req, res) => {
         // JOIN với bảng roles để lấy role_name
         const [rows] = await db.query(
             `SELECT u.id, u.username, u.email, u.password, u.full_name, u.role_id,
+                    u.is_deleted, u.delete_reason,
                     r.role_name AS role
              FROM users u
              JOIN roles r ON r.id = u.role_id
@@ -65,6 +66,15 @@ const login = async (req, res) => {
         }
 
         const user  = rows[0];
+
+        // Kiểm tra tài khoản bị xóa (soft-delete)
+        if (user.is_deleted) {
+            const reason = user.delete_reason
+                ? `Tài khoản của bạn đã bị xóa bởi quản trị viên.\n\nLý do: ${user.delete_reason}`
+                : 'Tài khoản của bạn đã bị xóa bởi quản trị viên.';
+            return res.status(403).json({ success: false, message: reason, code: 'ACCOUNT_DELETED' });
+        }
+
         const valid = await bcrypt.compare(password, user.password);
         if (!valid) {
             return res.status(401).json({ success: false, message: 'Email hoặc mật khẩu không đúng.' });

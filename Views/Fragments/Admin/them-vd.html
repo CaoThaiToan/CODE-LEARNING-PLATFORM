@@ -1,7 +1,19 @@
 <div class="form-center">
     <div class="form-container-card">
-        <h1 class="form-title">THÊM BÀI HỌC VIDEO</h1>
-        <p class="form-subtitle">Tạo video bài giảng và câu hỏi trắc nghiệm.</p>
+        <!-- Header + nút quay lại -->
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:6px;">
+            <button type="button" id="btn-back-to-lessons"
+                style="background:#f1f5f9; color:#4a5568; border:none; padding:8px 16px; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </button>
+            <div>
+                <h1 class="form-title" id="vd-form-title" style="margin-bottom:4px;">THÊM BÀI HỌC VIDEO</h1>
+                <p class="form-subtitle" id="vd-form-sub">Tạo video bài giảng và câu hỏi trắc nghiệm.</p>
+            </div>
+        </div>
+
+        <!-- Toast thông báo -->
+        <div id="vd-toast" style="display:none; padding:12px 20px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
 
         <form id="lessonForm">
             <div class="form-group">
@@ -12,9 +24,7 @@
             <div class="form-group">
                 <label>Thuộc khóa học</label>
                 <select class="form-select" id="courseSelect">
-                    <option value="">-- Chọn khóa học --</option>
-                    <option value="1">Lập trình Web cơ bản (HTML/CSS)</option>
-                    <option value="2">Làm chủ JavaScript từ A-Z</option>
+                    <option value="">-- Đang tải khóa học... --</option>
                 </select>
             </div>
 
@@ -28,103 +38,207 @@
 
             <hr style="margin:30px 0;">
 
-            <h3 style="margin-bottom:15px;">📝 Câu hỏi trắc nghiệm</h3>
+            <h3 style="margin-bottom:15px;">📝 Câu hỏi trắc nghiệm <span style="font-size:13px;font-weight:400;color:#94a3b8;">(không bắt buộc)</span></h3>
 
-            <div id="quizContainer">
-                <!-- Câu hỏi mẫu mặc định -->
-            </div>
+            <div id="quizContainer"></div>
 
             <button type="button" onclick="addQuestionField()" class="btn-submit-form" style="background:#64748b; margin:20px 0;">
                 + Thêm câu hỏi mới
             </button>
 
-            <button type="button" onclick="saveLessonWithQuiz()" class="btn-submit-form">
-                <i class="fa-solid fa-cloud-upload"></i> LƯU BÀI HỌC & CÂU HỎI
+            <button type="button" id="btn-save-lesson" class="btn-submit-form">
+                <i class="fa-solid fa-cloud-upload"></i> <span id="btn-save-text">LƯU BÀI HỌC</span>
             </button>
         </form>
     </div>
 </div>
 
 <script>
-// Thêm một câu hỏi mới
-function addQuestionField() {
-    const container = document.getElementById('quizContainer');
-    const index = container.children.length + 1;
+(async function initLessonForm() {
+    const isEditing    = !!window.editingLessonId;
+    const lessonId     = window.editingLessonId;
+    const toast        = document.getElementById('vd-toast');
 
-    const html = `
-        <div class="question-block" style="background:#f8f0ff; padding:20px; border-radius:12px; margin-bottom:20px;">
-            <label><strong>Câu ${index}:</strong></label>
-            <input type="text" class="question-text" placeholder="Nhập câu hỏi ở đây..." style="width:100%; margin:10px 0; padding:12px; border:1px solid #d1d5db; border-radius:8px;">
+    // ── Cập nhật tiêu đề form ─────────────────────────────
+    if (isEditing) {
+        document.getElementById('vd-form-title').textContent = 'CHỈNH SỬA BÀI HỌC';
+        document.getElementById('vd-form-sub').textContent   = 'Cập nhật nội dung bài học và câu hỏi.';
+        document.getElementById('btn-save-text').textContent = 'CẬP NHẬT BÀI HỌC';
+    }
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;">
-                <div>
-                    <label>A.</label>
-                    <input type="text" class="option" placeholder="Đáp án A" style="width:100%; padding:10px;">
-                </div>
-                <div>
-                    <label>B.</label>
-                    <input type="text" class="option" placeholder="Đáp án B" style="width:100%; padding:10px;">
-                </div>
-                <div>
-                    <label>C.</label>
-                    <input type="text" class="option" placeholder="Đáp án C" style="width:100%; padding:10px;">
-                </div>
-                <div>
-                    <label>D.</label>
-                    <input type="text" class="option" placeholder="Đáp án D" style="width:100%; padding:10px;">
-                </div>
-            </div>
+    function showToast(msg, isError = false) {
+        toast.textContent = msg;
+        toast.style.background  = isError ? '#fee2e2' : '#dcfce7';
+        toast.style.color       = isError ? '#ef4444' : '#16a34a';
+        toast.style.display     = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
 
-            <label style="margin-top:15px; display:block; font-weight:600;">Đáp án đúng:</label>
-            <select class="correct-answer" style="width:100%; padding:12px; border:1px solid #d1d5db; border-radius:8px;">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-            </select>
-        </div>
-    `;
-
-    container.innerHTML += html;
-}
-
-// Lưu bài học + tất cả câu hỏi
-function saveLessonWithQuiz() {
-    const lessonName = document.getElementById('lessonName').value;
-    const questions = [];
-
-    document.querySelectorAll('.question-block').forEach(block => {
-        const questionText = block.querySelector('.question-text').value.trim();
-        const options = Array.from(block.querySelectorAll('.option')).map(input => input.value.trim());
-        const correct = block.querySelector('.correct-answer').value;
-
-        if (questionText) {
-            questions.push({
-                question: questionText,
-                options: options,
-                correct: correct
+    // ── Load danh sách khóa học ───────────────────────────
+    async function loadCourseOptions(selectedId) {
+        const select = document.getElementById('courseSelect');
+        try {
+            const courses = await window.loadCourses();
+            select.innerHTML = '<option value="">-- Chọn khóa học --</option>';
+            if (!courses || courses.length === 0) {
+                select.innerHTML += '<option disabled>Chưa có khóa học nào</option>';
+                return;
+            }
+            courses.forEach(course => {
+                const opt = document.createElement('option');
+                opt.value = course.id;
+                opt.textContent = course.title;
+                if (String(course.id) === String(selectedId)) opt.selected = true;
+                select.appendChild(opt);
             });
+        } catch {
+            select.innerHTML = '<option value="">-- Lỗi tải khóa học --</option>';
+        }
+    }
+
+    // ── Reindex câu hỏi ──────────────────────────────────
+    function reindexQuestions() {
+        document.querySelectorAll('#quizContainer .question-block').forEach((block, i) => {
+            const label = block.querySelector('.question-label');
+            if (label) label.innerHTML = `<strong>Câu ${i + 1}:</strong>`;
+        });
+    }
+
+    // ── Xóa câu hỏi ──────────────────────────────────────
+    window.removeQuestion = function(btn) {
+        const block = btn.closest('.question-block');
+        if (!block) return;
+        block.style.transition = 'all 0.3s ease';
+        block.style.opacity    = '0';
+        block.style.transform  = 'translateX(30px)';
+        setTimeout(() => { block.remove(); reindexQuestions(); }, 300);
+    };
+
+    // ── Thêm câu hỏi ─────────────────────────────────────
+    window.addQuestionField = function(questionText = '', optTexts = ['','','',''], correctLabel = 'A') {
+        const container = document.getElementById('quizContainer');
+        const index     = container.children.length + 1;
+        const labels    = ['A','B','C','D'];
+
+        const wrapper       = document.createElement('div');
+        wrapper.className   = 'question-block';
+        wrapper.style.cssText = 'background:#f8f0ff; padding:20px; border-radius:12px; margin-bottom:20px; position:relative; animation:fadeSlideIn 0.3s ease;';
+
+        wrapper.innerHTML = `
+            <button type="button" onclick="removeQuestion(this)" class="btn-remove-question" title="Xóa câu hỏi">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+            <label class="question-label" style="font-weight:700;font-size:15px;"><strong>Câu ${index}:</strong></label>
+            <input type="text" class="question-text" value="${questionText.replace(/"/g,'&quot;')}"
+                placeholder="Nhập câu hỏi ở đây..."
+                style="width:100%;margin:10px 0;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+                ${labels.map((lbl, i) => `
+                <div>
+                    <label>${lbl}.</label>
+                    <input type="text" class="option" value="${(optTexts[i]||'').replace(/"/g,'&quot;')}"
+                        placeholder="Đáp án ${lbl}" style="width:100%;padding:10px;">
+                </div>`).join('')}
+            </div>
+            <label style="margin-top:15px;display:block;font-weight:600;">Đáp án đúng:</label>
+            <select class="correct-answer" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+                ${labels.map(lbl => `<option value="${lbl}" ${lbl === correctLabel ? 'selected' : ''}>${lbl}</option>`).join('')}
+            </select>`;
+
+        container.appendChild(wrapper);
+    };
+
+    // ── Load danh sách khóa học trước tiên ───────────────
+    let preselectedCourseId = window.selectedCourseId || '';
+    await loadCourseOptions(preselectedCourseId);
+
+    // ── Load dữ liệu bài học cũ nếu đang Edit ────────────
+    if (isEditing) {
+        try {
+            const lesson = await window.getLessonById(lessonId);
+            if (lesson) {
+                document.getElementById('lessonName').value  = lesson.title || '';
+                document.getElementById('youtubeLink').value = lesson.video_url || '';
+                if (lesson.course_id) {
+                    document.getElementById('courseSelect').value = lesson.course_id;
+                }
+
+                // Load quizzes
+                if (lesson.quizzes && lesson.quizzes.length > 0) {
+                    lesson.quizzes.forEach((quiz, qi) => {
+                        const options = quiz.options || [];
+                        const optTexts   = ['', '', '', ''];
+                        let correctLabel = 'A';
+                        const labels     = ['A','B','C','D'];
+                        options.forEach((opt, oi) => {
+                            optTexts[oi] = opt.option_text || '';
+                            if (opt.is_correct) correctLabel = labels[oi];
+                        });
+                        window.addQuestionField(quiz.question_text, optTexts, correctLabel);
+                    });
+                }
+            }
+        } catch (err) {
+            console.error(err);
+            showToast('Lỗi khi tải dữ liệu bài học', true);
+        }
+    }
+
+    // ── Lưu bài học ──────────────────────────────────────
+    document.getElementById('btn-save-lesson').addEventListener('click', async () => {
+        const lessonName = document.getElementById('lessonName').value.trim();
+        const courseId   = document.getElementById('courseSelect').value;
+        const videoUrl   = document.getElementById('youtubeLink').value.trim();
+
+        if (!lessonName) { showToast('⚠️ Vui lòng nhập tên bài học!', true); return; }
+        if (!courseId)   { showToast('⚠️ Vui lòng chọn khóa học!', true); return; }
+
+        // Collect quizzes
+        const quizzes = [];
+        document.querySelectorAll('#quizContainer .question-block').forEach(block => {
+            const questionText = block.querySelector('.question-text').value.trim();
+            if (!questionText) return;
+            const opts         = Array.from(block.querySelectorAll('.option')).map(i => i.value.trim());
+            const correctLabel = block.querySelector('.correct-answer').value;
+            const labels       = ['A','B','C','D'];
+            quizzes.push({
+                question_text: questionText,
+                options: labels.map((lbl, i) => ({
+                    option_text: opts[i] || `Đáp án ${lbl}`,
+                    is_correct:  lbl === correctLabel ? 1 : 0
+                }))
+            });
+        });
+
+        const payload = { course_id: courseId, title: lessonName, video_url: videoUrl, quizzes };
+
+        const btn = document.getElementById('btn-save-lesson');
+        btn.disabled   = true;
+        btn.style.opacity = '0.7';
+
+        let res;
+        if (isEditing) {
+            res = await window.updateLesson(lessonId, payload);
+        } else {
+            res = await window.createLesson(payload);
+        }
+
+        btn.disabled  = false;
+        btn.style.opacity = '1';
+
+        if (res.success) {
+            showToast(isEditing ? '✅ Cập nhật bài học thành công!' : '✅ Tạo bài học thành công!');
+            window.editingLessonId = null;
+            setTimeout(() => window.loadPage('danh-sach-bai-hoc.html'), 1200);
+        } else {
+            showToast('❌ ' + (res.message || 'Lỗi không xác định!'), true);
         }
     });
 
-    if (!lessonName) {
-        alert("Vui lòng nhập tên bài học!");
-        return;
-    }
-    if (questions.length === 0) {
-        alert("Vui lòng thêm ít nhất 1 câu hỏi trắc nghiệm!");
-        return;
-    }
-
-    alert(`✅ Đã lưu bài học "${lessonName}" với ${questions.length} câu hỏi trắc nghiệm!`);
-    
-    // Reset form
-    document.getElementById('lessonForm').reset();
-    document.getElementById('quizContainer').innerHTML = '';
-}
-
-// Thêm 1 câu hỏi mẫu khi load trang
-window.onload = function() {
-    addQuestionField();   // Tự động thêm 1 câu hỏi mẫu
-};
+    // ── Nút quay lại ─────────────────────────────────────
+    document.getElementById('btn-back-to-lessons').addEventListener('click', () => {
+        window.editingLessonId = null;
+        window.loadPage('danh-sach-bai-hoc.html');
+    });
+})();
 </script>
