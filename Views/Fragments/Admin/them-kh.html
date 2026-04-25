@@ -35,6 +35,17 @@
                 <input type="number" id="vipPrice" placeholder="1500000" min="0">
             </div>
 
+            <!-- Mức độ chỉ hiện khi chọn khóa thường -->
+            <div id="levelField" class="form-group">
+                <label>Mức độ</label>
+                <select id="courseLevel" class="form-select">
+                    <option value="coban">Cơ bản</option>
+                    <option value="trungcap">Trung cấp</option>
+                    <option value="nangcao">Nâng cao</option>
+                    <option value="thietke">Thiết kế</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Trạng thái</label>
                 <select id="courseStatus" class="form-select">
@@ -72,10 +83,11 @@
         setTimeout(() => { toast.style.display = 'none'; }, 3500);
     }
 
-    // ── Toggle trường Giá VIP ──────────────────────────────
+    // ── Toggle trường Giá VIP và Mức độ ──────────────────────────────
     window.togglePriceField = function() {
         const type = document.getElementById('courseType').value;
         document.getElementById('priceField').style.display = (type === 'vip') ? 'block' : 'none';
+        document.getElementById('levelField').style.display = (type === 'free') ? 'block' : 'none';
     };
 
     // ── Nút quay lại danh sách ────────────────────────────
@@ -108,6 +120,11 @@
                 document.getElementById('courseType').value  = 'vip';
                 document.getElementById('vipPrice').value    = course.price;
                 document.getElementById('priceField').style.display = 'block';
+                document.getElementById('levelField').style.display = 'none';
+            } else {
+                if (course.level) {
+                    document.getElementById('courseLevel').value = course.level;
+                }
             }
         } else {
             showToast('❌ Không tìm thấy khóa học!', true);
@@ -126,6 +143,7 @@
         const thumb    = document.getElementById('courseThumbnail').value.trim();
         const status   = document.getElementById('courseStatus').value;
         const type     = document.getElementById('courseType').value;
+        const level    = document.getElementById('courseLevel').value;
         const priceRaw = document.getElementById('vipPrice').value;
         const price    = type === 'vip' ? (parseFloat(priceRaw) || 0) : 0;
 
@@ -134,7 +152,7 @@
             return;
         }
 
-        const payload = { title, description: desc, thumbnail_url: thumb, price, status };
+        const payload = { title, description: desc, thumbnail_url: thumb, price, status, level: type === 'free' ? level : null };
         const btn = document.getElementById('btn-submit-kh');
         btn.disabled = true;
 

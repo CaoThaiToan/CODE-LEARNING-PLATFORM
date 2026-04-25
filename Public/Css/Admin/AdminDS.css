@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
     --primary: #6d28d9;
@@ -20,7 +20,7 @@
     z-index: 100;
 }
 
-/* PHẦN LOGO PHANTOM MỚI */
+/* PHẦN LOGO PLATFORM MỚI */
 .brand-logo { display: flex; align-items: center; gap: 12px; }
 
 .logo-img {

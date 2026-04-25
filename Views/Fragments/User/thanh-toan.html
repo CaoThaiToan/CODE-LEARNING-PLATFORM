@@ -73,7 +73,7 @@
                         </div>
                     </label>
 
-                    <button type="submit" class="btn-pay">THANH TOÁN 1.500.000 Đ</button>
+                    <button type="submit" class="btn-pay" id="checkout-pay-btn">THANH TOÁN 0 Đ</button>
 
                     <div class="security-note">
                         <i class="fa-solid fa-shield-halved"></i> Thông tin thanh toán của bạn được mã hóa an toàn
@@ -86,12 +86,11 @@
             <div class="summary-box">
                 <h2 class="section-title">TÓM TẮT ĐƠN HÀNG</h2>
                 
-                <div class="product-item">
-                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?q=80&w=200&auto=format&fit=crop" alt="ReactJS Course">
+                <div class="product-item" id="checkout-product-info">
+                    <img id="checkout-thumb" src="./Public/images/img_TrangChu.png" alt="Course Thumbnail">
                     <div class="product-details">
                         <span class="badge-orange">KHÓA HỌC VIP</span>
-                        <h3>Master ReactJS & NextJS Pro</h3>
-                        <span class="old-price">3.000.000 đ</span>
+                        <h3 id="checkout-title">Đang tải tên khóa học...</h3>
                     </div>
                 </div>
 
@@ -99,11 +98,11 @@
 
                 <div class="price-row">
                     <span class="label">Giá gốc</span>
-                    <span class="value">3.000.000 đ</span>
+                    <span class="value" id="checkout-base-price">0 đ</span>
                 </div>
                 <div class="price-row text-green">
                     <span class="label">Giảm giá</span>
-                    <span class="value">- 1.500.000 đ</span>
+                    <span class="value">0 đ</span>
                 </div>
                 <div class="price-row text-muted">
                     <span class="label">Thuế VAT</span>
@@ -117,9 +116,53 @@
                         <span class="main">TỔNG CỘNG</span>
                         <span class="sub">Đã bao gồm VAT</span>
                     </div>
-                    <div class="total-price">1.500.000 đ</div>
+                    <div class="total-price" id="checkout-total-price">0 đ</div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+(async function initCheckout() {
+    const courseId = window.selectedCourseId;
+    if (!courseId) {
+        alert('Vui lòng chọn khóa học trước!');
+        window.loadPage('khoa-hoc-vip.html');
+        return;
+    }
+
+    const titleEl = document.getElementById('checkout-title');
+    const thumbEl = document.getElementById('checkout-thumb');
+    const basePriceEl = document.getElementById('checkout-base-price');
+    const totalPriceEl = document.getElementById('checkout-total-price');
+    const payBtn = document.getElementById('checkout-pay-btn');
+
+    try {
+        const course = await window.getCourseById(courseId);
+        if (!course) throw new Error('Không tìm thấy thông tin khóa học');
+
+        const priceStr = Number(course.price).toLocaleString('vi-VN') + ' đ';
+
+        titleEl.textContent = course.title;
+        thumbEl.src = course.thumbnail_url || './Public/images/img_TrangChu.png';
+        basePriceEl.textContent = priceStr;
+        totalPriceEl.textContent = priceStr;
+        payBtn.textContent = `THANH TOÁN ${priceStr.toUpperCase()}`;
+
+        // Điền thông tin user nếu có
+        const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (user.full_name) document.querySelector('input[placeholder="Nguyễn Văn A"]').value = user.full_name;
+        if (user.email) document.querySelector('input[type="email"]').value = user.email;
+
+    } catch (err) {
+        console.error(err);
+        alert('Lỗi tải thông tin thanh toán: ' + err.message);
+    }
+
+    document.querySelector('.checkout-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Đã tiếp nhận yêu cầu thanh toán! Hệ thống đang chuyển hướng tới cổng thanh toán...');
+    });
+})();
+</script>

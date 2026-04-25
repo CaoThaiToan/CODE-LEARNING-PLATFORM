@@ -124,10 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.showConfirmDialog({
             title: 'Đăng xuất',
             message: 'Bạn có chắc chắn muốn rời khỏi hệ thống?',
-            icon: 'fa-right-from-bracket',
+            icon: 'fa-arrow-right-from-bracket',
             confirmText: 'Đăng xuất',
-            onConfirm: async () => {
-                await apiFetch('/auth/logout', { method: 'POST' });
+            onConfirm: () => {
+                // Always clear local auth regardless of API response
+                try { apiFetch('/auth/logout', { method: 'POST' }); } catch (_) {}
                 currentUser = null;
                 clearAuth();
                 window.location.replace('login-register.html');

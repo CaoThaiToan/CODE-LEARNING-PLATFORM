@@ -8,7 +8,10 @@
 
         <div class="filter-tabs">
             <button class="tab active" data-filter="all">TẤT CẢ</button>
-            <button class="tab" data-filter="vip">KHÓA HỌC VIP</button>
+            <button class="tab" data-filter="coban">CƠ BẢN</button>
+            <button class="tab" data-filter="trungcap">TRUNG CẤP</button>
+            <button class="tab" data-filter="nangcao">NÂNG CAO</button>
+            <button class="tab" data-filter="thietke">THIẾT KẾ</button>
         </div>
     </div>
 </div>
@@ -29,55 +32,60 @@
     const tabs = document.querySelectorAll('.filter-tabs .tab');
 
     function renderCard(course) {
-        const isVip = course.price > 0;
-        const badge = isVip 
-            ? `<span class="badge" style="background:#ff8c00;color:white;">VIP</span>`
-            : `<span class="badge badge-dark">MIỄN PHÍ</span>`;
-        
+        const levelMap = {
+            'coban': 'Cơ bản',
+            'trungcap': 'Trung cấp',
+            'nangcao': 'Nâng cao',
+            'thietke': 'Thiết kế'
+        };
+        const levelLabel = course.level ? (levelMap[course.level] || course.level) : null;
         const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
-        
+
+        // Badge MIỄN PHÍ - dùng inline style hoàn toàn, không dùng class badge để tránh position:absolute của CSS
+        const freeBadge = `<span style="display:inline-block;background:rgba(10,10,20,0.82);color:white;font-weight:800;padding:5px 12px;border-radius:20px;font-size:11px;letter-spacing:0.5px;backdrop-filter:blur(6px);">MIỄN PHÍ</span>`;
+
+        // Badge mức độ - chỉ hiển thị với khóa học miễn phí có level
+        const levelBadge = levelLabel
+            ? `<span style="display:inline-block;background:#7c3aed;color:white;font-weight:700;padding:5px 12px;border-radius:20px;font-size:11px;letter-spacing:0.5px;">${levelLabel.toUpperCase()}</span>`
+            : '';
+
         return `
         <div class="course-card">
             <div class="card-thumb">
                 <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='./Public/images/img_TrangChu.png';">
-                ${badge}
+                <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:5;">
+                    ${freeBadge}
+                    ${levelBadge}
+                </div>
             </div>
             <div class="card-body">
                 <h3 class="card-title">${course.title}</h3>
-                <p style="font-size:14px; color:#64748b; margin-bottom:12px;">${course.description || 'Chưa có mô tả'}</p>
-                ${isVip ? `<div style="color:#ef4444; font-weight:800; margin-bottom:4px; font-size: 1.1rem;">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : ''}
+                <p style="font-size:14px;color:#64748b;margin-bottom:12px;">${course.description || 'Chưa có mô tả'}</p>
             </div>
-            ${isVip 
-                ? `
-                <div class="card-footer" style="display:flex; gap:12px; padding: 16px 20px;">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html" data-id="${course.id}" style="flex:1; justify-content:center; border: 1px solid #7c3aed; padding: 8px 0; border-radius: 8px;">CHI TIẾT</a>
-                    <a href="#" class="btn-buy" onclick="alert('Tính năng thanh toán đang được phát triển!'); return false;" style="flex:1; justify-content:center; display:inline-flex; align-items:center; gap:6px; background:linear-gradient(135deg, #ff9800 0%, #f97316 100%); color:white; font-weight:700; font-size:0.85rem; padding: 8px 0; border-radius: 8px; transition: 0.3s; box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);">MUA <i class="fas fa-shopping-cart"></i></a>
-                </div>`
-                : `
-                <div class="card-footer">
-                    <a href="#" class="btn-detail" data-page="chi-tiet-kh.html" data-id="${course.id}">XEM CHI TIẾT</a>
-                </div>`
-            }
+            <div class="card-footer">
+                <a href="#" class="btn-detail" data-id="${course.id}">XEM CHI TIẾT</a>
+            </div>
         </div>`;
     }
 
     try {
-        // Chỉ lấy khóa học đã xuất bản
-        const allCourses = await window.loadCourses('published');
-        
+        // CHỈ lấy khóa học đã xuất bản và miễn phí (price = 0). VIP chỉ hiển thị ở khoa-hoc-vip.html
+        const allFetchedCourses = await window.loadCourses('published');
+        const allCourses = allFetchedCourses.filter(c => !c.price || Number(c.price) === 0);
+
         const renderGrid = (filter) => {
             let filtered = allCourses;
-            if (filter === 'vip') {
-                filtered = allCourses.filter(c => c.price > 0);
+            if (filter !== 'all') {
+                filtered = allCourses.filter(c => c.level === filter);
             }
-            
+
             if (!filtered || filtered.length === 0) {
-                grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#64748b;">Không có khóa học nào.</div>';
+                grid.innerHTML = '<div style="width:100%;grid-column:1/-1;text-align:center;padding:50px;color:#64748b;">Không có khóa học nào ở mức độ này.</div>';
                 return;
             }
             grid.innerHTML = filtered.map(renderCard).join('');
 
-            // Attach event for detail
+            // Gắn sự kiện xem chi tiết
             grid.querySelectorAll('.btn-detail').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -89,7 +97,7 @@
 
         renderGrid('all');
 
-        // Tab events
+        // Tab filter events
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 tabs.forEach(t => t.classList.remove('active'));
@@ -100,7 +108,7 @@
 
     } catch (err) {
         console.error(err);
-        grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#ef4444;">Lỗi khi tải khóa học.</div>';
+        grid.innerHTML = '<div style="width:100%;grid-column:1/-1;text-align:center;padding:50px;color:#ef4444;">Lỗi khi tải khóa học.</div>';
     }
 })();
 </script>
