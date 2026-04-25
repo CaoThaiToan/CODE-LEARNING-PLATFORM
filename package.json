@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "code-learning-platform",
   "version": "1.0.0",
-  "description": "Code E-Learning Phantom - Backend API",
+  "description": "Code E-Learning PLATFORM - Backend API",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

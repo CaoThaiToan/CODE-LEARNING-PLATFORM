@@ -9,83 +9,88 @@
         <p>Nâng tầm kỹ năng với các khóa học chuyên sâu được thiết kế đặc biệt. Nhận sự hỗ trợ tận tình từ chuyên gia, học tập qua dự án thực tế và nhận chứng chỉ giá trị.</p>
     </section>
 
-    <section class="course-grid">
-        
-        <!-- Card 1 -->
-        <article class="card">
-            <div class="card-image bg-react">
-                <span class="badge top-right"><i class="fa-solid fa-crown"></i> VIP</span>
-                <div class="image-bottom">
-                    <span class="badge bottom-left">VIP - CHUYÊN GIA</span>
-                    <span class="badge bottom-right rating"><i class="fa-solid fa-star"></i> 5</span>
-                </div>
-            </div>
-            <div class="card-content">
-                <h2 class="course-title">Master ReactJS & NextJS Pro</h2>
-                
-                <div class="course-meta">
-                    <span><i class="fa-solid fa-book-open"></i> 120 bài học</span>
-                    <span><i class="fa-regular fa-clock"></i> 60 giờ</span>
-                    <span><i class="fa-solid fa-user-group"></i> 340</span>
-                </div>
-
-                <div class="vip-features">
-                    <h3>ĐẶC QUYỀN VIP:</h3>
-                    <ul>
-                        <li>Hỗ trợ 1-1 qua Zoom</li>
-                        <li>Thực hành dự án thực tế</li>
-                        <li>Cấp chứng chỉ VIP</li>
-                        <li>Bảo hành kiến thức trọn đời</li>
-                    </ul>
-                </div>
-
-                <div class="card-footer">
-                    <div class="price-info">
-                        <span class="old-price">3.000.000 đ</span>
-                        <span class="new-price">1.500.000 đ</span>
-                    </div>
-                    <button class="buy-btn" data-page="thanh-toan.html">MUA NGAY</button>
-                </div>
-            </div>
-        </article>
-
-        <!-- Card 2 -->
-        <article class="card">
-            <div class="card-image bg-node">
-                <span class="badge top-right"><i class="fa-solid fa-crown"></i> VIP</span>
-                <div class="image-bottom">
-                    <span class="badge bottom-left">VIP - KIẾN TRÚC SƯ</span>
-                    <span class="badge bottom-right rating"><i class="fa-solid fa-star"></i> 4.9</span>
-                </div>
-            </div>
-            <div class="card-content">
-                <h2 class="course-title">Fullstack Node.js & Microservices</h2>
-                
-                <div class="course-meta">
-                    <span><i class="fa-solid fa-book-open"></i> 150 bài học</span>
-                    <span><i class="fa-regular fa-clock"></i> 80 giờ</span>
-                    <span><i class="fa-solid fa-user-group"></i> 215</span>
-                </div>
-
-                <div class="vip-features">
-                    <h3>ĐẶC QUYỀN VIP:</h3>
-                    <ul>
-                        <li>Học cùng chuyên gia Top 1%</li>
-                        <li>Review Code hàng tuần</li>
-                        <li>Cam kết việc làm</li>
-                        <li>Tham gia cộng đồng kín</li>
-                    </ul>
-                </div>
-
-                <div class="card-footer">
-                    <div class="price-info">
-                        <span class="old-price">4.000.000 đ</span>
-                        <span class="new-price">2.000.000 đ</span>
-                    </div>
-                    <button class="buy-btn" data-page="thanh-toan.html">MUA NGAY</button>
-                </div>
-            </div>
-        </article>
-
+    <section class="course-grid" id="vip-courses-grid">
+        <div style="width:100%; text-align:center; padding:50px; color:#f59e0b; grid-column: 1 / -1;">
+            <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách khóa học VIP...
+        </div>
     </section>
 </div>
+
+<script>
+(async function initVipCourses() {
+    const grid = document.getElementById('vip-courses-grid');
+
+    function renderVipCard(course, index) {
+        const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
+        const priceStr = Number(course.price).toLocaleString('vi-VN');
+        
+        // Luân phiên các badge và bg class cho đa dạng nếu không có ảnh
+        const bgs = ['bg-react', 'bg-node', ''];
+        const bgClass = bgs[index % bgs.length];
+
+        return `
+        <article class="card">
+            <div class="card-image" style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6)), url('${thumb}'); background-size: cover; background-position: center;">
+                <span class="badge top-right"><i class="fa-solid fa-crown"></i> VIP</span>
+                <div class="image-bottom">
+                    <span class="badge bottom-left">VIP - ĐỘC QUYỀN</span>
+                </div>
+            </div>
+            <div class="card-content">
+                <h2 class="course-title" style="color: #0f172a; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:56px; font-weight:700;">${course.title}</h2>
+                
+                <div class="course-meta">
+                    <span><i class="fa-solid fa-book-open"></i> Bài học đặc biệt</span>
+                    <span><i class="fa-regular fa-clock"></i> Truy cập mãi mãi</span>
+                    <span><i class="fa-solid fa-user-shield"></i> Hỗ trợ 24/7</span>
+                </div>
+
+                <div class="vip-features">
+                    <h3>ĐẶC QUYỀN VIP:</h3>
+                    <ul>
+                        <li>Hỗ trợ 1-1 cùng chuyên gia</li>
+                        <li>Tham gia nhóm học tập kín</li>
+                        <li>Review code trực tiếp</li>
+                        <li>Chứng chỉ hoàn thành VIP</li>
+                    </ul>
+                </div>
+
+                <div class="card-footer">
+                    <div class="price-info">
+                        <span class="new-price" style="font-size: 1.4rem;">${priceStr} đ</span>
+                    </div>
+                    <button class="buy-btn btn-buy-vip" data-id="${course.id}">MUA NGAY</button>
+                </div>
+            </div>
+        </article>`;
+    }
+
+    try {
+        if (typeof window.loadCourses !== 'function') throw new Error('API chưa sẵn sàng');
+
+        const allCourses = await window.loadCourses('published');
+        const vipCourses = allCourses.filter(c => c.price > 0);
+
+        if (!vipCourses || vipCourses.length === 0) {
+            grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#94a3b8; font-size:16px;">Hiện chưa có khóa học VIP nào được mở bán.</div>';
+            return;
+        }
+
+        grid.innerHTML = vipCourses.map((c, i) => renderVipCard(c, i)).join('');
+
+        // Gắn sự kiện mua khóa học
+        grid.querySelectorAll('.btn-buy-vip').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.selectedCourseId = btn.getAttribute('data-id');
+                // Chuyển tới trang thanh toán
+                window.loadPage('thanh-toan.html');
+            });
+        });
+
+    } catch (err) {
+        console.error('[khoa-hoc-vip] Lỗi:', err);
+        grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#ef4444;">Lỗi khi tải danh sách khóa học VIP.</div>';
+    }
+})();
+</script>

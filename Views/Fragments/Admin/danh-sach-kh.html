@@ -23,6 +23,21 @@
     const container = document.getElementById('course-list-container');
     const toast     = document.getElementById('ds-toast');
 
+    // Thêm style cho mock-tag nếu chưa có
+    const style = document.createElement('style');
+    style.innerHTML = `
+        .mock-tag {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+            background: #f1f5f9;
+            color: #475569;
+        }
+    `;
+    document.head.appendChild(style);
+
     // ── Helper: Hiện toast thông báo ────────────────────────
     function showToast(msg, isError = false) {
         toast.textContent = msg;
@@ -45,6 +60,21 @@
             ? `<span class="mock-tag" style="background:#dcfce7;color:#16a34a;margin-left:8px;">Đã xuất bản</span>`
             : `<span class="mock-tag" style="background:#f1f5f9;color:#64748b;margin-left:8px;">Nháp</span>`;
 
+        const levelMap = {
+            'coban': 'Cơ bản',
+            'trungcap': 'Trung cấp',
+            'nangcao': 'Nâng cao',
+            'thietke': 'Thiết kế',
+            'Cơ bản': 'Cơ bản',
+            'Trung cấp': 'Trung cấp',
+            'Nâng cao': 'Nâng cao',
+            'Thiết kế': 'Thiết kế'
+        };
+        const levelLabel = course.level ? (levelMap[course.level] || course.level) : null;
+        const levelTag = levelLabel
+            ? `<span class="mock-tag" style="background:#e0e7ff;color:#4338ca;">Mức độ: ${levelLabel}</span>`
+            : '';
+
         return `
         <div class="course-item-card" data-id="${course.id}">
             <div class="course-thumb">
@@ -53,8 +83,9 @@
             <div class="course-info">
                 <h3>${course.title}</h3>
                 <p>${course.description || 'Chưa có mô tả.'}</p>
-                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;">
                     ${priceTag}
+                    ${levelTag}
                     ${statusTag}
                 </div>
             </div>

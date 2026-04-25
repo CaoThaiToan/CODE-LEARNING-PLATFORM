@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code Elearning Phantom - Access System</title>
+    <title>Code Elearning PLATFORM - Access System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="LoginRegister.css">
 </head>
@@ -50,7 +50,7 @@
     </div>
 
     <div class="main-interface">
-        <div class="phantom-bg">
+        <div class="PLATFORM-bg">
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
             <div class="orb orb-3"></div>
@@ -58,8 +58,8 @@
             <div class="glass-card">
                 <div class="card-header">
                     <div class="logo">
-                        <img src="../../public/images/logo_phantom.png" alt="Logo Phantom" class="brand-logo-img">
-                        <span class="brand-name">Code Elearning Phantom</span>
+                        <img src="../../public/images/logo_PLATFORM.png" alt="Logo PLATFORM" class="brand-logo-img">
+                        <span class="brand-name">Code Elearning PLATFORM</span>
                     </div>
                     <p id="form-title">Decrypting Knowledge</p>
                 </div>
@@ -72,6 +72,9 @@
                     <div class="input-group">
                         <i class="fas fa-key"></i>
                         <input id="login-password" type="password" placeholder="Access Code" required>
+                    </div>
+                    <div style="text-align:right; margin-bottom: 12px; margin-top: -8px;">
+                        <a href="#" onclick="toggleForgotForm(); return false;" style="color:#6d28d9; font-size:13px; text-decoration:none; font-weight:600; transition:0.2s;" onmouseover="this.style.color='#5b21b6'" onmouseout="this.style.color='#6d28d9'">Quên mật khẩu?</a>
                     </div>
                     <div id="login-error" style="color:#ef4444;font-size:13px;margin-bottom:8px;display:none;"></div>
                     <button type="submit" class="btn-main" id="login-btn">Access System</button>
@@ -107,6 +110,19 @@
                         <p>Already a Member? <a href="#" onclick="toggleForm(); return false;">Login Now</a></p>
                     </div>
                 </form>
+
+                <form id="forgot-form" class="auth-form hidden">
+                    <p style="color:#64748b; font-size:14px; margin-bottom:16px; text-align:center; line-height:1.5;">Vui lòng nhập email của bạn để nhận liên kết khôi phục mật khẩu.</p>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input id="forgot-email" type="email" placeholder="Email Address" required>
+                    </div>
+                    <div id="forgot-msg" style="font-size:13px;margin-bottom:8px;display:none;"></div>
+                    <button type="submit" class="btn-main" id="forgot-btn">Gửi liên kết</button>
+                    <div class="form-footer">
+                        <p>Quay lại <a href="#" onclick="toggleForgotForm(); return false;">Đăng nhập</a></p>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -132,10 +148,34 @@
         function toggleForm() {
             const loginForm = document.getElementById('login-form');
             const signupForm = document.getElementById('signup-form');
+            const forgotForm = document.getElementById('forgot-form');
             const title = document.getElementById('form-title');
+            
+            forgotForm.classList.add('hidden');
+            
             loginForm.classList.toggle('hidden');
             signupForm.classList.toggle('hidden');
             title.innerText = loginForm.classList.contains('hidden') ? 'Join the Academy' : 'Decrypting Knowledge';
+        }
+
+        /* === CHUYỂN FORM QUÊN MẬT KHẨU === */
+        function toggleForgotForm() {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const forgotForm = document.getElementById('forgot-form');
+            const title = document.getElementById('form-title');
+
+            signupForm.classList.add('hidden');
+            
+            if (forgotForm.classList.contains('hidden')) {
+                loginForm.classList.add('hidden');
+                forgotForm.classList.remove('hidden');
+                title.innerText = 'Recover Password';
+            } else {
+                forgotForm.classList.add('hidden');
+                loginForm.classList.remove('hidden');
+                title.innerText = 'Decrypting Knowledge';
+            }
         }
 
         /* === API BASE === */
@@ -233,6 +273,25 @@
             } finally {
                 btn.disabled = false; btn.textContent = 'Begin Journey';
             }
+        });
+
+        /* === FORGOT PASSWORD === */
+        document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('forgot-email').value.trim();
+            const msgEl = document.getElementById('forgot-msg');
+            const btn = document.getElementById('forgot-btn');
+
+            btn.disabled = true; btn.textContent = 'Đang xử lý...';
+            msgEl.style.display = 'none';
+
+            // Giả lập gọi API gửi email khôi phục (Tính năng backend chưa được yêu cầu)
+            setTimeout(() => {
+                msgEl.textContent = 'Thành công! Một liên kết khôi phục đã được gửi đến email của bạn.';
+                msgEl.style.color = '#10b981'; // Xanh lá
+                msgEl.style.display = 'block';
+                btn.disabled = false; btn.textContent = 'Gửi liên kết';
+            }, 1200);
         });
 
         /* === MẮT NHÌN THEO CHUỘT === */

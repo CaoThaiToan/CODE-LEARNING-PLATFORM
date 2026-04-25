@@ -233,6 +233,7 @@ a { text-decoration: none; transition: 0.3s; }
     font-weight: 800;
     letter-spacing: 0.5px;
     color: #fff;
+    white-space: nowrap;
 }
 
 .badge-dark { background: rgba(10, 10, 20, 0.82); backdrop-filter: blur(6px); }

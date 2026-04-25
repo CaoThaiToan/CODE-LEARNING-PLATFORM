@@ -1,4 +1,4 @@
-/* =========================================
+﻿/* =========================================
    === IMPORT FONTS ===
    ========================================= */
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap');
@@ -389,7 +389,7 @@ body:not(.light-off) .lamp-hint {
     justify-content: center;
 }
 
-.phantom-bg {
+.PLATFORM-bg {
     width: 100%;
     height: 100%;
     display: flex;

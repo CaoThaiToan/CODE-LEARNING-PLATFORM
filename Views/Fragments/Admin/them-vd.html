@@ -228,6 +228,12 @@
 
         if (res.success) {
             showToast(isEditing ? '✅ Cập nhật bài học thành công!' : '✅ Tạo bài học thành công!');
+            
+            // Cập nhật state toàn cục để trang danh sách biết hiển thị khóa học nào
+            const select = document.getElementById('courseSelect');
+            window.selectedCourseId    = courseId;
+            window.selectedCourseTitle = select.options[select.selectedIndex].text;
+
             window.editingLessonId = null;
             setTimeout(() => window.loadPage('danh-sach-bai-hoc.html'), 1200);
         } else {

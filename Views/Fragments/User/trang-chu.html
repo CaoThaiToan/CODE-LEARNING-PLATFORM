@@ -3,9 +3,9 @@
 <section class="hero-section">
     <div class="container hero-container">
         <div class="hero-content">
-            <h1>CODE E-LEARNING <br><span class="highlight">PHANTOM</span></h1>
+            <h1>CODE E-LEARNING <br><span class="highlight">PLATFORM</span></h1>
             <p class="subtitle">Website học lập trình miễn phí dành cho sinh viên mới bắt đầu</p>
-            <p class="desc">Học lập trình từ cơ bản đến nâng cao với video dễ hiểu, bài tập thực hành và hỗ trợ 24/7. Giải mã tri thức cùng cộng đồng Phantom.</p>
+            <p class="desc">Học lập trình từ cơ bản đến nâng cao với video dễ hiểu, bài tập thực hành và hỗ trợ 24/7. Giải mã tri thức cùng cộng đồng PLATFORM.</p>
             
             <div class="hero-buttons">
                 <a href="#" class="btn-primary" data-page="khoa-hoc.html">
@@ -69,7 +69,7 @@
 <section class="section light-bg">
     <div class="container">
         <div class="section-title">
-            <h2>TẠI SAO CHỌN CODE E-LEARNING PHANTOM?</h2>
+            <h2>TẠI SAO CHỌN CODE E-LEARNING PLATFORM?</h2>
             <p>Những lợi ích tuyệt vời khi học lập trình cùng chúng tôi</p>
         </div>
         <div class="grid-3 feature-grid">
@@ -110,7 +110,7 @@
         <div class="card">
             <div class="card-img" style="background: ${randomColor}; background-image: url('${thumb}'); background-size: cover; background-position: center; position: relative;">
                 <div style="position:absolute; inset:0; background:rgba(0,0,0,0.4);"></div>
-                <div style="position:relative; z-index:2;">
+                <div style="position:absolute; top:12px; left:12px; z-index:2;">
                     ${badge}
                 </div>
             </div>
@@ -130,8 +130,12 @@
     }
 
     try {
+        if (typeof window.loadCourses !== 'function') {
+            throw new Error('API chưa sẵn sàng. Vui lòng tải lại trang.');
+        }
+
         const allCourses = await window.loadCourses('published');
-        
+
         if (!allCourses || allCourses.length === 0) {
             grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#64748b;">Hiện chưa có khóa học nào.</div>';
             return;
@@ -150,8 +154,16 @@
         });
 
     } catch (err) {
-        console.error(err);
-        grid.innerHTML = '<div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px; color:#ef4444;">Lỗi tải dữ liệu.</div>';
+        console.error('[trang-chu] loadCourses error:', err);
+        grid.innerHTML = `
+            <div style="width:100%; grid-column: 1 / -1; text-align:center; padding:50px;">
+                <p style="color:#ef4444; font-weight:600; margin-bottom:12px;">⚠️ Không thể tải khóa học</p>
+                <p style="color:#64748b; font-size:14px; margin-bottom:16px;">${err.message || 'Kiểm tra server backend có đang chạy không (localhost:3000).'}</p>
+                <button onclick="window.loadPage('trang-chu.html')" 
+                    style="background:#6d28d9;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-weight:700;cursor:pointer;">
+                    🔄 Thử lại
+                </button>
+            </div>`;
     }
 })();
 </script>
