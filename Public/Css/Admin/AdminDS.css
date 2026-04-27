@@ -1,4 +1,4 @@
-ï»¿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
     --primary: #6d28d9;
@@ -111,3 +111,113 @@
 
 .delete-btn { background: #fff5f5; color: #ef4444; }
 .delete-btn:hover { background: #ef4444; color: white; }
+
+/* UTILS CHO FRAGMENTS */
+.admin-toast {
+    display: none; background: #10b981; color: #fff; 
+    padding: 12px 22px; border-radius: 12px; 
+    margin-bottom: 20px; font-weight: 600; font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+
+.admin-loading {
+    padding: 60px; text-align: center; color: var(--primary); font-size: 16px;
+}
+
+.admin-empty-state {
+    padding: 80px; text-align: center; color: var(--text-muted);
+}
+.admin-empty-state i { font-size: 48px; margin-bottom: 16px; display: block; }
+.admin-empty-state p { font-size: 16px; font-weight: 600; }
+
+/* TAGS DÃ™NG CHUNG */
+.mock-tag {
+    padding: 4px 12px; border-radius: 8px; font-size: 12px; 
+    font-weight: 700; display: inline-block; background: #f1f5f9; color: #475569;
+}
+.tag-vip-gold { background: #fef3c7; color: #b45309; }
+.tag-vip-orange { background: #ff8c00; color: white; }
+.tag-success { background: #dcfce7; color: #16a34a; }
+.tag-level { background: #e0e7ff; color: #4338ca; }
+.tag-secondary-admin { background:#f1f5f9; color:#4a5568; }
+
+/* LESSON LIST STYLES */
+.lesson-list-container { display:flex; flex-direction:column; gap:16px; }
+
+.lesson-item-card {
+    background:#fff;
+    border-radius:20px;
+    border:1px solid #edf2f7;
+    padding:20px 25px;
+    display:flex;
+    align-items:center;
+    gap:20px;
+    position:relative;
+    transition:0.3s;
+    cursor:default;
+}
+.lesson-item-card:hover { box-shadow:0 6px 24px rgba(109,40,217,0.08); border-color:#c4b5fd; }
+
+.lesson-order-badge {
+    min-width:42px; height:42px;
+    background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+    color:#fff; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; font-size:16px; flex-shrink:0;
+}
+.lesson-info { flex:1; min-width:0; }
+.lesson-info h3 { font-size:16px; color:#1a202c; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lesson-info p { font-size:13px; color:#94a3b8; }
+.lesson-type-tag { display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+
+.lesson-actions { display:flex; gap:8px; flex-shrink:0; }
+.lesson-actions .act-btn { width:36px; height:36px; border-radius:10px; border:none; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s; }
+.lesson-actions .act-btn:hover { transform:scale(1.1); }
+.watch-btn { background:#f0f7ff; color:#3b82f6; }
+.edit-lesson-btn { background:#f0fdf4; color:#16a34a; }
+.delete-lesson-btn { background:#fff5f5; color:#ef4444; }
+
+/* MODAL VIDEO */
+.modal-admin {
+    position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;
+}
+.modal-admin-content {
+    background:#fff; border-radius:20px; padding:30px; max-width:800px; width:90%; position:relative;
+}
+.btn-close-modal {
+    position:absolute; top:15px; right:15px; background:#fee2e2; color:#ef4444; border:none; width:36px; height:36px; border-radius:10px; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.video-responsive-wrapper {
+    position:relative; padding-bottom:56.25%; height:0; border-radius:12px; overflow:hidden; background:#000;
+}
+.video-responsive-wrapper iframe {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+}
+
+/* SUMMARY ROW */
+.summary-row {
+    background:#f3e8ff; padding:20px; border-radius:16px; margin-bottom:25px; 
+    display:flex; justify-content:space-between; align-items:center;
+}
+.summary-item p { margin:0; font-size:14px; color:#6d28d9; }
+.summary-item h2 { margin:0; font-size:28px; color:#6d28d9; }
+.summary-item .t-success { color:#10b981; }
+
+.status-paid { color:#10b981; font-weight: 600; }
+.status-pending { color:#f59e0b; font-weight: 600; }
+
+.course-tags-wrapper {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* UTILS */
+.display-none { display: none !important; }
+.text-error { color: #ef4444; }
+
+/* TAGS DÙNG RIÊNG */
+.tag-vip-orange { background: #ff8c00 !important; color: white !important; }
+.pos-abs-tl { position: absolute; top: 10px; left: 10px; }

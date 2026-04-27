@@ -19,7 +19,7 @@
 <div class="courses-section">
     <div class="container">
         <div class="courses-grid" id="user-courses-grid">
-            <div style="width:100%; text-align:center; padding:50px; color:#6d28d9; grid-column: 1 / -1;">
+            <div class="user-loading grid-col-all">
                 <i class="fa-solid fa-spinner fa-spin"></i> Đang tải khóa học...
             </div>
         </div>
@@ -42,25 +42,25 @@
         const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
 
         // Badge MIỄN PHÍ - dùng inline style hoàn toàn, không dùng class badge để tránh position:absolute của CSS
-        const freeBadge = `<span style="display:inline-block;background:rgba(10,10,20,0.82);color:white;font-weight:800;padding:5px 12px;border-radius:20px;font-size:11px;letter-spacing:0.5px;backdrop-filter:blur(6px);">MIỄN PHÍ</span>`;
+        const freeBadge = `<span class="tag-free">MIỄN PHÍ</span>`;
 
         // Badge mức độ - chỉ hiển thị với khóa học miễn phí có level
         const levelBadge = levelLabel
-            ? `<span style="display:inline-block;background:#7c3aed;color:white;font-weight:700;padding:5px 12px;border-radius:20px;font-size:11px;letter-spacing:0.5px;">${levelLabel.toUpperCase()}</span>`
+            ? `<span class="tag-level-purple">${levelLabel.toUpperCase()}</span>`
             : '';
 
         return `
         <div class="course-card">
             <div class="card-thumb">
                 <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='./Public/images/img_TrangChu.png';">
-                <div style="position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:5;">
+                <div class="card-thumb-badge-wrapper">
                     ${freeBadge}
                     ${levelBadge}
                 </div>
             </div>
             <div class="card-body">
                 <h3 class="card-title">${course.title}</h3>
-                <p style="font-size:14px;color:#64748b;margin-bottom:12px;">${course.description || 'Chưa có mô tả'}</p>
+                <p class="card-desc">${course.description || 'Chưa có mô tả'}</p>
             </div>
             <div class="card-footer">
                 <a href="#" class="btn-detail" data-id="${course.id}">XEM CHI TIẾT</a>
@@ -80,7 +80,7 @@
             }
 
             if (!filtered || filtered.length === 0) {
-                grid.innerHTML = '<div style="width:100%;grid-column:1/-1;text-align:center;padding:50px;color:#64748b;">Không có khóa học nào ở mức độ này.</div>';
+                grid.innerHTML = '<div class="user-empty-state grid-col-all text-center-padded">Không có khóa học nào ở mức độ này.</div>';
                 return;
             }
             grid.innerHTML = filtered.map(renderCard).join('');
@@ -108,7 +108,7 @@
 
     } catch (err) {
         console.error(err);
-        grid.innerHTML = '<div style="width:100%;grid-column:1/-1;text-align:center;padding:50px;color:#ef4444;">Lỗi khi tải khóa học.</div>';
+        grid.innerHTML = '<div class="user-error-box-full">Lỗi khi tải khóa học.</div>';
     }
 })();
 </script>

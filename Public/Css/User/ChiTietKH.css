@@ -97,7 +97,9 @@ a { text-decoration: none; transition: 0.3s; }
 }
 
 /* ===== LEFT MAIN ===== */
-.detail-main {}
+.detail-main {
+    flex: 1;
+}
 
 .course-title {
     font-size: 2.8rem;
@@ -171,7 +173,9 @@ a { text-decoration: none; transition: 0.3s; }
 }
 
 /* Curriculum */
-.curriculum {}
+.curriculum {
+    margin-top: 40px;
+}
 
 .curriculum-header {
     margin-bottom: 20px;
@@ -235,6 +239,27 @@ a { text-decoration: none; transition: 0.3s; }
     background: #f3e8ff;
     color: var(--primary);
 }
+
+.detail-loading {
+    width: 100%; text-align: center; padding: 50px; color: var(--primary);
+}
+
+.price-value-large {
+    font-size: 24px; color: #ef4444; font-weight: bold; margin-bottom: 15px;
+}
+
+.sidebar-price-label {
+    font-weight: bold; color: #1e293b;
+}
+
+.empty-lessons {
+    padding: 20px; text-align: center; color: #64748b;
+}
+
+.btn-full { width: 100%; }
+.mt-20 { margin-top: 20px; }
+.text-content { color:#475569; line-height:1.8; margin-top:15px; }
+.flex-1 { flex: 1; }
 
 .lesson-info {
     flex: 1;
@@ -464,3 +489,8 @@ a { text-decoration: none; transition: 0.3s; }
     font-size: 0.85rem;
     color: #6b7280;
 }
+/* UTILS */
+.mt-10 { margin-top: 10px; }
+.text-error { color: #ef4444; }
+.mt-20 { margin-top: 20px; }
+.flex-1 { flex: 1; }

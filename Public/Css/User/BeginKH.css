@@ -561,3 +561,147 @@ body {
     border-color: var(--primary);
     transform: scale(1.1);
 }
+
+/* ===== QUIZ BUTTONS REDESIGN ===== */
+.quiz-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 15px;
+}
+
+.btn-quiz {
+    flex: 1;
+    padding: 14px 25px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    letter-spacing: 0.3px;
+}
+
+.btn-quiz-primary {
+    background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+}
+
+.btn-quiz-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.45);
+    filter: brightness(1.1);
+}
+
+.btn-quiz-primary:active {
+    transform: translateY(-1px);
+}
+
+.btn-quiz-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+}
+
+.btn-quiz-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}
+
+.btn-quiz-secondary:active {
+    transform: scale(0.98);
+}
+
+/* QUIZ RESULT BOX */
+.quiz-result-box {
+    margin-top: 30px;
+    padding: 30px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #2a1f4d 0%, #1e1654 100%);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: none;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-score {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.result-percent {
+    font-size: 48px;
+    font-weight: 800;
+    color: #a78bfa;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(167, 139, 250, 0.4);
+}
+
+.result-count {
+    font-size: 14px;
+    color: #c4b5fd;
+    margin-top: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feedback-item {
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.feedback-correct {
+    background: rgba(34, 197, 94, 0.1);
+    color: #4ade80;
+    border-left: 4px solid #22c55e;
+}
+
+.feedback-wrong {
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border-left: 4px solid #ef4444;
+}
+
+.result-message {
+    margin-top: 25px;
+    text-align: center;
+    font-size: 15px;
+    color: #f1f5f9;
+    font-weight: 600;
+}
+/* FRAGMENT QUIZ STYLES */
+.quiz-section {
+    margin-top:50px; padding:35px; background:#1e1654; border-radius:20px; color:#fff;
+}
+.quiz-section-title {
+    margin-bottom:25px; color:#a78bfa; font-size:22px;
+}
+.quiz-question { margin-top:30px; }
+.quiz-question:first-of-type { margin-top: 0; }
+.quiz-question label {
+    display: inline-block; margin-top: 10px; cursor: pointer;
+}
+.quiz-question input[type="radio"] { margin-right: 8px; }

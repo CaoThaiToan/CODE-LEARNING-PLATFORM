@@ -9,11 +9,11 @@
 </div>
 
 <!-- Thông báo toast -->
-<div id="vip-toast" style="display:none; background:#10b981; color:#fff; padding:12px 22px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
+<div id="vip-toast" class="admin-toast"></div>
 
 <div class="course-list-container" id="vip-course-list-container">
     <!-- Danh sách sẽ được render động -->
-    <div style="padding:60px; text-align:center; color:#7c3aed; font-size:16px;">
+    <div class="admin-loading">
         <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách khóa học VIP...
     </div>
 </div>
@@ -26,9 +26,10 @@
     // ── Helper: Hiện toast thông báo ────────────────────────
     function showToast(msg, isError = false) {
         toast.textContent = msg;
+        toast.className = 'admin-toast';
         toast.style.background = isError ? '#ef4444' : '#10b981';
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        toast.classList.remove('display-none');
+        setTimeout(() => { toast.classList.add('display-none'); }, 3000);
     }
 
     // ── Helper: Render HTML cho 1 thẻ khóa học ──────────────
@@ -38,23 +39,23 @@
             : '../../images/img_TrangChu.png';
 
         const priceTag = course.price > 0
-            ? `<span class="mock-tag" style="background:#fef3c7;color:#b45309;">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
+            ? `<span class="mock-tag tag-vip-gold">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
             : `<span class="mock-tag">Miễn phí</span>`;
 
         const statusTag = course.status === 'published'
-            ? `<span class="mock-tag" style="background:#dcfce7;color:#16a34a;margin-left:8px;">Đã xuất bản</span>`
-            : `<span class="mock-tag" style="background:#f1f5f9;color:#64748b;margin-left:8px;">Nháp</span>`;
+            ? `<span class="mock-tag tag-success">Đã xuất bản</span>`
+            : `<span class="mock-tag tag-muted">Nháp</span>`;
 
         return `
         <div class="course-item-card" data-id="${course.id}">
             <div class="course-thumb">
                 <img src="${thumb}" alt="${course.title}" onerror="this.onerror=null; this.src='Public/images/img_TrangChu.png';">
-                <span class="mock-tag" style="background:#ff8c00;color:white;position:absolute;top:10px;left:10px;font-size:12px;">VIP</span>
+                <span class="mock-tag tag-vip-orange pos-abs-tl">VIP</span>
             </div>
             <div class="course-info">
                 <h3>${course.title}</h3>
                 <p>${course.description || 'Chưa có mô tả.'}</p>
-                <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+                <div class="course-tags-wrapper">
                     ${priceTag}
                     ${statusTag}
                 </div>
@@ -75,16 +76,16 @@
 
     // ── Helper: Render toàn bộ danh sách ────────────────────
     async function renderList() {
-        container.innerHTML = `<div style="padding:60px;text-align:center;color:#7c3aed;font-size:16px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+        container.innerHTML = `<div class="admin-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
 
         const allCourses = await window.loadCourses();
         const courses = allCourses ? allCourses.filter(c => c.price > 0) : [];
 
         if (!courses || courses.length === 0) {
             container.innerHTML = `
-                <div style="padding:80px;text-align:center;color:#94a3b8;">
-                    <i class="fa-solid fa-box-open" style="font-size:48px;margin-bottom:16px;display:block;"></i>
-                    <p style="font-size:16px;font-weight:600;">Chưa có khóa học VIP nào. Hãy thêm mới!</p>
+                <div class="admin-empty-state">
+                    <i class="fa-solid fa-box-open"></i>
+                    <p>Chưa có khóa học VIP nào. Hãy thêm mới!</p>
                 </div>`;
             return;
         }
