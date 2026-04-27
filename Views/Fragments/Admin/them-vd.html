@@ -1,19 +1,18 @@
 <div class="form-center">
     <div class="form-container-card">
         <!-- Header + nút quay lại -->
-        <div style="display:flex; align-items:center; gap:14px; margin-bottom:6px;">
-            <button type="button" id="btn-back-to-lessons"
-                style="background:#f1f5f9; color:#4a5568; border:none; padding:8px 16px; border-radius:10px; font-weight:600; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:6px;">
+        <div class="flex items-center gap-14 mb-6">
+            <button type="button" id="btn-back-to-lessons" class="btn-back-admin">
                 <i class="fa-solid fa-arrow-left"></i> Quay lại
             </button>
             <div>
-                <h1 class="form-title" id="vd-form-title" style="margin-bottom:4px;">THÊM BÀI HỌC VIDEO</h1>
+                <h1 class="form-title mb-4" id="vd-form-title">THÊM BÀI HỌC VIDEO</h1>
                 <p class="form-subtitle" id="vd-form-sub">Tạo video bài giảng và câu hỏi trắc nghiệm.</p>
             </div>
         </div>
 
         <!-- Toast thông báo -->
-        <div id="vd-toast" style="display:none; padding:12px 20px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
+        <div id="vd-toast" class="toast-vd display-none"></div>
 
         <form id="lessonForm">
             <div class="form-group">
@@ -29,6 +28,11 @@
             </div>
 
             <div class="form-group">
+                <label>Nội dung chính bài học</label>
+                <textarea id="lessonTheory" placeholder="Nhập tóm tắt hoặc nội dung lý thuyết chính của bài học..." style="height: 120px;"></textarea>
+            </div>
+
+            <div class="form-group">
                 <label>Link YouTube (URL)</label>
                 <div class="input-with-icon">
                     <i class="fa-brands fa-youtube"></i>
@@ -36,13 +40,13 @@
                 </div>
             </div>
 
-            <hr style="margin:30px 0;">
+            <hr class="divider-margin">
 
-            <h3 style="margin-bottom:15px;">📝 Câu hỏi trắc nghiệm <span style="font-size:13px;font-weight:400;color:#94a3b8;">(không bắt buộc)</span></h3>
+            <h3 class="quiz-section-title">📝 Câu hỏi trắc nghiệm <span class="text-muted-small">(không bắt buộc)</span></h3>
 
             <div id="quizContainer"></div>
 
-            <button type="button" onclick="addQuestionField()" class="btn-submit-form" style="background:#64748b; margin:20px 0;">
+            <button type="button" onclick="addQuestionField()" class="btn-submit-form btn-secondary-gray">
                 + Thêm câu hỏi mới
             </button>
 
@@ -70,8 +74,8 @@
         toast.textContent = msg;
         toast.style.background  = isError ? '#fee2e2' : '#dcfce7';
         toast.style.color       = isError ? '#ef4444' : '#16a34a';
-        toast.style.display     = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        toast.classList.remove('display-none');
+        setTimeout(() => { toast.classList.add('display-none'); }, 3500);
     }
 
     // ── Load danh sách khóa học ───────────────────────────
@@ -108,9 +112,7 @@
     window.removeQuestion = function(btn) {
         const block = btn.closest('.question-block');
         if (!block) return;
-        block.style.transition = 'all 0.3s ease';
-        block.style.opacity    = '0';
-        block.style.transform  = 'translateX(30px)';
+        block.classList.add('removing-question');
         setTimeout(() => { block.remove(); reindexQuestions(); }, 300);
     };
 
@@ -121,27 +123,25 @@
         const labels    = ['A','B','C','D'];
 
         const wrapper       = document.createElement('div');
-        wrapper.className   = 'question-block';
-        wrapper.style.cssText = 'background:#f8f0ff; padding:20px; border-radius:12px; margin-bottom:20px; position:relative; animation:fadeSlideIn 0.3s ease;';
+        wrapper.className   = 'question-block question-block-style';
 
         wrapper.innerHTML = `
             <button type="button" onclick="removeQuestion(this)" class="btn-remove-question" title="Xóa câu hỏi">
                 <i class="fa-solid fa-trash-can"></i>
             </button>
-            <label class="question-label" style="font-weight:700;font-size:15px;"><strong>Câu ${index}:</strong></label>
-            <input type="text" class="question-text" value="${questionText.replace(/"/g,'&quot;')}"
-                placeholder="Nhập câu hỏi ở đây..."
-                style="width:100%;margin:10px 0;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+            <label class="question-label"><strong>Câu ${index}:</strong></label>
+            <input type="text" class="question-text input-quiz" value="${questionText.replace(/"/g,'&quot;')}"
+                placeholder="Nhập câu hỏi ở đây...">
+            <div class="grid-quiz-options">
                 ${labels.map((lbl, i) => `
                 <div>
                     <label>${lbl}.</label>
-                    <input type="text" class="option" value="${(optTexts[i]||'').replace(/"/g,'&quot;')}"
-                        placeholder="Đáp án ${lbl}" style="width:100%;padding:10px;">
+                    <input type="text" class="option input-full-padded" value="${(optTexts[i]||'').replace(/"/g,'&quot;')}"
+                        placeholder="Đáp án ${lbl}">
                 </div>`).join('')}
             </div>
-            <label style="margin-top:15px;display:block;font-weight:600;">Đáp án đúng:</label>
-            <select class="correct-answer" style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;">
+            <label class="mt-15 block font-600">Đáp án đúng:</label>
+            <select class="correct-answer select-quiz">
                 ${labels.map(lbl => `<option value="${lbl}" ${lbl === correctLabel ? 'selected' : ''}>${lbl}</option>`).join('')}
             </select>`;
 
@@ -159,6 +159,7 @@
             if (lesson) {
                 document.getElementById('lessonName').value  = lesson.title || '';
                 document.getElementById('youtubeLink').value = lesson.video_url || '';
+                document.getElementById('lessonTheory').value = lesson.theory_md || '';
                 if (lesson.course_id) {
                     document.getElementById('courseSelect').value = lesson.course_id;
                 }
@@ -210,11 +211,17 @@
             });
         });
 
-        const payload = { course_id: courseId, title: lessonName, video_url: videoUrl, quizzes };
+        const payload = { 
+            course_id: courseId, 
+            title: lessonName, 
+            video_url: videoUrl, 
+            theory_md: document.getElementById('lessonTheory').value.trim(),
+            quizzes 
+        };
 
         const btn = document.getElementById('btn-save-lesson');
         btn.disabled   = true;
-        btn.style.opacity = '0.7';
+        btn.classList.add('opacity-70');
 
         let res;
         if (isEditing) {
@@ -224,7 +231,7 @@
         }
 
         btn.disabled  = false;
-        btn.style.opacity = '1';
+        btn.classList.remove('opacity-70');
 
         if (res.success) {
             showToast(isEditing ? '✅ Cập nhật bài học thành công!' : '✅ Tạo bài học thành công!');

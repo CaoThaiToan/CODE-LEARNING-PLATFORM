@@ -7,6 +7,7 @@ const authRoutes   = require('./Routes/authRoutes');
 const courseRoutes = require('./Routes/courseRoutes');
 const lessonRoutes = require('./Routes/lessonRoutes');
 const userRoutes   = require('./Routes/userRoutes');
+const uploadRoutes = require('./Routes/uploadRoutes');
 
 const app = express();
 
@@ -20,7 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ── Serve static files ────────────────────────────────────
-app.use(express.static(path.join(__dirname, '..', 'Public')));
+app.use('/Public', express.static(path.join(__dirname, '..', 'Public')));
+app.use(express.static(path.join(__dirname, '..', 'Public'))); // Giữ cả root để hỗ trợ link trực tiếp index.html
 app.use('/views', express.static(path.join(__dirname, '..', 'Views')));
 
 // ── API Routes ────────────────────────────────────────────
@@ -28,6 +30,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // ── Serve index.html for all non-API GET requests ─────────
 app.get(/^(?!\/api).*/, (req, res) => {

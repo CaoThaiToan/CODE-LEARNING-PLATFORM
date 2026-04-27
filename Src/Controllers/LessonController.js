@@ -48,7 +48,7 @@ const createLesson = async (req, res) => {
     try {
         await conn.beginTransaction();
 
-        const { course_id, title, video_url, order_index, quizzes = [] } = req.body;
+        const { course_id, title, video_url, theory_md, order_index, quizzes = [] } = req.body;
         if (!title || !course_id) {
             await conn.rollback();
             conn.release();
@@ -60,8 +60,8 @@ const createLesson = async (req, res) => {
         const finalOrder = order_index ?? (cnt + 1);
 
         const [result] = await conn.query(
-            'INSERT INTO lessons (course_id, title, content_type, video_url, order_index) VALUES (?, ?, ?, ?, ?)',
-            [course_id, title, video_url ? 'video' : 'theory', video_url || null, finalOrder]
+            'INSERT INTO lessons (course_id, title, content_type, video_url, theory_md, order_index) VALUES (?, ?, ?, ?, ?, ?)',
+            [course_id, title, video_url ? 'video' : 'theory', video_url || null, theory_md || null, finalOrder]
         );
         const lessonId = result.insertId;
 
@@ -110,8 +110,8 @@ const updateLesson = async (req, res) => {
         }
 
         await conn.query(
-            'UPDATE lessons SET title = ?, content_type = ?, video_url = ?, order_index = ? WHERE id = ?',
-            [title, video_url ? 'video' : 'theory', video_url || null, order_index || 1, lessonId]
+            'UPDATE lessons SET title = ?, content_type = ?, video_url = ?, theory_md = ?, order_index = ? WHERE id = ?',
+            [title, video_url ? 'video' : 'theory', video_url || null, theory_md || null, order_index || 1, lessonId]
         );
 
         // Delete old quizzes and options, re-insert

@@ -3,7 +3,7 @@
         <h1 class="form-title" id="form-kh-title">THÊM KHÓA HỌC MỚI</h1>
         <p class="form-subtitle" id="form-kh-subtitle">Khởi tạo một khóa học lập trình mới trên hệ thống.</p>
 
-        <div id="form-toast" style="display:none; background:#10b981; color:#fff; padding:12px 20px; border-radius:10px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
+        <div id="form-toast" class="toast-admin-form display-none"></div>
 
         <form id="form-kh" autocomplete="off">
             <div class="form-group">
@@ -25,12 +25,33 @@
             </div>
 
             <div class="form-group">
-                <label>Link Hình ảnh (URL)</label>
-                <input id="courseThumbnail" type="text" placeholder="https://...">
+                <label>Hình ảnh khóa học</label>
+                <div class="upload-container">
+                    <!-- Upload Box -->
+                    <div class="upload-box" id="dropzone">
+                        <input type="file" id="fileInput" accept="image/*" class="display-none">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>Kéo thả ảnh vào đây hoặc <b>Nhấp để chọn file</b></p>
+                        <span class="font-size-12 text-muted">Hỗ trợ: JPG, PNG, WEBP (Max 5MB)</span>
+                    </div>
+
+                    <div class="upload-divider">Hoặc nhập URL</div>
+
+                    <!-- URL Input -->
+                    <input id="courseThumbnail" type="text" placeholder="https://...">
+                    
+                    <!-- Preview Area -->
+                    <div class="image-preview-wrapper display-none" id="previewWrapper">
+                        <img src="" id="imagePreview">
+                        <button type="button" class="btn-remove-preview" id="btnRemovePreview">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Giá chỉ hiện khi chọn VIP -->
-            <div id="priceField" class="form-group" style="display:none;">
+            <div id="priceField" class="form-group display-none">
                 <label>Giá khóa học VIP (đơn vị: VNĐ)</label>
                 <input type="number" id="vipPrice" placeholder="1500000" min="0">
             </div>
@@ -54,11 +75,11 @@
                 </select>
             </div>
 
-            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <div class="form-actions">
                 <button type="button" class="btn-submit-form" id="btn-submit-kh">
                     <i class="fa-solid fa-check"></i> <span id="btn-label">TẠO KHÓA HỌC NGAY</span>
                 </button>
-                <button type="button" id="btn-back-list" style="background:transparent;border:2px solid #6d28d9;color:#6d28d9;padding:12px 24px;border-radius:12px;font-weight:700;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='#6d28d9';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#6d28d9'">
+                <button type="button" id="btn-back-list" class="btn-secondary-admin">
                     <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
                 </button>
             </div>
@@ -74,21 +95,92 @@
     const btnLabel   = document.getElementById('btn-label');
     const formTitle  = document.getElementById('form-kh-title');
     const formSub    = document.getElementById('form-kh-subtitle');
+    const fileInput  = document.getElementById('fileInput');
+    const dropzone   = document.getElementById('dropzone');
+    const thumbInput = document.getElementById('courseThumbnail');
+    const previewWrp = document.getElementById('previewWrapper');
+    const previewImg = document.getElementById('imagePreview');
+    const btnRemove  = document.getElementById('btnRemovePreview');
+
+    let selectedFile = null;
 
     // ── Helper hiện toast ──────────────────────────────────
     function showToast(msg, isError = false) {
         toast.textContent = msg;
+        toast.className = 'toast-admin-form';
         toast.style.background = isError ? '#ef4444' : '#10b981';
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        toast.classList.remove('display-none');
+        setTimeout(() => { toast.classList.add('display-none'); }, 3500);
     }
 
     // ── Toggle trường Giá VIP và Mức độ ──────────────────────────────
     window.togglePriceField = function() {
         const type = document.getElementById('courseType').value;
-        document.getElementById('priceField').style.display = (type === 'vip') ? 'block' : 'none';
-        document.getElementById('levelField').style.display = (type === 'free') ? 'block' : 'none';
+        const priceField = document.getElementById('priceField');
+        const levelField = document.getElementById('levelField');
+        
+        if (type === 'vip') {
+            priceField.classList.remove('display-none');
+            levelField.classList.add('display-none');
+        } else {
+            priceField.classList.add('display-none');
+            levelField.classList.remove('display-none');
+        }
     };
+
+    // ── Xử lý chọn File & Preview ─────────────────────────
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFileSelection(file);
+    });
+
+    // Kéo thả (Drag & Drop)
+    dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('border-purple-main', 'bg-purple-light');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('border-purple-main', 'bg-purple-light');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) handleFileSelection(file);
+    });
+
+    function handleFileSelection(file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            previewWrp.classList.remove('display-none');
+            thumbInput.value = ''; // Xóa URL nếu chọn file
+        };
+        reader.readAsDataURL(file);
+    }
+
+    btnRemove.addEventListener('click', () => {
+        selectedFile = null;
+        fileInput.value = '';
+        previewWrp.classList.add('display-none');
+        previewImg.src = '';
+    });
+
+    // Nếu nhập URL thì ẩn preview file (hoặc cập nhật preview từ URL)
+    thumbInput.addEventListener('input', () => {
+        if (thumbInput.value.trim() !== '') {
+            selectedFile = null;
+            fileInput.value = '';
+            previewImg.src = thumbInput.value;
+            previewWrp.classList.remove('display-none');
+        } else if (!selectedFile) {
+            previewWrp.classList.add('display-none');
+        }
+    });
 
     // ── Nút quay lại danh sách ────────────────────────────
     document.getElementById('btn-back-list').addEventListener('click', () => {
@@ -104,11 +196,11 @@
         formSub.textContent   = 'Cập nhật thông tin khóa học hiện có.';
         btnLabel.textContent  = 'LƯU THAY ĐỔI';
         toast.textContent = '⏳ Đang tải thông tin khóa học...';
-        toast.style.background = '#6d28d9';
-        toast.style.display = 'block';
+        toast.className = 'toast-admin-form bg-purple-main';
+        toast.classList.remove('display-none');
 
         const course = await window.getCourseById(courseId);
-        toast.style.display = 'none';
+        toast.classList.add('display-none');
 
         if (course) {
             document.getElementById('courseTitle').value     = course.title     || '';
@@ -116,11 +208,16 @@
             document.getElementById('courseThumbnail').value = course.thumbnail_url || '';
             document.getElementById('courseStatus').value    = course.status    || 'draft';
 
+            if (course.thumbnail_url) {
+                previewImg.src = course.thumbnail_url;
+                previewWrp.classList.remove('display-none');
+            }
+
             if (course.price > 0) {
                 document.getElementById('courseType').value  = 'vip';
                 document.getElementById('vipPrice').value    = course.price;
-                document.getElementById('priceField').style.display = 'block';
-                document.getElementById('levelField').style.display = 'none';
+                document.getElementById('priceField').classList.remove('display-none');
+                document.getElementById('levelField').classList.add('display-none');
             } else {
                 if (course.level) {
                     document.getElementById('courseLevel').value = course.level;
@@ -152,9 +249,43 @@
             return;
         }
 
-        const payload = { title, description: desc, thumbnail_url: thumb, price, status, level: type === 'free' ? level : null };
         const btn = document.getElementById('btn-submit-kh');
         btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+
+        let finalThumb = thumbInput.value.trim();
+
+        // 1. Nếu có file được chọn -> Upload lên server trước
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            try {
+                const uploadRes = await fetch(`${window.API_BASE || 'http://localhost:3000/api'}/upload/image`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.success) {
+                    finalThumb = uploadData.url;
+                    // Hiển thị ảnh từ server để xác nhận upload thành công
+                    previewImg.src = finalThumb; 
+                } else {
+                    showToast('❌ Lỗi upload ảnh: ' + uploadData.message, true);
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-check"></i> ${isEditing ? 'LƯU THAY ĐỔI' : 'TẠO KHÓA HỌC NGAY'}`;
+                    return;
+                }
+            } catch (err) {
+                showToast('❌ Lỗi kết nối khi upload ảnh!', true);
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> ${isEditing ? 'LƯU THAY ĐỔI' : 'TẠO KHÓA HỌC NGAY'}`;
+                return;
+            }
+        }
+
+        const payload = { title, description: desc, thumbnail_url: finalThumb, price, status, level: type === 'free' ? level : null };
 
         let res;
         if (isEditing) {

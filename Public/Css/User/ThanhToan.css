@@ -327,3 +327,11 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* FRAGMENT UTILS */
+.divider-dashed-line {
+    height: 1px; border-bottom: 1px dashed #d1d5db; margin: 20px 0;
+}
+
+.text-green-color { color: var(--text-green); }
+.text-muted-color { color: var(--text-muted); }

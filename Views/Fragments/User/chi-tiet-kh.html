@@ -12,9 +12,9 @@
 
         <!-- Main 2-column layout -->
         <div class="detail-layout" id="course-detail-container">
-            <div style="width:100%; text-align:center; padding:50px; color:#6d28d9;">
+            <div class="detail-loading">
                 <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
-                <p style="margin-top:10px;">Đang tải dữ liệu khóa học...</p>
+                <p class="mt-10">Đang tải dữ liệu khóa học...</p>
             </div>
         </div><!-- end detail-layout -->
     </div><!-- end container -->
@@ -25,7 +25,7 @@
     const courseId = window.selectedCourseId;
     if (!courseId) {
         document.getElementById('course-detail-container').innerHTML = `
-            <div style="width:100%; text-align:center; padding:50px; color:#ef4444;">
+            <div class="detail-loading text-error">
                 Không tìm thấy thông tin khóa học.
             </div>`;
         return;
@@ -54,12 +54,12 @@
         // --- 3. Lessons list ---
         let lessonsHtml = '';
         if (lessons.length === 0) {
-            lessonsHtml = '<div style="padding:20px; text-align:center; color:#64748b;">Khóa học này chưa có bài học nào.</div>';
+            lessonsHtml = '<div class="empty-lessons">Khóa học này chưa có bài học nào.</div>';
         } else {
             lessons.forEach((lesson, index) => {
                 // If it's VIP and not paid (for now just indicate locked if VIP, or if free indicate free)
                 const isLocked = isVip; 
-                const icon = isLocked ? '<i class="fas fa-lock" style="color:#ef4444;"></i>' : '<i class="far fa-play-circle"></i>';
+                const icon = isLocked ? '<i class="fas fa-lock text-error"></i>' : '<i class="far fa-play-circle"></i>';
                 const tagClass = isLocked ? 'lock-tag' : 'free-tag';
                 const tagText = isLocked ? 'Cần mở khóa' : 'Học miễn phí';
                 const rowClass = isLocked ? 'locked' : 'free';
@@ -78,27 +78,27 @@
 
         // --- 4. Sidebar Pricing & CTA ---
         const priceLabel = isVip ? 'CÓ PHÍ' : 'Miễn phí';
-        const priceValueHtml = isVip ? `<div style="font-size:24px; color:#ef4444; font-weight:bold; margin-bottom:15px;">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '';
+        const priceValueHtml = isVip ? `<div class="price-value-large">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '';
         const ctaText = 'BẮT ĐẦU HỌC NGAY';
         const ctaAction = isVip ? 'alert("Bạn phải đóng phí cho khóa học này");' : 'window.loadPage("begin-kh.html");';
-        const ctaBtn = `<button class="btn-enroll" style="width:100%;" onclick='${ctaAction}'>${ctaText}</button>`;
+        const ctaBtn = `<button class="btn-enroll btn-full" onclick='${ctaAction}'>${ctaText}</button>`;
 
         // Render everything
         document.getElementById('course-detail-container').innerHTML = `
             <!-- ===== LEFT CONTENT ===== -->
-            <div class="detail-main">
+            <div class="detail-main flex-1">
                 <h1 class="course-title">${mainTitle}</h1>
                 
                 <!-- What you'll learn -->
                 <div class="learn-box">
                     <h2 class="section-heading">BẠN SẼ HỌC ĐƯỢC GÌ?</h2>
-                    <div style="color:#475569; line-height:1.8; margin-top:15px;">
-                        ${descText.replace(/\\n/g, '<br>')}
+                    <div class="text-content">
+                        ${descText.replace(/\n/g, '<br>')}
                     </div>
                 </div>
 
                 <!-- Course content -->
-                <div class="curriculum">
+                <div class="curriculum mt-20">
                     <div class="curriculum-header">
                         <h2 class="section-heading">
                             <span class="section-icon"><i class="fas fa-th-large"></i></span>
@@ -128,12 +128,12 @@
 
                     <!-- Price & CTA -->
                     <div class="sidebar-body">
-                        <p class="price-label" style="font-weight:bold; color:#1e293b;">${priceLabel}</p>
+                        <p class="price-label sidebar-price-label">${priceLabel}</p>
                         ${priceValueHtml}
                         ${ctaBtn}
 
                         <!-- Course stats -->
-                        <ul class="course-stats" style="margin-top:20px;">
+                        <ul class="course-stats mt-20">
                             <li>
                                 <span class="stat-label"><i class="fas fa-book-open"></i> Tổng số bài học:</span>
                                 <span class="stat-value">${lessons.length}</span>
@@ -154,7 +154,7 @@
     } catch (err) {
         console.error(err);
         document.getElementById('course-detail-container').innerHTML = `
-            <div style="width:100%; text-align:center; padding:50px; color:#ef4444;">
+            <div class="detail-loading text-error">
                 Lỗi tải chi tiết khóa học.
             </div>`;
     }

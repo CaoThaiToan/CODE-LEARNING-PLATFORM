@@ -207,7 +207,8 @@
     background: #f8fafc;
     border-radius: 15px; 
     font-size: 15px; 
-    color: #4a5568; 
+    color: #1a202c; 
+    font-weight: 600;
     transition: 0.3s;
 }
 
@@ -233,7 +234,7 @@
     background-repeat: no-repeat;
     background-position: right 25px center;
     background-size: 18px;
-    color: #718096;
+    color: #1a202c;
 }
 
 /* Ô nhập có Icon (Dùng cho Link YouTube) */
@@ -391,3 +392,70 @@
 .question-block {
     position: relative;
 }
+
+/* FRAGMENT UTILS */
+.btn-back-admin {
+    background:#f1f5f9; color:#4a5568; border:none; padding:8px 16px; 
+    border-radius:10px; font-weight:600; font-size:13px; cursor:pointer; 
+    display:flex; align-items:center; gap:6px; transition: 0.2s;
+}
+.btn-back-admin:hover { background: #e2e8f0; }
+
+.toast-vd {
+    padding:12px 20px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;
+}
+
+.question-block-style {
+    background:#f8f0ff; padding:20px; border-radius:12px; margin-bottom:20px; position:relative; animation:fadeSlideIn 0.3s ease;
+}
+
+.input-quiz {
+    width:100%; margin:10px 0; padding:12px; border:1px solid #d1d5db; border-radius:8px;
+}
+
+.grid-quiz-options {
+    display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:10px;
+}
+
+.select-quiz {
+    width:100%; padding:12px; border:1px solid #d1d5db; border-radius:8px;
+}
+
+.display-none { display: none !important; }
+
+/* LAYOUT UTILS */
+.flex { display: flex; }
+.items-center { align-items: center; }
+.gap-14 { gap: 14px; }
+.mb-6 { margin-bottom: 6px; }
+.mt-15 { margin-top: 15px; }
+.block { display: block; }
+.font-600 { font-weight: 600; }
+
+/* SPECIFIC UTILS */
+.quiz-section-title { margin-bottom: 15px; font-size: 18px; font-weight: 700; }
+.text-muted-small { font-size: 13px; font-weight: 400; color: #94a3b8; }
+.btn-secondary-gray { background: #64748b !important; margin: 20px 0 !important; }
+/* UTILS */
+.mb-4 { margin-bottom: 4px; }
+.mt-30 { margin-top: 30px; }
+.mb-30 { margin-bottom: 30px; }
+.divider-margin { margin: 30px 0; }
+.input-full-padded { width: 100%; padding: 10px; }
+.opacity-70 { opacity: 0.7; }
+
+.removing-question {
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(30px);
+}
+
+/* UTILS */
+.tag-video { background:#eff6ff; color:#3b82f6; }
+.tag-theory { background:#f0fdf4; color:#16a34a; }
+.padding-60 { padding:60px; }
+.text-purple-main { color:#7c3aed; }
+.font-size-48 { font-size:48px; }
+.mb-16 { margin-bottom:16px; }
+.font-size-16 { font-size:16px; }
+.font-600 { font-weight:600; }

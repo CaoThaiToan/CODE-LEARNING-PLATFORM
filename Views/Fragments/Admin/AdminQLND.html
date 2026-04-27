@@ -3,138 +3,70 @@
         <h1 class="main-title">QUẢN LÝ NGƯỜI DÙNG</h1>
         <p class="sub-title">Danh sách tất cả tài khoản đã đăng ký trên hệ thống.</p>
     </div>
-    <div id="user-count-badge" style="background:#f3e8ff;color:#7c3aed;padding:10px 20px;border-radius:12px;font-weight:700;font-size:14px;display:none;">
+    <div id="user-count-badge" class="user-count-badge display-none">
         👥 <span id="user-count-text">0</span> tài khoản
     </div>
 </div>
 
 <!-- Toast -->
-<div id="user-toast" style="display:none;background:#10b981;color:#fff;padding:12px 22px;border-radius:12px;margin-bottom:20px;font-weight:600;font-size:14px;"></div>
+<div id="user-toast" class="admin-toast"></div>
 
 <!-- Table container -->
 <div class="user-table-container" id="user-table-wrapper">
-    <div style="padding:60px;text-align:center;color:#7c3aed;font-size:16px;">
+    <div class="admin-loading">
         <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách người dùng...
     </div>
 </div>
 
 <!-- ── MODAL XEM KHÓA HỌC ─────────────────────────────── -->
-<div id="modal-courses" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:24px;padding:36px;max-width:680px;width:92%;max-height:80vh;overflow-y:auto;position:relative;">
-        <button onclick="closeModal('modal-courses')"
-            style="position:absolute;top:14px;right:14px;background:#fee2e2;color:#ef4444;border:none;width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+<div id="modal-courses" class="modal-overlay">
+    <div class="modal-content">
+        <button onclick="closeModal('modal-courses')" class="modal-close-btn">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <h2 id="modal-courses-title" style="font-size:18px;color:#2d1b81;margin-bottom:6px;"></h2>
-        <p id="modal-courses-email" style="font-size:13px;color:#94a3b8;margin-bottom:24px;"></p>
+        <h2 id="modal-courses-title" class="font-size-18 text-purple-indigo mb-6"></h2>
+        <p id="modal-courses-email" class="font-size-13 text-muted mb-24"></p>
         <div id="modal-courses-body"></div>
     </div>
 </div>
 
 <!-- ── MODAL XÓA TÀI KHOẢN ───────────────────────────── -->
-<div id="modal-delete" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9000;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:24px;padding:36px;max-width:480px;width:92%;position:relative;">
-        <button onclick="closeModal('modal-delete')"
-            style="position:absolute;top:14px;right:14px;background:#fee2e2;color:#ef4444;border:none;width:34px;height:34px;border-radius:10px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+<div id="modal-delete" class="modal-overlay">
+    <div class="modal-content delete-modal-content">
+        <button onclick="closeModal('modal-delete')" class="modal-close-btn">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div style="text-align:center;margin-bottom:20px;">
-            <div style="width:60px;height:60px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                <i class="fa-solid fa-user-slash" style="font-size:24px;color:#ef4444;"></i>
+        <div class="text-center mb-20">
+            <div class="delete-icon-box">
+                <i class="fa-solid fa-user-slash font-size-24 text-error"></i>
             </div>
-            <h2 style="font-size:20px;font-weight:800;color:#1a202c;margin-bottom:6px;">Xóa tài khoản</h2>
-            <p id="delete-modal-username" style="font-size:14px;color:#64748b;"></p>
+            <h2 class="font-size-20 font-800 text-main mb-6">Xóa tài khoản</h2>
+            <p id="delete-modal-username" class="font-size-14 text-desc"></p>
         </div>
-        <div style="margin-bottom:20px;">
-            <label style="font-weight:700;font-size:14px;color:#1a202c;display:block;margin-bottom:8px;">
-                Lý do xóa tài khoản <span style="color:#ef4444;">*</span>
+        <div class="mb-20">
+            <label class="font-700 font-size-14 text-main block mb-8">
+                Lý do xóa tài khoản <span class="text-error">*</span>
             </label>
-            <textarea id="delete-reason-input" rows="3" placeholder="Ví dụ: Vi phạm điều khoản sử dụng, spam nội dung, ..."
-                style="width:100%;padding:14px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;resize:none;outline:none;transition:0.2s;"
-                onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='#e2e8f0'"></textarea>
-            <p id="delete-reason-err" style="color:#ef4444;font-size:12px;margin-top:4px;display:none;">Vui lòng nhập lý do xóa!</p>
+            <textarea id="delete-reason-input" class="delete-textarea" rows="3" placeholder="Ví dụ: Vi phạm điều khoản sử dụng, spam nội dung, ..."></textarea>
+            <p id="delete-reason-err" class="text-error font-size-12 mt-4 display-none">Vui lòng nhập lý do xóa!</p>
         </div>
-        <div style="display:flex;gap:12px;">
-            <button onclick="closeModal('modal-delete')"
-                style="flex:1;padding:13px;border:1.5px solid #e2e8f0;border-radius:12px;font-weight:600;font-size:14px;cursor:pointer;background:#fff;color:#64748b;transition:0.2s;"
-                onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+        <div class="flex gap-12">
+            <button onclick="closeModal('modal-delete')" class="btn-cancel-modal">
                 Hủy bỏ
             </button>
-            <button id="confirm-delete-btn" onclick="confirmDeleteUser()"
-                style="flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;transition:0.2s;"
-                onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+            <button id="confirm-delete-btn" onclick="confirmDeleteUser()" class="btn-confirm-delete">
                 <i class="fa-solid fa-trash-can"></i> Xác nhận xóa
             </button>
         </div>
     </div>
 </div>
 
-<style>
-/* ── Table ── */
-.user-table-container { background:#fff; border-radius:24px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.04); }
-.user-table { width:100%; border-collapse:collapse; }
-.user-table th {
-    background:#fafbff; text-align:left; padding:16px 20px;
-    color:#64748b; font-size:12px; font-weight:700; text-transform:uppercase;
-    letter-spacing:0.5px; border-bottom:1px solid #f1f5f9;
-}
-.user-table td { padding:16px 20px; border-bottom:1px solid #f8fafc; vertical-align:middle; }
-.user-table tr:last-child td { border-bottom:none; }
-.user-table tr:hover td { background:#fafbff; }
-
-/* ── Avatar ── */
-.user-avatar {
-    width:40px; height:40px; border-radius:12px;
-    display:flex; align-items:center; justify-content:center;
-    color:#fff; font-weight:800; font-size:15px; flex-shrink:0;
-}
-.av-purple { background:linear-gradient(135deg,#a78bfa,#7c3aed); }
-.av-blue   { background:linear-gradient(135deg,#60a5fa,#2563eb); }
-.av-green  { background:linear-gradient(135deg,#34d399,#059669); }
-.av-orange { background:linear-gradient(135deg,#fb923c,#ea580c); }
-.av-pink   { background:linear-gradient(135deg,#f472b6,#db2777); }
-
-/* ── Badges ── */
-.role-badge {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:5px 12px; border-radius:20px; font-size:11px; font-weight:700;
-}
-.badge-admin { background:#f3e8ff; color:#7c3aed; }
-.badge-user  { background:#ecfdf5; color:#059669; }
-.badge-deleted { background:#fee2e2; color:#ef4444; }
-
-/* ── Action buttons ── */
-.user-act-btn {
-    width:34px; height:34px; border-radius:10px; border:none;
-    display:inline-flex; align-items:center; justify-content:center;
-    font-size:14px; cursor:pointer; transition:all 0.2s;
-}
-.user-act-btn:hover { transform:scale(1.12); }
-.btn-view-user   { background:#eff6ff; color:#3b82f6; }
-.btn-delete-user { background:#fff5f5; color:#ef4444; }
-.btn-deleted-tag { background:#fee2e2; color:#ef4444; font-size:11px; font-weight:700; border-radius:8px; padding:5px 10px; border:none; cursor:default; }
-
-/* ── Course card in modal ── */
-.course-card-mini {
-    display:flex; align-items:center; gap:14px;
-    padding:14px; border-radius:14px; border:1px solid #f1f5f9;
-    margin-bottom:10px; transition:0.2s;
-}
-.course-card-mini:hover { background:#fafbff; border-color:#c4b5fd; }
-.course-card-mini img { width:60px; height:44px; object-fit:cover; border-radius:8px; }
-.course-card-mini h4 { font-size:14px; font-weight:600; color:#1a202c; margin-bottom:3px; }
-.course-card-mini p  { font-size:12px; color:#94a3b8; }
-
-/* Enrolled counter badge */
-.enrolled-count { background:#f5f3ff; color:#7c3aed; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
-.vip-count { background:#fef3c7; color:#b45309; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
-</style>
-
 <script>
 let deletingUserId = null;
 
 function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
+    document.getElementById(id).classList.add('display-none');
+    document.getElementById(id).style.display = 'none'; // Keep for compatibility if needed
 }
 
 // ── Màu avatar ngẫu nhiên ──────────────────────────────────
@@ -146,7 +78,16 @@ function showUserToast(msg, isError = false) {
     if (window.showGlobalToast) {
         window.showGlobalToast(msg, isError ? 'error' : 'success');
     } else {
-        alert(msg);
+        const toast = document.getElementById('user-toast');
+        if (toast) {
+            toast.textContent = msg;
+            toast.className = 'admin-toast';
+            toast.style.background = isError ? '#ef4444' : '#10b981';
+            toast.classList.remove('display-none');
+            setTimeout(() => toast.classList.add('display-none'), 3000);
+        } else {
+            alert(msg);
+        }
     }
 }
 
@@ -157,26 +98,26 @@ function renderRow(user) {
     const isDeleted = user.is_deleted;
 
     const roleBadge = user.role === 'Admin'
-        ? `<span class="role-badge badge-admin"><i class="fa-solid fa-crown" style="font-size:10px;"></i> Admin</span>`
+        ? `<span class="role-badge badge-admin"><i class="fa-solid fa-crown font-size-10"></i> Admin</span>`
         : isDeleted
-            ? `<span class="role-badge badge-deleted"><i class="fa-solid fa-ban" style="font-size:10px;"></i> Đã xóa</span>`
-            : `<span class="role-badge badge-user"><i class="fa-solid fa-user" style="font-size:10px;"></i> User</span>`;
+            ? `<span class="role-badge badge-deleted"><i class="fa-solid fa-ban font-size-10"></i> Đã xóa</span>`
+            : `<span class="role-badge badge-user"><i class="fa-solid fa-user font-size-10"></i> User</span>`;
 
     const joinDate = user.created_at
         ? new Date(user.created_at).toLocaleDateString('vi-VN')
         : '—';
 
     const actions = isDeleted
-        ? `<td style="text-align:center;">
+        ? `<td class="text-center">
                 <span class="btn-deleted-tag" title="${user.delete_reason || ''}">🚫 Đã xóa</span>
            </td>`
-        : `<td style="text-align:center;">
+        : `<td class="text-center">
                 <button class="user-act-btn btn-view-user" title="Xem khóa học đã đăng ký"
                     onclick="openUserCourses(${user.id}, '${(user.full_name||user.username).replace(/'/g,"\\'")}', '${user.email}')">
                     <i class="fa-regular fa-eye"></i>
                 </button>
-                <button class="user-act-btn btn-delete-user" title="Xóa tài khoản"
-                    style="margin-left:6px;" onclick="openDeleteModal(${user.id}, '${(user.full_name||user.username).replace(/'/g,"\\'")}')">
+                <button class="user-act-btn btn-delete-user ml-6" title="Xóa tài khoản"
+                     onclick="openDeleteModal(${user.id}, '${(user.full_name||user.username).replace(/'/g,"\\'")}')">
                     <i class="fa-regular fa-trash-can"></i>
                 </button>
            </td>`;
@@ -184,17 +125,17 @@ function renderRow(user) {
     return `
     <tr data-user-id="${user.id}">
         <td>
-            <div style="display:flex;align-items:center;gap:12px;">
+            <div class="flex items-center gap-12">
                 <div class="user-avatar ${avClass}">${initial}</div>
                 <div>
-                    <div style="font-weight:600;color:#1a202c;font-size:14px;">${user.full_name || user.username}</div>
-                    <div style="font-size:12px;color:#94a3b8;">@${user.username}</div>
+                    <div class="font-600 text-main font-size-14">${user.full_name || user.username}</div>
+                    <div class="font-size-12 text-muted">@${user.username}</div>
                 </div>
             </div>
         </td>
-        <td style="font-size:14px;color:#4a5568;">${user.email}</td>
+        <td class="font-size-14 text-indigo-light">${user.email}</td>
         <td>${roleBadge}</td>
-        <td style="font-size:13px;color:#94a3b8;">${joinDate}</td>
+        <td class="font-size-13 text-muted">${joinDate}</td>
         ${actions}
     </tr>`;
 }
@@ -204,10 +145,12 @@ async function openUserCourses(userId, name, email) {
     document.getElementById('modal-courses-title').textContent = '📚 Khóa học của ' + name;
     document.getElementById('modal-courses-email').textContent = email;
     document.getElementById('modal-courses-body').innerHTML = `
-        <div style="text-align:center;padding:30px;color:#7c3aed;">
+        <div class="admin-loading">
             <i class="fa-solid fa-spinner fa-spin"></i> Đang tải...
         </div>`;
-    document.getElementById('modal-courses').style.display = 'flex';
+    const modal = document.getElementById('modal-courses');
+    modal.classList.remove('display-none');
+    modal.style.display = 'flex';
 
     try {
         const token = localStorage.getItem('token');
@@ -217,16 +160,16 @@ async function openUserCourses(userId, name, email) {
         const data = await res.json();
 
         if (!data.success) {
-            document.getElementById('modal-courses-body').innerHTML = `<p style="color:#ef4444;">❌ ${data.message}</p>`;
+            document.getElementById('modal-courses-body').innerHTML = `<p class="text-error">❌ ${data.message}</p>`;
             return;
         }
 
         const courses = data.data;
         if (!courses || courses.length === 0) {
             document.getElementById('modal-courses-body').innerHTML = `
-                <div style="text-align:center;padding:30px;color:#94a3b8;">
-                    <i class="fa-solid fa-book-open" style="font-size:36px;display:block;margin-bottom:12px;"></i>
-                    <p style="font-weight:600;">Người dùng chưa đăng ký khóa học nào.</p>
+                <div class="admin-empty-state">
+                    <i class="fa-solid fa-book-open"></i>
+                    <p>Người dùng chưa đăng ký khóa học nào.</p>
                 </div>`;
             return;
         }
@@ -235,10 +178,10 @@ async function openUserCourses(userId, name, email) {
         const vipCount  = courses.filter(c => c.price > 0).length;
 
         let html = `
-            <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;">
+            <div class="flex gap-10 mb-18 flex-wrap">
                 <span class="enrolled-count">📗 ${freeCount} Miễn phí</span>
                 <span class="vip-count">👑 ${vipCount} VIP</span>
-                <span style="background:#f1f5f9;color:#64748b;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;">Tổng: ${courses.length} khóa học</span>
+                <span class="badge-count-gray">Tổng: ${courses.length} khóa học</span>
             </div>`;
 
         courses.forEach(c => {
@@ -249,7 +192,7 @@ async function openUserCourses(userId, name, email) {
             html += `
             <div class="course-card-mini">
                 <img src="${thumb}" alt="${c.title}" onerror="this.src='Public/images/img_TrangChu.png';">
-                <div style="flex:1;min-width:0;">
+                <div class="flex-1 shrink-0-min-0">
                     <h4>${c.title}</h4>
                     <p>
                         ${isVip
@@ -258,16 +201,16 @@ async function openUserCourses(userId, name, email) {
                         ${validUntil ? `• Hạn đến: ${validUntil}` : ''}
                     </p>
                 </div>
-                <div style="text-align:center;flex-shrink:0;">
-                    <div style="font-size:16px;font-weight:800;color:#7c3aed;">${progress}%</div>
-                    <div style="font-size:11px;color:#94a3b8;">tiến độ</div>
+                <div class="text-center shrink-0">
+                    <div class="font-size-16 font-800 text-purple-main">${progress}%</div>
+                    <div class="font-size-11 text-muted">tiến độ</div>
                 </div>
             </div>`;
         });
 
         document.getElementById('modal-courses-body').innerHTML = html;
     } catch (err) {
-        document.getElementById('modal-courses-body').innerHTML = `<p style="color:#ef4444;">❌ Lỗi kết nối!</p>`;
+        document.getElementById('modal-courses-body').innerHTML = `<p class="text-error">❌ Lỗi kết nối!</p>`;
     }
 }
 
@@ -276,8 +219,12 @@ function openDeleteModal(userId, name) {
     deletingUserId = userId;
     document.getElementById('delete-modal-username').textContent = `Bạn đang xóa tài khoản: ${name}`;
     document.getElementById('delete-reason-input').value = '';
-    document.getElementById('delete-reason-err').style.display = 'none';
-    document.getElementById('modal-delete').style.display = 'flex';
+    const errEl = document.getElementById('delete-reason-err');
+    errEl.classList.add('display-none');
+    errEl.style.display = 'none';
+    const modal = document.getElementById('modal-delete');
+    modal.classList.remove('display-none');
+    modal.style.display = 'flex';
     setTimeout(() => document.getElementById('delete-reason-input').focus(), 100);
 }
 
@@ -285,10 +232,14 @@ function openDeleteModal(userId, name) {
 async function confirmDeleteUser() {
     const reason = document.getElementById('delete-reason-input').value.trim();
     if (!reason) {
-        document.getElementById('delete-reason-err').style.display = 'block';
+        const errEl = document.getElementById('delete-reason-err');
+        errEl.classList.remove('display-none');
+        errEl.style.display = 'block';
         return;
     }
-    document.getElementById('delete-reason-err').style.display = 'none';
+    const errEl = document.getElementById('delete-reason-err');
+    errEl.classList.add('display-none');
+    errEl.style.display = 'none';
 
     const btn = document.getElementById('confirm-delete-btn');
     btn.disabled = true;
@@ -321,7 +272,7 @@ async function confirmDeleteUser() {
 // ── Render bảng ───────────────────────────────────────────
 async function renderUserTable() {
     const wrapper = document.getElementById('user-table-wrapper');
-    wrapper.innerHTML = `<div style="padding:60px;text-align:center;color:#7c3aed;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+    wrapper.innerHTML = `<div class="admin-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
 
     try {
         const token = localStorage.getItem('token');
@@ -331,7 +282,7 @@ async function renderUserTable() {
         const data = await res.json();
 
         if (!data.success) {
-            wrapper.innerHTML = `<div style="padding:60px;text-align:center;color:#ef4444;">❌ ${data.message}</div>`;
+            wrapper.innerHTML = `<div class="admin-loading text-error">❌ ${data.message}</div>`;
             return;
         }
 
@@ -339,11 +290,12 @@ async function renderUserTable() {
 
         // Update badge
         const badge = document.getElementById('user-count-badge');
+        badge.classList.remove('display-none');
         badge.style.display = 'block';
         document.getElementById('user-count-text').textContent = users.length;
 
         if (users.length === 0) {
-            wrapper.innerHTML = `<div style="padding:60px;text-align:center;color:#94a3b8;">Chưa có người dùng nào.</div>`;
+            wrapper.innerHTML = `<div class="admin-empty-state">Chưa có người dùng nào.</div>`;
             return;
         }
 
@@ -355,13 +307,13 @@ async function renderUserTable() {
                     <th>EMAIL</th>
                     <th>VAI TRÒ</th>
                     <th>NGÀY THAM GIA</th>
-                    <th style="text-align:center;">THAO TÁC</th>
+                    <th class="text-center">THAO TÁC</th>
                 </tr>
             </thead>
             <tbody>${users.map(renderRow).join('')}</tbody>
         </table>`;
     } catch {
-        wrapper.innerHTML = `<div style="padding:60px;text-align:center;color:#ef4444;">❌ Không thể kết nối đến server!</div>`;
+        wrapper.innerHTML = `<div class="admin-loading text-error">❌ Không thể kết nối đến server!</div>`;
     }
 }
 

@@ -9,11 +9,11 @@
 </div>
 
 <!-- Thông báo toast -->
-<div id="ds-toast" style="display:none; background:#10b981; color:#fff; padding:12px 22px; border-radius:12px; margin-bottom:20px; font-weight:600; font-size:14px;"></div>
+<div id="ds-toast" class="admin-toast"></div>
 
 <div class="course-list-container" id="course-list-container">
     <!-- Danh sách sẽ được render động -->
-    <div style="padding:60px; text-align:center; color:#7c3aed; font-size:16px;">
+    <div class="admin-loading">
         <i class="fa-solid fa-spinner fa-spin"></i> Đang tải danh sách khóa học...
     </div>
 </div>
@@ -23,42 +23,29 @@
     const container = document.getElementById('course-list-container');
     const toast     = document.getElementById('ds-toast');
 
-    // Thêm style cho mock-tag nếu chưa có
-    const style = document.createElement('style');
-    style.innerHTML = `
-        .mock-tag {
-            padding: 4px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            display: inline-block;
-            background: #f1f5f9;
-            color: #475569;
-        }
-    `;
-    document.head.appendChild(style);
 
     // ── Helper: Hiện toast thông báo ────────────────────────
     function showToast(msg, isError = false) {
         toast.textContent = msg;
+        toast.className = 'admin-toast';
         toast.style.background = isError ? '#ef4444' : '#10b981';
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+        toast.classList.remove('display-none');
+        setTimeout(() => { toast.classList.add('display-none'); }, 3000);
     }
 
     // ── Helper: Render HTML cho 1 thẻ khóa học ──────────────
     function renderCard(course) {
         const thumb = course.thumbnail_url
             ? course.thumbnail_url
-            : '../../images/img_TrangChu.png';
+            : 'Public/images/img_TrangChu.png';
 
         const priceTag = course.price > 0
-            ? `<span class="mock-tag" style="background:#fef3c7;color:#b45309;">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
+            ? `<span class="mock-tag tag-vip-gold">VIP – ${Number(course.price).toLocaleString('vi-VN')} ₫</span>`
             : `<span class="mock-tag">Miễn phí</span>`;
 
         const statusTag = course.status === 'published'
-            ? `<span class="mock-tag" style="background:#dcfce7;color:#16a34a;margin-left:8px;">Đã xuất bản</span>`
-            : `<span class="mock-tag" style="background:#f1f5f9;color:#64748b;margin-left:8px;">Nháp</span>`;
+            ? `<span class="mock-tag tag-success">Đã xuất bản</span>`
+            : `<span class="mock-tag tag-muted">Nháp</span>`;
 
         const levelMap = {
             'coban': 'Cơ bản',
@@ -72,7 +59,7 @@
         };
         const levelLabel = course.level ? (levelMap[course.level] || course.level) : null;
         const levelTag = levelLabel
-            ? `<span class="mock-tag" style="background:#e0e7ff;color:#4338ca;">Mức độ: ${levelLabel}</span>`
+            ? `<span class="mock-tag tag-level">Mức độ: ${levelLabel}</span>`
             : '';
 
         return `
@@ -83,7 +70,7 @@
             <div class="course-info">
                 <h3>${course.title}</h3>
                 <p>${course.description || 'Chưa có mô tả.'}</p>
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                <div class="course-tags-wrapper">
                     ${priceTag}
                     ${levelTag}
                     ${statusTag}
@@ -105,15 +92,15 @@
 
     // ── Helper: Render toàn bộ danh sách ────────────────────
     async function renderList() {
-        container.innerHTML = `<div style="padding:60px;text-align:center;color:#7c3aed;font-size:16px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+        container.innerHTML = `<div class="admin-loading"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
 
         const courses = await window.loadCourses();
 
         if (!courses || courses.length === 0) {
             container.innerHTML = `
-                <div style="padding:80px;text-align:center;color:#94a3b8;">
-                    <i class="fa-solid fa-box-open" style="font-size:48px;margin-bottom:16px;display:block;"></i>
-                    <p style="font-size:16px;font-weight:600;">Chưa có khóa học nào. Hãy thêm mới!</p>
+                <div class="admin-empty-state">
+                    <i class="fa-solid fa-box-open"></i>
+                    <p>Chưa có khóa học nào. Hãy thêm mới!</p>
                 </div>`;
             return;
         }

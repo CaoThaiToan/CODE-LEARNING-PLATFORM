@@ -94,8 +94,8 @@
                 </div>
 
                 <!-- ==================== PHẦN TRẮC NGHIỆM NỔI BẬT ==================== -->
-                <div class="quiz-section" style="margin-top:50px; padding:35px; background:#1e1654; border-radius:20px; color:#fff;">
-                    <h3 style="margin-bottom:25px; color:#a78bfa; font-size:22px;">
+                <div class="quiz-section">
+                    <h3 class="quiz-section-title">
                         📝 Kiểm tra kiến thức
                     </h3>
 
@@ -106,19 +106,23 @@
                         <label><input type="radio" name="q1" value="c"> Hyper Tool Markup Language</label>
                     </div>
 
-                    <div class="quiz-question" id="q2" style="margin-top:30px;">
+                    <div class="quiz-question" id="q2">
                         <p><strong>2. CSS dùng để làm gì?</strong></p>
                         <label><input type="radio" name="q2" value="a"> Xây dựng cấu trúc trang web</label><br>
                         <label><input type="radio" name="q2" value="b"> Thiết kế giao diện và kiểu dáng</label><br>
                         <label><input type="radio" name="q2" value="c"> Xử lý logic lập trình</label>
                     </div>
 
-                    <div style="margin-top:40px; display:flex; gap:15px;">
-                        <button onclick="submitQuiz()" class="btn-submit-form" style="flex:1; background:#a78bfa;">Kiểm tra kết quả</button>
-                        <button onclick="resetQuiz()" class="btn-submit-form" style="flex:1; background:#64748b;">Làm lại</button>
+                    <div class="quiz-actions">
+                        <button onclick="submitQuiz()" class="btn-quiz btn-quiz-primary">
+                            <i class="fas fa-paper-plane"></i> Kiểm tra kết quả
+                        </button>
+                        <button onclick="resetQuiz()" class="btn-quiz btn-quiz-secondary">
+                            <i class="fas fa-undo"></i> Làm lại
+                        </button>
                     </div>
 
-                    <div id="quiz-result" style="margin-top:30px; display:none; padding:20px; border-radius:12px; background:#2a1f4d;"></div>
+                    <div id="quiz-result" class="quiz-result-box"></div>
                 </div>
             </div>
 
@@ -138,41 +142,48 @@
 function submitQuiz() {
     const resultDiv = document.getElementById('quiz-result');
     let score = 0;
-    let feedbackHTML = '';
+    let feedbackHTML = '<div class="feedback-list">';
 
     // Câu 1
     const q1 = document.querySelector('input[name="q1"]:checked');
     if (q1 && q1.value === 'a') {
         score++;
-        feedbackHTML += `<p style="color:#22c55e;">✅ Câu 1: Đúng</p>`;
+        feedbackHTML += `<div class="feedback-item feedback-correct"><i class="fas fa-check-circle"></i> <span>Câu 1: Chính xác</span></div>`;
     } else {
-        feedbackHTML += `<p style="color:#ef4444;">❌ Câu 1: Sai. Đáp án đúng là: Hyper Text Markup Language</p>`;
+        feedbackHTML += `<div class="feedback-item feedback-wrong"><i class="fas fa-times-circle"></i> <span>Câu 1: Sai. Đáp án đúng là: Hyper Text Markup Language</span></div>`;
     }
 
     // Câu 2
     const q2 = document.querySelector('input[name="q2"]:checked');
     if (q2 && q2.value === 'b') {
         score++;
-        feedbackHTML += `<p style="color:#22c55e;">✅ Câu 2: Đúng</p>`;
+        feedbackHTML += `<div class="feedback-item feedback-correct"><i class="fas fa-check-circle"></i> <span>Câu 2: Chính xác</span></div>`;
     } else {
-        feedbackHTML += `<p style="color:#ef4444;">❌ Câu 2: Sai. Đáp án đúng là: Thiết kế giao diện và kiểu dáng</p>`;
+        feedbackHTML += `<div class="feedback-item feedback-wrong"><i class="fas fa-times-circle"></i> <span>Câu 2: Sai. Đáp án đúng là: Thiết kế giao diện và kiểu dáng</span></div>`;
     }
+
+    feedbackHTML += '</div>';
 
     const percent = Math.round((score / 2) * 100);
 
     resultDiv.style.display = 'block';
     resultDiv.innerHTML = `
-        <div style="text-align:center; margin-bottom:20px;">
-            <h2 style="font-size:42px; margin:0; color:#a78bfa;">${percent}%</h2>
-            <p style="margin:0; color:#c4b5fd;">${score}/2 câu đúng</p>
+        <div class="result-score">
+            <h2 class="result-percent">${percent}%</h2>
+            <p class="result-count">${score}/2 câu đúng</p>
         </div>
         ${feedbackHTML}
-        <p style="margin-top:20px; font-size:15px;">${percent === 100 ? '🎉 Xuất sắc! Bạn đã nắm vững bài học.' : 'Hãy ôn lại phần chưa nắm chắc nhé!'}</p>
+        <p class="result-message">${percent === 100 ? '🎉 Xuất sắc! Bạn đã nắm vững bài học.' : 'Hãy ôn lại phần chưa nắm chắc nhé!'}</p>
     `;
+
+    // Cuộn xuống xem kết quả
+    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function resetQuiz() {
-    document.getElementById('quiz-result').style.display = 'none';
-    document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+    const quizResult = document.getElementById('quiz-result');
+    quizResult.style.display = 'none';
+    const radios = document.querySelectorAll('input[type="radio"]');
+    radios.forEach(radio => radio.checked = false);
 }
 </script>
