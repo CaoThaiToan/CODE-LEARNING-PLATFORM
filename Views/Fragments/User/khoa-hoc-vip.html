@@ -20,13 +20,21 @@
 (async function initVipCourses() {
     const grid = document.getElementById('vip-courses-grid');
 
-    function renderVipCard(course, index) {
+    function renderVipCard(course, index, isEnrolled) {
         const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
         const priceStr = Number(course.price).toLocaleString('vi-VN');
         
         // Luân phiên các badge và bg class cho đa dạng nếu không có ảnh
         const bgs = ['bg-react', 'bg-node', ''];
         const bgClass = bgs[index % bgs.length];
+
+        let priceHtml = `<span class="new-price">${priceStr} đ</span>`;
+        let btnHtml = `<button class="buy-btn btn-buy-vip" data-id="${course.id}">MUA NGAY</button>`;
+
+        if (isEnrolled) {
+            priceHtml = `<span class="new-price" style="color:#22c55e;"><i class="fa-solid fa-circle-check"></i> ĐÃ SỞ HỮU</span>`;
+            btnHtml = `<button class="buy-btn btn-enter-course" data-id="${course.id}" style="background:linear-gradient(135deg, #10b981, #059669);box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">VÀO HỌC NGAY</button>`;
+        }
 
         return `
         <article class="card">
@@ -57,9 +65,9 @@
 
                 <div class="card-footer">
                     <div class="price-info">
-                        <span class="new-price">${priceStr} đ</span>
+                        ${priceHtml}
                     </div>
-                    <button class="buy-btn btn-buy-vip" data-id="${course.id}">MUA NGAY</button>
+                    ${btnHtml}
                 </div>
             </div>
         </article>`;
@@ -76,7 +84,19 @@
             return;
         }
 
-        grid.innerHTML = vipCourses.map((c, i) => renderVipCard(c, i)).join('');
+        // Fetch enrollments
+        let userEnrollments = [];
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const enrollRes = await apiFetch('/users/me/courses');
+                if (enrollRes.success) {
+                    userEnrollments = enrollRes.data.filter(e => e.enrollment_status === 'active').map(e => e.course_id);
+                }
+            } catch (e) { console.error('Lỗi check enroll', e); }
+        }
+
+        grid.innerHTML = vipCourses.map((c, i) => renderVipCard(c, i, userEnrollments.includes(c.id))).join('');
 
         // Gắn sự kiện mua khóa học
         grid.querySelectorAll('.btn-buy-vip').forEach(btn => {
@@ -85,6 +105,16 @@
                 window.selectedCourseId = btn.getAttribute('data-id');
                 // Chuyển tới trang thanh toán
                 window.loadPage('thanh-toan.html');
+            });
+        });
+
+        // Gắn sự kiện vào học ngay (nếu đã sở hữu)
+        grid.querySelectorAll('.btn-enter-course').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.selectedCourseId = btn.getAttribute('data-id');
+                // Có thể chuyển sang chi-tiet-kh.html để họ xem tổng quan, hoặc thẳng vào begin-kh.html
+                window.loadPage('chi-tiet-kh.html'); 
             });
         });
 

@@ -51,6 +51,22 @@ const getUserCourses = async (req, res) => {
     }
 };
 
+// ── GET /api/users/me/courses  [User - requires login] ────
+const getMyCourses = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const [enrollments] = await db.query(`
+            SELECT course_id, status AS enrollment_status
+            FROM enrollments
+            WHERE user_id = ?
+        `, [userId]);
+        return res.json({ success: true, data: enrollments });
+    } catch (err) {
+        console.error('[getMyCourses]', err);
+        return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
+    }
+};
+
 // ── DELETE /api/users/:id  [Admin only] ──────────────────
 // Soft-delete: đánh dấu is_deleted=1 và lưu lý do, không xóa dữ liệu thật
 const deleteUser = async (req, res) => {
@@ -90,4 +106,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, getUserCourses, deleteUser };
+module.exports = { getAllUsers, getUserCourses, getMyCourses, deleteUser };

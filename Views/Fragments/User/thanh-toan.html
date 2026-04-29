@@ -11,20 +11,20 @@
             <div class="checkout-box">
                 <h2 class="section-title">THÔNG TIN THANH TOÁN</h2>
                 
-                <form class="checkout-form">
+                <form class="checkout-form" id="checkout-form">
                     <div class="form-group">
                         <label>Họ và tên <span class="required">*</span></label>
-                        <input type="text" placeholder="Nguyễn Văn A" required>
+                        <input type="text" id="checkout-name" placeholder="Nguyễn Văn A" required>
                     </div>
                     
                     <div class="form-group">
                         <label>Email <span class="required">*</span></label>
-                        <input type="email" placeholder="email@example.com" required>
+                        <input type="email" id="checkout-email" placeholder="email@example.com" required>
                     </div>
                     
                     <div class="form-group">
                         <label>Số điện thoại</label>
-                        <input type="tel" placeholder="0912345678">
+                        <input type="tel" id="checkout-phone" placeholder="0912345678">
                     </div>
 
                     <div class="divider"></div>
@@ -123,46 +123,267 @@
     </div>
 </div>
 
+<!-- ── SUCCESS MODAL ──────────────────────────────────── -->
+<div id="payment-success-modal" style="
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(10,20,40,0.65);
+    backdrop-filter:blur(6px);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 0.3s ease;
+">
+    <div id="payment-success-card" style="
+        background:#fff;
+        border-radius:28px;
+        padding:44px 36px;
+        width:92%;
+        max-width:440px;
+        text-align:center;
+        box-shadow:0 24px 60px rgba(0,0,0,0.15);
+        transform:translateY(30px) scale(0.95);
+        transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    ">
+        <!-- Animated checkmark -->
+        <div style="
+            width:80px;height:80px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 24px;
+            box-shadow:0 8px 24px rgba(109,40,217,0.35);
+            animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.1s both;
+        ">
+            <i class="fa-solid fa-check" style="color:#fff;font-size:36px;"></i>
+        </div>
+        <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:10px;">Thanh toán thành công!</h2>
+        <p style="
+            font-size:15px;
+            color:#475569;
+            line-height:1.65;
+            margin-bottom:8px;
+            padding:14px 18px;
+            background:#f3e8ff;
+            border-radius:12px;
+            border:1px solid #e9d5ff;
+        ">
+            <i class="fa-solid fa-circle-check" style="color:#7c3aed;margin-right:6px;"></i>
+            <strong>Bạn đã thanh toán thành công!</strong><br>
+            Chờ Admin xác nhận để có thể truy cập khóa học.
+        </p>
+        <p id="payment-txcode" style="font-size:13px;color:#94a3b8;margin-bottom:28px;"></p>
+        <button id="payment-success-ok" style="
+            background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+            color:#fff;
+            border:none;
+            padding:14px 32px;
+            border-radius:14px;
+            font-size:15px;
+            font-weight:700;
+            cursor:pointer;
+            width:100%;
+            transition:0.2s;
+            box-shadow:0 4px 16px rgba(109,40,217,0.3);
+        ">Về trang chính</button>
+    </div>
+</div>
+
+<!-- ── ERROR MODAL ──────────────────────────────────── -->
+<div id="payment-error-modal" style="
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(10,20,40,0.65);
+    backdrop-filter:blur(6px);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 0.3s ease;
+">
+    <div id="payment-error-card" style="
+        background:#fff;
+        border-radius:28px;
+        padding:44px 36px;
+        width:92%;
+        max-width:440px;
+        text-align:center;
+        box-shadow:0 24px 60px rgba(0,0,0,0.15);
+        transform:translateY(30px) scale(0.95);
+        transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    ">
+        <!-- Animated warning icon -->
+        <div style="
+            width:80px;height:80px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#f43f5e,#e11d48);
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 24px;
+            box-shadow:0 8px 24px rgba(225,29,72,0.35);
+            animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275) 0.1s both;
+        ">
+            <i class="fa-solid fa-exclamation" style="color:#fff;font-size:36px;"></i>
+        </div>
+        <h2 style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:10px;">Thao tác không thành công!</h2>
+        <p style="
+            font-size:15px;
+            color:#475569;
+            line-height:1.65;
+            margin-bottom:28px;
+            padding:14px 18px;
+            background:#fff1f2;
+            border-radius:12px;
+            border:1px solid #ffe4e6;
+        ">
+            <i class="fa-solid fa-circle-exclamation" style="color:#e11d48;margin-right:6px;"></i>
+            <span id="payment-error-msg">Bạn đã có đơn hàng đang chờ xử lý cho khóa học này.</span>
+        </p>
+        <button id="payment-error-ok" style="
+            background:#f1f5f9;
+            color:#334155;
+            border:none;
+            padding:14px 32px;
+            border-radius:14px;
+            font-size:15px;
+            font-weight:700;
+            cursor:pointer;
+            width:100%;
+            transition:0.2s;
+        ">Đã hiểu</button>
+    </div>
+</div>
+
+<style>
+@keyframes popIn {
+    0%   { transform:scale(0); opacity:0; }
+    100% { transform:scale(1); opacity:1; }
+}
+</style>
+
 <script>
 (async function initCheckout() {
     const courseId = window.selectedCourseId;
     if (!courseId) {
-        alert('Vui lòng chọn khóa học trước!');
-        window.loadPage('khoa-hoc-vip.html');
+        showErrorModal('Vui lòng chọn khóa học trước!');
+        setTimeout(() => window.loadPage('khoa-hoc-vip.html'), 2000);
         return;
     }
 
-    const titleEl = document.getElementById('checkout-title');
-    const thumbEl = document.getElementById('checkout-thumb');
-    const basePriceEl = document.getElementById('checkout-base-price');
+    const titleEl      = document.getElementById('checkout-title');
+    const thumbEl      = document.getElementById('checkout-thumb');
+    const basePriceEl  = document.getElementById('checkout-base-price');
     const totalPriceEl = document.getElementById('checkout-total-price');
-    const payBtn = document.getElementById('checkout-pay-btn');
+    const payBtn       = document.getElementById('checkout-pay-btn');
+
+    let courseData = null;
 
     try {
         const course = await window.getCourseById(courseId);
         if (!course) throw new Error('Không tìm thấy thông tin khóa học');
+        courseData = course;
 
         const priceStr = Number(course.price).toLocaleString('vi-VN') + ' đ';
-
-        titleEl.textContent = course.title;
-        thumbEl.src = course.thumbnail_url || './Public/images/img_TrangChu.png';
+        titleEl.textContent    = course.title;
+        thumbEl.src            = course.thumbnail_url || './Public/images/img_TrangChu.png';
         basePriceEl.textContent = priceStr;
         totalPriceEl.textContent = priceStr;
-        payBtn.textContent = `THANH TOÁN ${priceStr.toUpperCase()}`;
+        payBtn.textContent     = `THANH TOÁN ${priceStr.toUpperCase()}`;
 
-        // Điền thông tin user nếu có
+        // Prefill user info
         const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (user.full_name) document.querySelector('input[placeholder="Nguyễn Văn A"]').value = user.full_name;
-        if (user.email) document.querySelector('input[type="email"]').value = user.email;
+        if (user.full_name) document.getElementById('checkout-name').value  = user.full_name;
+        if (user.email)     document.getElementById('checkout-email').value = user.email;
 
     } catch (err) {
         console.error(err);
-        alert('Lỗi tải thông tin thanh toán: ' + err.message);
+        showErrorModal('Lỗi tải thông tin thanh toán: ' + err.message);
     }
 
-    document.querySelector('.checkout-form').addEventListener('submit', (e) => {
+    // ── Handle form submit ────────────────────────────────
+    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        alert('Đã tiếp nhận yêu cầu thanh toán! Hệ thống đang chuyển hướng tới cổng thanh toán...');
+
+        const name   = document.getElementById('checkout-name').value.trim();
+        const email  = document.getElementById('checkout-email').value.trim();
+        const phone  = document.getElementById('checkout-phone').value.trim();
+        const method = document.querySelector('input[name="payment"]:checked')?.value || 'momo';
+
+        if (!name || !email) {
+            showErrorModal('Vui lòng điền đầy đủ Họ tên và Email!');
+            return;
+        }
+
+        // Check login
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showErrorModal('Bạn cần đăng nhập để thanh toán!');
+            return;
+        }
+
+        payBtn.disabled     = true;
+        payBtn.textContent  = 'Đang xử lý...';
+        payBtn.style.opacity = '0.7';
+
+        try {
+            const result = await window.createOrder({
+                course_id:      courseId,
+                payment_method: method,
+                full_name:      name,
+                email,
+                phone
+            });
+
+            if (result.success) {
+                showSuccessModal(result.data?.transaction_code);
+            } else {
+                showErrorModal(result.message || 'Không thể tạo đơn hàng.');
+                payBtn.disabled     = false;
+                payBtn.textContent  = `THANH TOÁN ${Number(courseData?.price || 0).toLocaleString('vi-VN')} Đ`;
+                payBtn.style.opacity = '1';
+            }
+        } catch (err) {
+            console.error(err);
+            showErrorModal('Đã xảy ra lỗi khi thanh toán. Vui lòng thử lại!');
+            payBtn.disabled     = false;
+            payBtn.style.opacity = '1';
+        }
     });
+
+    function showSuccessModal(txCode) {
+        const modal = document.getElementById('payment-success-modal');
+        const card  = document.getElementById('payment-success-card');
+        const txEl  = document.getElementById('payment-txcode');
+        if (txCode) txEl.textContent = `Mã giao dịch: ${txCode}`;
+
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.style.opacity        = '1';
+            card.style.transform       = 'translateY(0) scale(1)';
+        });
+
+        document.getElementById('payment-success-ok').onclick = () => {
+            window.loadPage('trang-chu.html');
+        };
+    }
+
+    window.showErrorModal = function(msg) {
+        const modal = document.getElementById('payment-error-modal');
+        const card  = document.getElementById('payment-error-card');
+        const msgEl = document.getElementById('payment-error-msg');
+        msgEl.textContent = msg;
+
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.style.opacity        = '1';
+            card.style.transform       = 'translateY(0) scale(1)';
+        });
+
+        document.getElementById('payment-error-ok').onclick = () => {
+            modal.style.opacity        = '0';
+            card.style.transform       = 'translateY(30px) scale(0.95)';
+            setTimeout(() => modal.style.display = 'none', 300);
+        };
+    }
 })();
 </script>

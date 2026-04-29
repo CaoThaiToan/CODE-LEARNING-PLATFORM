@@ -1,55 +1,356 @@
 <div class="content-header">
     <div class="header-titles">
-        <h1 class="main-title">QUẢN LÝ ĐƠN HÀNG & THANH TOÁN</h1>
+        <h1 class="main-title">QUẢN LÝ ĐƠN HÀNG &amp; THANH TOÁN</h1>
         <p class="sub-title">Danh sách các đơn mua khóa học VIP.</p>
     </div>
 </div>
 
-<!-- Phần tổng tiền -->
-<div class="summary-row">
+<!-- Phần thống kê động -->
+<div class="summary-row" id="order-stats-row">
     <div class="summary-item">
         <p>TỔNG SỐ ĐƠN HÀNG</p>
-        <h2>12 đơn</h2>
+        <h2 id="stat-total">— đơn</h2>
     </div>
     <div class="summary-item">
         <p>TỔNG DOANH THU</p>
-        <h2 class="t-success">18.500.000 đ</h2>
+        <h2 class="t-success" id="stat-revenue">—</h2>
     </div>
     <div class="summary-item">
         <p>ĐƠN ĐÃ THANH TOÁN</p>
-        <h2 class="t-success">9 đơn</h2>
+        <h2 class="t-success" id="stat-confirmed">— đơn</h2>
     </div>
 </div>
 
-<div class="user-table-container">
-    <table class="user-table">
+<!-- Toast notification -->
+<div id="order-toast" style="
+    display:none;
+    position:fixed;
+    top:24px;right:24px;
+    z-index:99999;
+    background:#fff;
+    border-radius:14px;
+    padding:14px 20px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.15);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:280px;
+    max-width:380px;
+    border-left:4px solid #8b5cf6;
+    transform:translateX(120%);
+    transition:transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275);
+">
+    <i class="fa-solid fa-circle-check" style="color:#8b5cf6;font-size:20px;"></i>
+    <span id="order-toast-msg" style="color:#1e293b;font-size:14px;font-weight:600;"></span>
+</div>
+
+<div class="user-table-container" id="order-table-wrapper">
+    <div id="order-loading" style="text-align:center;padding:60px 20px;color:#7c3aed;font-size:16px;">
+        <i class="fa-solid fa-spinner fa-spin" style="font-size:28px;margin-bottom:12px;display:block;"></i>
+        Đang tải danh sách đơn hàng...
+    </div>
+    <table class="user-table" id="order-table" style="display:none;">
         <thead>
             <tr>
                 <th>MÃ ĐƠN</th>
                 <th>KHÓA HỌC</th>
                 <th>KHÁCH HÀNG</th>
                 <th>SỐ TIỀN</th>
+                <th>PHƯƠNG THỨC</th>
+                <th>THỜI GIAN</th>
                 <th>TRẠNG THÁI</th>
                 <th>THAO TÁC</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>#VIP001</td>
-                <td>Master ReactJS & NextJS Pro</td>
-                <td>Nguyễn Văn A</td>
-                <td>1.500.000 đ</td>
-                <td><span class="status-paid">Đã thanh toán</span></td>
-                <td><button class="view-btn">👁️</button></td>
-            </tr>
-            <tr>
-                <td>#VIP002</td>
-                <td>Fullstack Node.js & Microservices</td>
-                <td>Trần Thị B</td>
-                <td>2.000.000 đ</td>
-                <td><span class="status-pending">Chờ thanh toán</span></td>
-                <td><button class="view-btn">👁️</button></td>
-            </tr>
-        </tbody>
+        <tbody id="order-table-body"></tbody>
     </table>
+    <div id="order-empty" style="display:none;text-align:center;padding:60px 20px;color:#94a3b8;">
+        <i class="fa-solid fa-inbox" style="font-size:40px;margin-bottom:14px;display:block;"></i>
+        <p style="font-size:15px;">Chưa có đơn hàng nào.</p>
+    </div>
 </div>
+
+<!-- ── CUSTOM CONFIRM MODAL ─────────────────────────── -->
+<div id="admin-confirm-modal" style="
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(10,20,40,0.65);
+    backdrop-filter:blur(6px);
+    z-index:999999;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 0.3s ease;
+">
+    <div id="admin-confirm-card" style="
+        background:#fff;
+        border-radius:24px;
+        padding:36px 32px;
+        width:90%;
+        max-width:400px;
+        text-align:center;
+        box-shadow:0 24px 60px rgba(0,0,0,0.15);
+        transform:translateY(30px) scale(0.95);
+        transition:transform 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+    ">
+        <div style="
+            width:70px;height:70px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+            display:flex;align-items:center;justify-content:center;
+            margin:0 auto 20px;
+            box-shadow:0 8px 24px rgba(109,40,217,0.35);
+        ">
+            <i class="fa-solid fa-circle-question" style="color:#fff;font-size:32px;"></i>
+        </div>
+        <h2 style="font-size:20px;font-weight:800;color:#0f172a;margin-bottom:12px;">Xác nhận thao tác</h2>
+        <p id="admin-confirm-msg" style="
+            font-size:15px;
+            color:#475569;
+            line-height:1.6;
+            margin-bottom:28px;
+        ">Bạn có chắc chắn muốn xác nhận đơn hàng này?</p>
+        
+        <div style="display:flex;gap:12px;justify-content:center;">
+            <button id="admin-confirm-cancel" style="
+                background:#f1f5f9;
+                color:#475569;
+                border:none;
+                padding:12px 24px;
+                border-radius:12px;
+                font-size:14px;
+                font-weight:600;
+                cursor:pointer;
+                flex:1;
+                transition:0.2s;
+            ">Hủy</button>
+            <button id="admin-confirm-ok" style="
+                background:linear-gradient(135deg,#8b5cf6,#6d28d9);
+                color:#fff;
+                border:none;
+                padding:12px 24px;
+                border-radius:12px;
+                font-size:14px;
+                font-weight:600;
+                cursor:pointer;
+                flex:1;
+                transition:0.2s;
+                box-shadow:0 4px 16px rgba(109,40,217,0.3);
+            ">Đồng ý</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ── Confirm button ─────────────────────────── */
+.btn-confirm-order {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: #fff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+.btn-confirm-order:hover  { opacity: 0.85; transform: translateY(-1px); }
+.btn-confirm-order:active { transform: translateY(0); }
+.btn-confirm-order:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+.method-badge {
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+    background:#f1f5f9;
+    color:#475569;
+}
+.status-confirmed {
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:20px;
+    background:#dcfce7;
+    color:#16a34a;
+    font-size:12px;
+    font-weight:700;
+}
+.status-pending {
+    display:inline-block;
+    padding:4px 12px;
+    border-radius:20px;
+    background:#fef9c3;
+    color:#ca8a04;
+    font-size:12px;
+    font-weight:700;
+}
+</style>
+
+<script>
+(async function initOrderManagement() {
+
+    function showToast(msg, isError = false) {
+        const toast   = document.getElementById('order-toast');
+        const msgEl   = document.getElementById('order-toast-msg');
+        const icon    = toast.querySelector('i');
+        msgEl.textContent       = msg;
+        toast.style.borderColor = isError ? '#ef4444' : '#8b5cf6';
+        icon.style.color        = isError ? '#ef4444' : '#8b5cf6';
+        icon.className          = isError ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-circle-check';
+        toast.style.display     = 'flex';
+        // Show
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateX(0)';
+        });
+        // Hide after 3s
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(() => {
+            toast.style.transform = 'translateX(120%)';
+            setTimeout(() => toast.style.display = 'none', 350);
+        }, 3000);
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '—';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    }
+
+    function formatMoney(amount) {
+        return Number(amount || 0).toLocaleString('vi-VN') + ' đ';
+    }
+
+    function methodLabel(method) {
+        const map = { momo: 'MoMo', vnpay: 'VNPAY', card: 'Thẻ QT' };
+        return map[method] || (method || 'Khác');
+    }
+
+    async function loadStats() {
+        try {
+            const stats = await window.getOrderStats();
+            if (!stats) return;
+            document.getElementById('stat-total').textContent     = `${stats.total_orders || 0} đơn`;
+            document.getElementById('stat-revenue').textContent   = formatMoney(stats.total_revenue);
+            document.getElementById('stat-confirmed').textContent = `${stats.confirmed_orders || 0} đơn`;
+        } catch (_) {}
+    }
+
+    async function loadOrders() {
+        const loadEl  = document.getElementById('order-loading');
+        const tableEl = document.getElementById('order-table');
+        const emptyEl = document.getElementById('order-empty');
+        const tbody   = document.getElementById('order-table-body');
+
+        try {
+            const orders = await window.loadOrders();
+
+            loadEl.style.display = 'none';
+
+            if (!orders || orders.length === 0) {
+                emptyEl.style.display = 'block';
+                return;
+            }
+
+            tableEl.style.display = 'table';
+            tbody.innerHTML = orders.map(o => {
+                const isConfirmed = o.status === 'paid';
+                const statusBadge = isConfirmed
+                    ? `<span class="status-confirmed">✅ Đã xác nhận</span>`
+                    : `<span class="status-pending">⏳ Chờ xác nhận</span>`;
+                const actionBtn = isConfirmed
+                    ? `<button class="btn-confirm-order" disabled>Đã xác nhận</button>`
+                    : `<button class="btn-confirm-order" data-order-id="${o.id}" onclick="handleConfirmOrder(${o.id}, this)">
+                           <i class="fa-solid fa-check" style="margin-right:4px;"></i>Xác nhận
+                       </button>`;
+                return `
+                    <tr id="order-row-${o.id}">
+                        <td><strong>#${String(o.id).padStart(4,'0')}</strong></td>
+                        <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${o.course_title}">${o.course_title}</td>
+                        <td>
+                            <div style="font-weight:600;font-size:13px;">${o.customer_name || '—'}</div>
+                            <div style="font-size:12px;color:#94a3b8;">${o.customer_email || ''}</div>
+                        </td>
+                        <td><strong>${formatMoney(o.final_amount)}</strong></td>
+                        <td><span class="method-badge">${methodLabel(o.payment_method)}</span></td>
+                        <td style="font-size:12px;color:#64748b;">${formatDate(o.created_at)}</td>
+                        <td>${statusBadge}</td>
+                        <td>${actionBtn}</td>
+                    </tr>`;
+            }).join('');
+
+        } catch (err) {
+            console.error('[loadOrders]', err);
+            loadEl.innerHTML = '<p style="color:#ef4444">❌ Không thể tải danh sách đơn hàng.</p>';
+        }
+    }
+
+    window.handleConfirmOrder = (orderId, btn) => {
+        // Show custom modal
+        showAdminConfirm(`Xác nhận đơn hàng #${String(orderId).padStart(4,'0')} và cấp quyền truy cập khóa học?`, async () => {
+            btn.disabled    = true;
+            btn.textContent = 'Đang xử lý...';
+
+            try {
+                const result = await window.confirmOrder(orderId);
+                if (result.success) {
+                    const row = document.getElementById(`order-row-${orderId}`);
+                    if (row) {
+                        row.cells[6].innerHTML = `<span class="status-confirmed">✅ Đã xác nhận</span>`;
+                        row.cells[7].innerHTML = `<button class="btn-confirm-order" disabled>Đã xác nhận</button>`;
+                    }
+                    showToast('Đã xác nhận thanh toán và cấp quyền truy cập khóa học!');
+                    await loadStats();
+                } else {
+                    showToast(result.message || 'Xác nhận thất bại.', true);
+                    btn.disabled    = false;
+                    btn.innerHTML   = '<i class="fa-solid fa-check" style="margin-right:4px;"></i>Xác nhận';
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Lỗi kết nối máy chủ.', true);
+                btn.disabled    = false;
+                btn.innerHTML   = '<i class="fa-solid fa-check" style="margin-right:4px;"></i>Xác nhận';
+            }
+        });
+    };
+
+    function showAdminConfirm(msg, onConfirm) {
+        const modal = document.getElementById('admin-confirm-modal');
+        const card  = document.getElementById('admin-confirm-card');
+        const msgEl = document.getElementById('admin-confirm-msg');
+        msgEl.textContent = msg;
+
+        modal.style.display = 'flex';
+        requestAnimationFrame(() => {
+            modal.style.opacity  = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+        });
+
+        const closeBtn = document.getElementById('admin-confirm-cancel');
+        const okBtn    = document.getElementById('admin-confirm-ok');
+
+        const closeModal = () => {
+            modal.style.opacity  = '0';
+            card.style.transform = 'translateY(30px) scale(0.95)';
+            setTimeout(() => modal.style.display = 'none', 300);
+            okBtn.onclick = null;
+            closeBtn.onclick = null;
+        };
+
+        closeBtn.onclick = closeModal;
+        okBtn.onclick = () => {
+            closeModal();
+            if (typeof onConfirm === 'function') onConfirm();
+        };
+    }
+
+    // Init
+    await Promise.all([loadStats(), loadOrders()]);
+})();
+</script>
