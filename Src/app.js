@@ -8,6 +8,7 @@ const courseRoutes = require('./Routes/courseRoutes');
 const lessonRoutes = require('./Routes/lessonRoutes');
 const userRoutes   = require('./Routes/userRoutes');
 const uploadRoutes = require('./Routes/uploadRoutes');
+const orderRoutes  = require('./Routes/orderRoutes');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use('/api/courses', courseRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/orders', orderRoutes);
 
 // ── Serve index.html for all non-API GET requests ─────────
 app.get(/^(?!\/api).*/, (req, res) => {

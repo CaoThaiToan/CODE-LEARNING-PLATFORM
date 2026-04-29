@@ -41,7 +41,20 @@
         const lessonsRes = await apiFetch('/lessons?course_id=' + courseId);
         const lessons = lessonsRes.success ? lessonsRes.data : [];
 
+        // Check enrollment
+        let isEnrolled = false;
+        const token = localStorage.getItem('token');
+        if (token) {
+            try {
+                const enrollRes = await apiFetch('/users/me/courses');
+                if (enrollRes.success) {
+                    isEnrolled = enrollRes.data.some(e => e.course_id == courseId && e.enrollment_status === 'active');
+                }
+            } catch (e) { console.error('Lỗi check enroll', e); }
+        }
+
         const isVip = course.price > 0;
+        const isLocked = isVip && !isEnrolled;
         
         // --- 1. Breadcrumb & Titles ---
         const breadcrumbTitle = course.title;
@@ -57,11 +70,15 @@
             lessonsHtml = '<div class="empty-lessons">Khóa học này chưa có bài học nào.</div>';
         } else {
             lessons.forEach((lesson, index) => {
-                // If it's VIP and not paid (for now just indicate locked if VIP, or if free indicate free)
-                const isLocked = isVip; 
                 const icon = isLocked ? '<i class="fas fa-lock text-error"></i>' : '<i class="far fa-play-circle"></i>';
-                const tagClass = isLocked ? 'lock-tag' : 'free-tag';
-                const tagText = isLocked ? 'Cần mở khóa' : 'Học miễn phí';
+                let tagClass, tagText;
+                if (isLocked) {
+                    tagClass = 'lock-tag'; tagText = 'Cần mở khóa';
+                } else if (isEnrolled) {
+                    tagClass = 'free-tag'; tagText = 'Đã mở khóa';
+                } else {
+                    tagClass = 'free-tag'; tagText = 'Học miễn phí';
+                }
                 const rowClass = isLocked ? 'locked' : 'free';
                 
                 lessonsHtml += `
@@ -77,11 +94,23 @@
         }
 
         // --- 4. Sidebar Pricing & CTA ---
-        const priceLabel = isVip ? 'CÓ PHÍ' : 'Miễn phí';
-        const priceValueHtml = isVip ? `<div class="price-value-large">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '';
-        const ctaText = 'BẮT ĐẦU HỌC NGAY';
-        const ctaAction = isVip ? 'alert("Bạn phải đóng phí cho khóa học này");' : 'window.loadPage("begin-kh.html");';
-        const ctaBtn = `<button class="btn-enroll btn-full" onclick='${ctaAction}'>${ctaText}</button>`;
+        let priceLabel = isVip ? 'CÓ PHÍ' : 'Miễn phí';
+        let priceValueHtml = isVip ? `<div class="price-value-large">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '';
+        let ctaText = 'BẮT ĐẦU HỌC NGAY';
+        let ctaAction = isVip ? 'window.loadPage("thanh-toan.html");' : 'window.loadPage("begin-kh.html");';
+        let ctaClass = 'btn-enroll';
+
+        if (isEnrolled) {
+            priceLabel = 'TRẠNG THÁI';
+            priceValueHtml = `<div class="price-value-large" style="color:#22c55e;font-size:18px;"><i class="fa-solid fa-circle-check"></i> Đã sở hữu</div>`;
+            ctaText = 'VÀO HỌC NGAY';
+            ctaAction = 'window.loadPage("begin-kh.html");';
+            ctaClass = 'btn-enroll';
+        } else if (isLocked) {
+            ctaText = 'ĐĂNG KÝ HỌC';
+        }
+
+        const ctaBtn = `<button class="${ctaClass} btn-full" onclick='${ctaAction}'>${ctaText}</button>`;
 
         // Render everything
         document.getElementById('course-detail-container').innerHTML = `

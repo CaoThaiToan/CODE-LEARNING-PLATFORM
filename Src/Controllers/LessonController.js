@@ -99,7 +99,7 @@ const updateLesson = async (req, res) => {
     try {
         await conn.beginTransaction();
 
-        const { title, video_url, order_index, quizzes = [] } = req.body;
+        const { title, video_url, theory_md, order_index, quizzes = [] } = req.body;
         const lessonId = req.params.id;
 
         const [check] = await conn.query('SELECT id FROM lessons WHERE id = ?', [lessonId]);
