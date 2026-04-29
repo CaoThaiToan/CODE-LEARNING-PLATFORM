@@ -257,6 +257,33 @@ document.addEventListener('DOMContentLoaded', () => {
         return data;
     };
 
+    // ── Create Order (User) ───────────────────────────────
+    window.createOrder = async (payload) => {
+        const data = await apiFetch('/orders', {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+        return data;
+    };
+
+    // ── Load All Orders (Admin) ───────────────────────────
+    window.loadOrders = async () => {
+        const data = await apiFetch('/orders');
+        return data.success ? data.data : [];
+    };
+
+    // ── Get Order Stats (Admin) ───────────────────────────
+    window.getOrderStats = async () => {
+        const data = await apiFetch('/orders/stats');
+        return data.success ? data.data : null;
+    };
+
+    // ── Confirm Order (Admin) ─────────────────────────────
+    window.confirmOrder = async (orderId) => {
+        const data = await apiFetch(`/orders/${orderId}/confirm`, { method: 'PUT' });
+        return data;
+    };
+
     // ── Load Page (Fragment system) ───────────────────────
     async function loadPage(page) {
         if (!contentArea) return;

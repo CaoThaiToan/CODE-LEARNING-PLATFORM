@@ -1,6 +1,5 @@
 <div class="lesson-layout">
 
-    <!-- SIDEBAR giữ nguyên -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <a href="#" class="back-btn" data-page="chi-tiet-kh.html">
@@ -10,180 +9,243 @@
         </div>
 
         <div class="course-info">
-            <h3 class="course-title">LẬP TRÌNH WEB CƠ BẢN (HTML/CSS)</h3>
+            <h3 class="course-title" id="sidebar-course-title">Đang tải...</h3>
             <div class="progress-bar">
-                <div class="progress-fill" style="width: 20%"></div>
+                <div class="progress-fill" style="width: 0%" id="sidebar-progress-fill"></div>
             </div>
-            <p class="progress-text">Hoàn thành 2/10 bài học (20%)</p>
+            <p class="progress-text" id="sidebar-progress-text">Hoàn thành 0/0 bài học (0%)</p>
         </div>
 
         <div class="lesson-list-scroll">
-            <ul class="lesson-list">
-                <li class="lesson-item active">
-                    <div class="lesson-icon completed"><i class="fas fa-check"></i></div>
-                    <div class="lesson-info">
-                        <span class="lesson-name">1. Giới thiệu HTML/CSS</span>
-                        <span class="lesson-duration"><i class="far fa-clock"></i> 15:20</span>
-                    </div>
-                </li>
-                <!-- Các bài học khác giữ nguyên -->
+            <ul class="lesson-list" id="sidebar-lesson-list">
+                <li style="padding: 20px; color: #a8b2d1; text-align: center;">Đang tải danh sách bài học...</li>
             </ul>
         </div>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
-
         <div class="topbar">
             <button class="close-btn" data-page="chi-tiet-kh.html"><i class="fas fa-times"></i></button>
-            <h2 class="topbar-title">GIỚI THIỆU HTML/CSS</h2>
+            <h2 class="topbar-title" id="topbar-lesson-title">Đang tải...</h2>
             <a href="#" class="qa-btn"><i class="far fa-comment-dots"></i> Hỏi đáp</a>
         </div>
 
-        <div class="content-scroll">
-
-            <!-- Video Player -->
-            <div class="video-wrapper">
-                <div class="video-player">
-                    <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=900&q=80" alt="Video thumbnail" class="video-thumb" />
-                    <div class="play-overlay">
-                        <div class="play-btn-big"></div>
-                    </div>
-                    <div class="video-controls">
-                        <div class="video-progress">
-                            <div class="video-progress-fill" style="width: 34%">
-                                <div class="progress-dot"></div>
-                            </div>
-                        </div>
-                        <div class="video-time">
-                            <button class="play-btn-small"><i class="fas fa-play"></i></button>
-                            <span>05:12 / 15:20</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lesson Description -->
-            <div class="lesson-detail">
-                <div class="lesson-detail-header">
-                    <div>
-                        <h1 class="lesson-detail-title">GIỚI THIỆU HTML/CSS</h1>
-                        <p class="lesson-update">Cập nhật tháng 10, 2023</p>
-                    </div>
-                    <div class="lesson-actions">
-                        <button class="action-btn"><i class="far fa-thumbs-up"></i> Thích</button>
-                        <button class="action-btn"><i class="fas fa-share-nodes"></i> Chia sẻ</button>
-                    </div>
-                </div>
-
-                <div class="lesson-body">
-                    <p>Trong bài học này, chúng ta sẽ cùng tìm hiểu về các khái niệm cơ bản nhất của HTML và CSS...</p>
-
-                    <h4>Nội dung chính:</h4>
-                    <ul>
-                        <li>Khái niệm HTML là gì?</li>
-                        <li>Cách hoạt động của trình duyệt (Browser)</li>
-                        <li>Mối quan hệ giữa HTML, CSS và JavaScript</li>
-                        <li>Cài đặt môi trường lập trình (VS Code)</li>
-                    </ul>
-
-                    <div class="tip-box">
-                        <p class="tip-label"><span class="tip-icon">💡</span> <strong>LỜI KHUYÊN:</strong></p>
-                        <p>Hãy vừa xem video vừa thực hành trên máy tính của bạn.</p>
-                    </div>
-                </div>
-
-                <!-- ==================== PHẦN TRẮC NGHIỆM NỔI BẬT ==================== -->
-                <div class="quiz-section">
-                    <h3 class="quiz-section-title">
-                        📝 Kiểm tra kiến thức
-                    </h3>
-
-                    <div class="quiz-question" id="q1">
-                        <p><strong>1. HTML là viết tắt của gì?</strong></p>
-                        <label><input type="radio" name="q1" value="a"> Hyper Text Markup Language</label><br>
-                        <label><input type="radio" name="q1" value="b"> High Text Machine Language</label><br>
-                        <label><input type="radio" name="q1" value="c"> Hyper Tool Markup Language</label>
-                    </div>
-
-                    <div class="quiz-question" id="q2">
-                        <p><strong>2. CSS dùng để làm gì?</strong></p>
-                        <label><input type="radio" name="q2" value="a"> Xây dựng cấu trúc trang web</label><br>
-                        <label><input type="radio" name="q2" value="b"> Thiết kế giao diện và kiểu dáng</label><br>
-                        <label><input type="radio" name="q2" value="c"> Xử lý logic lập trình</label>
-                    </div>
-
-                    <div class="quiz-actions">
-                        <button onclick="submitQuiz()" class="btn-quiz btn-quiz-primary">
-                            <i class="fas fa-paper-plane"></i> Kiểm tra kết quả
-                        </button>
-                        <button onclick="resetQuiz()" class="btn-quiz btn-quiz-secondary">
-                            <i class="fas fa-undo"></i> Làm lại
-                        </button>
-                    </div>
-
-                    <div id="quiz-result" class="quiz-result-box"></div>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="lesson-nav">
-                <button class="nav-btn nav-prev"><i class="fas fa-chevron-left"></i> Bài trước</button>
-                <button class="nav-btn nav-next">BÀI TIẾP THEO <i class="fas fa-chevron-right"></i></button>
+        <div class="content-scroll" id="main-lesson-content">
+            <div style="padding: 100px; text-align: center; color: #a8b2d1;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px;"></i>
+                <p>Đang tải nội dung bài học...</p>
             </div>
         </div>
     </main>
-
-    <button class="help-btn"><i class="fas fa-question"></i></button>
 </div>
 
 <script>
-// Trắc nghiệm nổi bật
-function submitQuiz() {
-    const resultDiv = document.getElementById('quiz-result');
-    let score = 0;
-    let feedbackHTML = '<div class="feedback-list">';
-
-    // Câu 1
-    const q1 = document.querySelector('input[name="q1"]:checked');
-    if (q1 && q1.value === 'a') {
-        score++;
-        feedbackHTML += `<div class="feedback-item feedback-correct"><i class="fas fa-check-circle"></i> <span>Câu 1: Chính xác</span></div>`;
-    } else {
-        feedbackHTML += `<div class="feedback-item feedback-wrong"><i class="fas fa-times-circle"></i> <span>Câu 1: Sai. Đáp án đúng là: Hyper Text Markup Language</span></div>`;
+(async function initBeginKH() {
+    const courseId = window.selectedCourseId;
+    if (!courseId) {
+        document.getElementById('main-lesson-content').innerHTML = `
+            <div style="padding: 100px; text-align: center; color: #ef4444;">
+                <h3>⚠️ Lỗi: Không tìm thấy khóa học.</h3>
+                <button onclick="window.loadPage('trang-chu.html')" style="margin-top:20px; padding:10px 20px; background:#6d28d9; color:white; border:none; border-radius:8px; cursor:pointer;">Về trang chủ</button>
+            </div>`;
+        return;
     }
 
-    // Câu 2
-    const q2 = document.querySelector('input[name="q2"]:checked');
-    if (q2 && q2.value === 'b') {
-        score++;
-        feedbackHTML += `<div class="feedback-item feedback-correct"><i class="fas fa-check-circle"></i> <span>Câu 2: Chính xác</span></div>`;
-    } else {
-        feedbackHTML += `<div class="feedback-item feedback-wrong"><i class="fas fa-times-circle"></i> <span>Câu 2: Sai. Đáp án đúng là: Thiết kế giao diện và kiểu dáng</span></div>`;
+    let lessons = [];
+    let currentLessonIndex = 0;
+    let currentLessonDetail = null;
+
+    try {
+        // Fetch course info (optional, just to get title)
+        const course = await window.getCourseById(courseId);
+        if (course) {
+            document.getElementById('sidebar-course-title').textContent = course.title.toUpperCase();
+        }
+
+        // Fetch lessons list
+        lessons = await window.getLessonsByCourse(courseId);
+        
+        if (lessons.length === 0) {
+            document.getElementById('sidebar-lesson-list').innerHTML = '<li style="padding: 20px; color: #a8b2d1; text-align: center;">Chưa có bài học nào.</li>';
+            document.getElementById('main-lesson-content').innerHTML = `
+                <div style="padding: 100px; text-align: center; color: #a8b2d1;">
+                    <h3>Khoá học này chưa có nội dung.</h3>
+                </div>`;
+            return;
+        }
+
+        // Init Sidebar
+        renderSidebar();
+
+        // Load first lesson
+        await loadLesson(0);
+
+    } catch (err) {
+        console.error('Lỗi load khóa học:', err);
+        document.getElementById('main-lesson-content').innerHTML = `<div style="padding: 50px; text-align: center; color: #ef4444;">Lỗi khi tải dữ liệu bài học.</div>`;
     }
 
-    feedbackHTML += '</div>';
+    function renderSidebar() {
+        const listContainer = document.getElementById('sidebar-lesson-list');
+        listContainer.innerHTML = '';
+        
+        document.getElementById('sidebar-progress-text').textContent = `Hoàn thành 0/${lessons.length} bài học (0%)`;
 
-    const percent = Math.round((score / 2) * 100);
+        lessons.forEach((lesson, index) => {
+            const li = document.createElement('li');
+            li.className = `lesson-item ${index === currentLessonIndex ? 'active' : ''}`;
+            li.innerHTML = `
+                <div class="lesson-icon"><i class="fas fa-play"></i></div>
+                <div class="lesson-info">
+                    <span class="lesson-name">${index + 1}. ${lesson.title}</span>
+                </div>
+            `;
+            li.addEventListener('click', () => loadLesson(index));
+            listContainer.appendChild(li);
+        });
+    }
 
-    resultDiv.style.display = 'block';
-    resultDiv.innerHTML = `
-        <div class="result-score">
-            <h2 class="result-percent">${percent}%</h2>
-            <p class="result-count">${score}/2 câu đúng</p>
-        </div>
-        ${feedbackHTML}
-        <p class="result-message">${percent === 100 ? '🎉 Xuất sắc! Bạn đã nắm vững bài học.' : 'Hãy ôn lại phần chưa nắm chắc nhé!'}</p>
-    `;
+    async function loadLesson(index) {
+        if (index < 0 || index >= lessons.length) return;
+        currentLessonIndex = index;
+        const lessonMeta = lessons[index];
 
-    // Cuộn xuống xem kết quả
-    resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+        // Update sidebar visual active state
+        document.querySelectorAll('.lesson-item').forEach((li, i) => {
+            li.classList.toggle('active', i === index);
+        });
 
-function resetQuiz() {
-    const quizResult = document.getElementById('quiz-result');
-    quizResult.style.display = 'none';
-    const radios = document.querySelectorAll('input[type="radio"]');
-    radios.forEach(radio => radio.checked = false);
-}
+        document.getElementById('topbar-lesson-title').textContent = lessonMeta.title.toUpperCase();
+        
+        const mainContent = document.getElementById('main-lesson-content');
+        mainContent.innerHTML = `<div style="padding: 50px; text-align: center; color: #a8b2d1;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải...</div>`;
+
+        try {
+            const lessonData = await window.getLessonById(lessonMeta.id);
+            if (!lessonData) throw new Error('Không có data');
+            currentLessonDetail = lessonData;
+            renderMainContent(lessonData);
+        } catch (e) {
+            console.error(e);
+            mainContent.innerHTML = `<div style="padding: 50px; text-align: center; color: #ef4444;">Lỗi tải chi tiết bài học.</div>`;
+        }
+    }
+
+    function renderMainContent(lesson) {
+        let videoHtml = '';
+        if (lesson.video_url) {
+            // Very simple YouTube embed extraction for demo purposes
+            let embedUrl = lesson.video_url;
+            if (embedUrl.includes('watch?v=')) {
+                embedUrl = embedUrl.replace('watch?v=', 'embed/');
+            }
+            videoHtml = `
+                <div class="video-wrapper">
+                    <iframe width="100%" height="500" src="${embedUrl}" frameborder="0" allowfullscreen style="border-radius: 12px;"></iframe>
+                </div>
+            `;
+        } else {
+            videoHtml = `
+                <div class="video-wrapper" style="display:flex;align-items:center;justify-content:center;background:#1e293b;height:300px;border-radius:12px;">
+                    <h3 style="color:#94a3b8;"><i class="fa-solid fa-book-open"></i> Bài học lý thuyết</h3>
+                </div>
+            `;
+        }
+
+        let theoryHtml = lesson.theory_md ? `<div class="lesson-body" style="white-space: pre-wrap; line-height: 1.6; color: #e2e8f0;">${lesson.theory_md}</div>` : '';
+
+        let quizHtml = '';
+        if (lesson.quizzes && lesson.quizzes.length > 0) {
+            let questionsHtml = lesson.quizzes.map((quiz, qIdx) => {
+                let optionsHtml = (quiz.options || []).map((opt, oIdx) => {
+                    return `
+                        <label style="display:block; margin: 8px 0; cursor:pointer;">
+                            <input type="radio" name="q${qIdx}" value="${opt.id}" data-correct="${opt.is_correct}"> 
+                            ${opt.option_text}
+                        </label>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="quiz-question" style="margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                        <p style="margin-bottom: 12px;"><strong>Câu ${qIdx + 1}: ${quiz.question_text}</strong></p>
+                        ${optionsHtml}
+                    </div>
+                `;
+            }).join('');
+
+            quizHtml = `
+                <div class="quiz-section">
+                    <h3 class="quiz-section-title">📝 Kiểm tra kiến thức</h3>
+                    ${questionsHtml}
+                    <div class="quiz-actions" style="margin-top: 20px;">
+                        <button id="btn-submit-quiz" class="btn-quiz btn-quiz-primary"><i class="fas fa-paper-plane"></i> Kiểm tra kết quả</button>
+                    </div>
+                    <div id="quiz-result" class="quiz-result-box" style="display:none; margin-top: 20px;"></div>
+                </div>
+            `;
+        }
+
+        const prevDisabled = currentLessonIndex === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
+        const nextDisabled = currentLessonIndex === lessons.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
+
+        document.getElementById('main-lesson-content').innerHTML = `
+            ${videoHtml}
+            <div class="lesson-detail">
+                <div class="lesson-detail-header">
+                    <h1 class="lesson-detail-title" style="margin: 20px 0;">${lesson.title}</h1>
+                </div>
+                ${theoryHtml}
+                ${quizHtml}
+            </div>
+            <div class="lesson-nav" style="margin-top: 40px; display:flex; justify-content:space-between;">
+                <button id="btn-prev-lesson" class="nav-btn nav-prev" ${prevDisabled}><i class="fas fa-chevron-left"></i> Bài trước</button>
+                <button id="btn-next-lesson" class="nav-btn nav-next" ${nextDisabled}>Bài tiếp theo <i class="fas fa-chevron-right"></i></button>
+            </div>
+        `;
+
+        if (lesson.quizzes && lesson.quizzes.length > 0) {
+            document.getElementById('btn-submit-quiz').addEventListener('click', () => submitDynamicQuiz(lesson.quizzes));
+        }
+
+        document.getElementById('btn-prev-lesson').addEventListener('click', () => loadLesson(currentLessonIndex - 1));
+        document.getElementById('btn-next-lesson').addEventListener('click', () => loadLesson(currentLessonIndex + 1));
+    }
+
+    function submitDynamicQuiz(quizzes) {
+        let score = 0;
+        let feedbackHTML = '<div class="feedback-list" style="margin-top:15px;">';
+
+        quizzes.forEach((quiz, qIdx) => {
+            const selected = document.querySelector(`input[name="q${qIdx}"]:checked`);
+            let isCorrect = false;
+            
+            if (selected) {
+                isCorrect = selected.getAttribute('data-correct') === '1' || selected.getAttribute('data-correct') === 'true';
+            }
+
+            if (isCorrect) {
+                score++;
+                feedbackHTML += `<div style="color:#22c55e; margin-bottom:10px;"><i class="fas fa-check-circle"></i> Câu ${qIdx + 1}: Chính xác</div>`;
+            } else {
+                const correctOpt = quiz.options.find(o => o.is_correct === 1 || o.is_correct === true);
+                const correctText = correctOpt ? correctOpt.option_text : 'Không xác định';
+                feedbackHTML += `<div style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-times-circle"></i> Câu ${qIdx + 1}: Sai. Đáp án đúng là: ${correctText}</div>`;
+            }
+        });
+
+        feedbackHTML += '</div>';
+        const percent = Math.round((score / quizzes.length) * 100);
+
+        const resultDiv = document.getElementById('quiz-result');
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = `
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
+                <div style="font-size:24px; font-weight:bold; color: ${percent === 100 ? '#22c55e' : '#eab308'};">${percent}% (${score}/${quizzes.length})</div>
+                ${feedbackHTML}
+            </div>
+        `;
+    }
+
+})();
 </script>
