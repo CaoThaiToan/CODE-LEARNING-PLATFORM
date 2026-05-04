@@ -77,6 +77,27 @@ a { text-decoration: none; transition: 0.3s; }
     transform: translateX(-50%) translateY(-2px) scale(1.1);
     color: #ffc107;
 }
+
+/* --- CHỮ KHÓA HỌC VIP TRÊN NAVBAR --- */
+.nav-links a.nav-vip-link {
+    color: #f97316 !important;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.3s;
+}
+
+.nav-links a.nav-vip-link i {
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.nav-links a.nav-vip-link:hover {
+    color: #ea580c !important;
+    transform: translateY(-1px);
+    text-shadow: 0 2px 8px rgba(249, 115, 22, 0.4);
+}
 /* -------------------------------------- */
 
 .nav-actions { display: flex; align-items: center; gap: 20px; }
@@ -191,6 +212,13 @@ a { text-decoration: none; transition: 0.3s; }
     white-space: nowrap;
 }
 .badge-purple { background: var(--primary); }
+
+.tag-vip-orange {
+    background: linear-gradient(135deg, #ff9800 0%, #f97316 100%) !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);
+    border: none;
+}
 
 .card-body { padding: 30px; }
 .card-body h3 { color: var(--dark); font-size: 1.2rem; margin-bottom: 12px; font-weight: 700; }
