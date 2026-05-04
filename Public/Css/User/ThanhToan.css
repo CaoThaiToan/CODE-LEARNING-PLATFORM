@@ -140,10 +140,20 @@ body {
     position: relative;
 }
 
-/* Checked State Styling */
-.payment-method input[type="radio"]:checked + .method-card.momo-active {
+/* Specific Active Colors per Method */
+.payment-method input[value="momo"]:checked + .method-card {
     border-color: var(--primary-pink);
-    background-color: #fff9fc;
+    background-color: #fdf2f8;
+}
+
+.payment-method input[value="vnpay"]:checked + .method-card {
+    border-color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+.payment-method input[value="card"]:checked + .method-card {
+    border-color: #8b5cf6;
+    background-color: #f5f3ff;
 }
 
 .payment-method input[type="radio"]:checked + .method-card .radio-custom {

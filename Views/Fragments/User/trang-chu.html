@@ -99,7 +99,7 @@
     function renderHomeCard(course, isEnrolled) {
         const isVip = course.price > 0;
         const badge = isVip 
-            ? `<span class="badge tag-vip-orange">VIP</span>`
+            ? `<span class="badge tag-vip-orange"><i class="fa-solid fa-crown"></i> VIP</span>`
             : `<span class="badge">MIỄN PHÍ</span>`;
         
         const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
