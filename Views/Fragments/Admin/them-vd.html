@@ -33,10 +33,25 @@
             </div>
 
             <div class="form-group">
-                <label>Link YouTube (URL)</label>
+                <label>Video bài giảng (Tải lên Cloudinary)</label>
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+                    <input type="file" id="videoFile" accept="video/*" class="input-full-padded" style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+                    <button type="button" id="btn-upload-video" class="btn-submit-form" style="width: auto; padding: 0 20px; height: 42px; margin: 0;">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Tải lên
+                    </button>
+                </div>
+                <!-- Chứa URL trả về từ Cloudinary -->
                 <div class="input-with-icon">
-                    <i class="fa-brands fa-youtube"></i>
-                    <input type="text" id="youtubeLink" placeholder="https://www.youtube.com/watch?v=...">
+                    <i class="fa-solid fa-link"></i>
+                    <input type="text" id="youtubeLink" placeholder="Đường dẫn video sẽ hiện ở đây sau khi tải lên..." readonly style="background: #f5f5f5; cursor: not-allowed;">
+                </div>
+                
+                <!-- Thanh tiến trình (Progress Bar) -->
+                <div id="upload-progress-container" style="display: none; margin-top: 10px;">
+                    <div style="width: 100%; background: #e0e0e0; border-radius: 4px; height: 10px; overflow: hidden;">
+                        <div id="upload-progress-bar" style="width: 0%; background: #7c3aed; height: 100%; transition: width 0.2s;"></div>
+                    </div>
+                    <span id="upload-progress-text" style="font-size: 12px; color: #666; font-weight: 600;">0%</span>
                 </div>
             </div>
 
@@ -206,6 +221,87 @@
             console.error(err);
             showToast('Lỗi khi tải dữ liệu bài học', true);
         }
+    }
+
+    // ── Xử lý Upload Video lên Cloudinary ─────────────────
+    const btnUpload = document.getElementById('btn-upload-video');
+    if (btnUpload) {
+        btnUpload.addEventListener('click', async () => {
+            const fileInput = document.getElementById('videoFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showToast('⚠️ Vui lòng chọn một file video trước!', true);
+                return;
+            }
+
+            // 1. Gọi API lấy chữ ký (Signature) từ Backend
+            btnUpload.disabled = true;
+            btnUpload.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+            
+            try {
+                const token = localStorage.getItem('token');
+                const sigRes = await fetch('http://localhost:3000/api/upload/video-signature', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const sigData = await sigRes.json();
+                
+                if (!sigData.success) throw new Error('Không thể kết nối Server Cloudinary');
+
+                // 2. Gửi trực tiếp lên Cloudinary
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('api_key', sigData.apiKey);
+                formData.append('timestamp', sigData.timestamp);
+                formData.append('signature', sigData.signature);
+                formData.append('folder', 'courses_videos');
+
+                const progressContainer = document.getElementById('upload-progress-container');
+                const progressBar = document.getElementById('upload-progress-bar');
+                const progressText = document.getElementById('upload-progress-text');
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://api.cloudinary.com/v1_1/${sigData.cloudName}/video/upload`, true);
+
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        progressBar.style.width = percent + '%';
+                        progressText.textContent = percent + '%';
+                    }
+                };
+
+                xhr.onload = () => {
+                    btnUpload.disabled = false;
+                    btnUpload.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Tải lên';
+                    
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        document.getElementById('youtubeLink').value = response.secure_url;
+                        showToast('✅ Upload video lên Cloudinary thành công!');
+                    } else {
+                        showToast('❌ Lỗi upload: ' + xhr.responseText, true);
+                    }
+                };
+
+                xhr.onerror = () => {
+                    btnUpload.disabled = false;
+                    btnUpload.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Tải lên';
+                    showToast('❌ Lỗi kết nối mạng khi tải video!', true);
+                };
+
+                xhr.send(formData);
+                
+            } catch (err) {
+                console.error(err);
+                btnUpload.disabled = false;
+                btnUpload.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Tải lên';
+                showToast('❌ ' + err.message, true);
+            }
+        });
     }
 
     // ── Lưu bài học ──────────────────────────────────────

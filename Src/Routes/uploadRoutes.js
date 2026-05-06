@@ -4,6 +4,7 @@ const multer  = require('multer');
 const path    = require('path');
 const fs      = require('fs');
 const { verifyToken, requireAdmin } = require('../Middleware/authMiddleware');
+const cloudinary = require('../Utils/cloudinary');
 
 // ── Multer Storage Configuration ──────────────────────────
 const storage = multer.diskStorage({
@@ -54,6 +55,30 @@ router.post('/image', verifyToken, requireAdmin, upload.single('image'), (req, r
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+// GET /api/upload/video-signature - API cấp chữ ký để up trực tiếp lên Cloudinary
+router.get('/video-signature', verifyToken, requireAdmin, (req, res) => {
+    try {
+        const timestamp = Math.round((new Date).getTime() / 1000);
+        
+        // Tạo chữ ký (signature) cho upload
+        const signature = cloudinary.utils.api_sign_request({
+            timestamp: timestamp,
+            folder: 'courses_videos' // Video sẽ được lưu vào thư mục này trên Cloudinary
+        }, process.env.CLOUDINARY_API_SECRET);
+
+        res.status(200).json({
+            success: true,
+            signature: signature,
+            timestamp: timestamp,
+            cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+            apiKey: process.env.CLOUDINARY_API_KEY
+        });
+    } catch (error) {
+        console.error('Lỗi tạo signature:', error);
+        res.status(500).json({ success: false, message: 'Lỗi server khi tạo chữ ký upload.' });
     }
 });
 
