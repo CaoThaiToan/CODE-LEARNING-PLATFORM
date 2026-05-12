@@ -81,7 +81,7 @@ const apiFetch = async (endpoint, options = {}) => {
 document.addEventListener('DOMContentLoaded', () => {
     const contentArea  = document.getElementById('dynamic-content');
     const authButtons  = document.getElementById('auth-buttons');
-    const isAdminPage  = window.location.pathname.includes('admin.html');
+    const isAdminPage  = window.location.pathname.startsWith('/admin');
 
     // Restore session from localStorage
     const saved = localStorage.getItem('currentUser');
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!authButtons) return;
         if (currentUser) {
             const adminBadge = (currentUser.role_id === 1 || currentUser.role === 'Admin')
-                ? `<a href="admin.html" class="btn-admin" title="Trang Admin">⚙️ Admin</a>`
+                ? `<a href="/admin" class="btn-admin" title="Trang Admin">⚙️ Admin</a>`
                 : '';
             const displayName = currentUser.full_name || currentUser.username || 'User';
             authButtons.innerHTML = `
@@ -114,8 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button onclick="logout()" style="background:var(--primary, #6d28d9);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-weight:600;cursor:pointer;transition:0.2s;" onmouseover="this.style.background='var(--primary-hover, #5b21b6)'" onmouseout="this.style.background='var(--primary, #6d28d9)'">Đăng xuất</button>`;
         } else {
             authButtons.innerHTML = `
-                <a href="login-register.html" class="btn-login">Đăng nhập</a>
-                <a href="login-register.html" class="btn-register">Đăng ký</a>`;
+                <a href="/login" class="btn-login">Đăng nhập</a>
+                <a href="/login" class="btn-register">Đăng ký</a>`;
         }
     }
 
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 try { apiFetch('/auth/logout', { method: 'POST' }); } catch (_) {}
                 currentUser = null;
                 clearAuth();
-                window.location.replace('login-register.html');
+                window.location.replace('/login');
             }
         });
     };
@@ -152,9 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderNavbar();
 
         if (data.user.role === 'admin') {
-            window.location.href = 'admin.html';
+            window.location.href = '/admin';
         } else {
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
         return { success: true };
     };
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = data.user;
         saveAuth(data.token, data.user);
         renderNavbar();
-        window.location.href = 'index.html';
+        window.location.href = '/';
         return { success: true };
     };
 
@@ -290,10 +290,9 @@ document.addEventListener('DOMContentLoaded', () => {
         contentArea.innerHTML = `<div style="padding:120px;text-align:center;color:#7c3aed;font-size:18px;">Đang tải...</div>`;
 
         try {
-            const isAdmin  = window.location.pathname.includes('admin.html');
+            const isAdmin  = window.location.pathname.startsWith('/admin');
             const folder   = isAdmin ? 'Admin' : 'User';
-            const baseUrl  = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-            const fileUrl  = `${baseUrl}/Views/Fragments/${folder}/${page}`;
+            const fileUrl  = `/views/Fragments/${folder}/${page}`;
 
             // 1. Cập nhật trạng thái active cho menu bên trái (Sidebar)
             if (isAdmin) {

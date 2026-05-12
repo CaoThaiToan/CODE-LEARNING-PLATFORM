@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Elearning PLATFORM - Access System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="LoginRegister.css">
+    <link rel="stylesheet" href="/Public/Css/login-register.css">
 </head>
 
 <body class="light-off">
@@ -58,7 +58,7 @@
             <div class="glass-card">
                 <div class="card-header">
                     <div class="logo">
-                        <img src="../../public/images/logo_PLATFORM.png" alt="Logo PLATFORM" class="brand-logo-img">
+                        <img src="/Public/images/logo_PLATFORM.png" alt="Logo PLATFORM" class="brand-logo-img">
                         <span class="brand-name">Code Elearning PLATFORM</span>
                     </div>
                     <p id="form-title">Decrypting Knowledge</p>
@@ -136,7 +136,7 @@
                 try {
                     const user = JSON.parse(userStr);
                     // Nếu đã đăng nhập, thay thế URL hiện tại bằng trang dashboard
-                    window.location.replace(user.role_id === 1 ? 'admin.html' : 'index.html');
+                    window.location.replace(user.role_id === 1 ? '/admin' : '/');
                 } catch (e) { }
             }
         })();
@@ -208,7 +208,7 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('currentUser', JSON.stringify(data.user));
                     // Sử dụng replace để xóa trang đăng nhập khỏi lịch sử Back của trình duyệt
-                    window.location.replace(data.user.role_id === 1 ? 'admin.html' : 'index.html');
+                    window.location.replace(data.user.role_id === 1 ? '/admin' : '/');
                 }
             } catch {
                 errEl.textContent = 'Không kết nối được server. Vui lòng thử lại.';

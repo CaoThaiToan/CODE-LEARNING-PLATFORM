@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // ── Serve static files ────────────────────────────────────
 app.use('/Public', express.static(path.join(__dirname, '..', 'Public')));
-app.use(express.static(path.join(__dirname, '..', 'Public'))); // Giữ cả root để hỗ trợ link trực tiếp index.html
+app.use(express.static(path.join(__dirname, '..', 'Public')));
 app.use('/views', express.static(path.join(__dirname, '..', 'Views')));
 
 // ── API Routes ────────────────────────────────────────────
@@ -34,10 +34,15 @@ app.use('/api/users', userRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/orders', orderRoutes);
 
-// ── Serve index.html for all non-API GET requests ─────────
-app.get(/^(?!\/api).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
+// ── View Routes (MVC) ─────────────────────────────────────
+const viewsDir = path.join(__dirname, '..', 'Views');
+
+app.get('/',                    (req, res) => res.sendFile(path.join(viewsDir, 'index.html')));
+app.get('/index.html',          (req, res) => res.sendFile(path.join(viewsDir, 'index.html')));
+app.get('/login',               (req, res) => res.sendFile(path.join(viewsDir, 'login-register.html')));
+app.get('/login-register.html', (req, res) => res.sendFile(path.join(viewsDir, 'login-register.html')));
+app.get('/admin',               (req, res) => res.sendFile(path.join(viewsDir, 'admin.html')));
+app.get('/admin.html',          (req, res) => res.sendFile(path.join(viewsDir, 'admin.html')));
 
 // ── Global Error Handler ──────────────────────────────────
 app.use((err, req, res, _next) => {

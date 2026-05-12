@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -6,10 +6,10 @@
     <title>Admin - CODE E-LEARNING PLATFORM</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="Public/Css/Admin/AdminDS.css">
-    <link rel="stylesheet" href="Public/Css/Admin/AdminQLND.css">
-    <link rel="stylesheet" href="Public/Css/Admin/AdminThemKH.css">
-    <link rel="stylesheet" href="Public/Css/Admin/AdminThemVD.css">
+    <link rel="stylesheet" href="/Public/Css/Admin/AdminDS.css">
+    <link rel="stylesheet" href="/Public/Css/Admin/AdminQLND.css">
+    <link rel="stylesheet" href="/Public/Css/Admin/AdminThemKH.css">
+    <link rel="stylesheet" href="/Public/Css/Admin/AdminThemVD.css">
 
     <script>
         /* === ADMIN GUARD - Chạy ngay lập tức, trước khi render trang === */
@@ -19,7 +19,7 @@
 
             if (!raw || !token) {
                 // Chưa đăng nhập → về trang đăng nhập
-                window.location.replace('login-register.html');
+                window.location.replace('/login');
                 return;
             }
 
@@ -27,7 +27,7 @@
 
             // role_id !== 1 → không phải Admin → về trang user
             if (user.role_id !== 1) {
-                window.location.replace('index.html');
+                window.location.replace('/');
             }
         })();
     </script>
@@ -36,7 +36,7 @@
     <!-- HEADER DYNAMIC -->
     <div class="admin-header">
         <div class="brand-logo">
-            <img src="Public/images/logo_PLATFORM.png" alt="Logo" class="logo-img">
+            <img src="/Public/images/logo_PLATFORM.png" alt="Logo" class="logo-img">
             <div class="brand-text">
                 <span class="t-purple">CODE E-LEARNING</span>
                 <span class="t-black">PLATFORM</span>
@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <script src="Public/JS/main.js"></script>
+    <script src="/Public/JS/main.js"></script>
     <script>
         /* === KHỞI TẠO HEADER ADMIN === */
         (function () {
@@ -113,14 +113,14 @@
                                 try { await fetch('http://localhost:3000/api/auth/logout', { method: 'POST' }); } catch {}
                                 localStorage.removeItem('token');
                                 localStorage.removeItem('currentUser');
-                                window.location.replace('login-register.html');
+                                window.location.replace('/login');
                             }
                         });
                     } else {
                         if (!confirm('Bạn có chắc chắn muốn đăng xuất?')) return;
                         localStorage.removeItem('token');
                         localStorage.removeItem('currentUser');
-                        window.location.replace('login-register.html');
+                        window.location.replace('/login');
                     }
                 });
             }
