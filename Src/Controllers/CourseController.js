@@ -3,7 +3,9 @@ const db = require('../Config/db');
 // ── GET /api/courses ──────────────────────────────────────
 const getAllCourses = async (req, res) => {
     try {
-        const { status } = req.query; // ?status=published | ?status=draft
+        const { status, q } = req.query;
+        console.log(`[API] getAllCourses - status: ${status}, q: "${q}"`); // Log để debug
+
         let query = `
             SELECT c.id, c.title, c.description, c.thumbnail_url, c.price, c.status, c.level, c.created_at,
                    u.username AS author_username, u.full_name AS author_name
@@ -11,16 +13,30 @@ const getAllCourses = async (req, res) => {
             LEFT JOIN users u ON u.id = c.author_id
         `;
         const params = [];
+        const conditions = [];
+
         if (status) {
-            query += ' WHERE c.status = ?';
+            conditions.push('c.status = ?');
             params.push(status);
         }
+
+        // Đảm bảo q có giá trị và không chỉ là khoảng trắng
+        if (q && q.trim() !== '') {
+            conditions.push('c.title LIKE ?');
+            params.push(`%${q.trim()}%`);
+        }
+
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+        }
+
         query += ' ORDER BY c.created_at DESC';
 
         const [rows] = await db.query(query, params);
+        console.log(`[API] Found ${rows.length} courses`);
         return res.json({ success: true, data: rows });
     } catch (err) {
-        console.error('[getAllCourses]', err);
+        console.error('[getAllCourses Error]', err);
         return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
     }
 };

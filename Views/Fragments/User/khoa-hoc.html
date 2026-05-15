@@ -30,6 +30,7 @@
 (async function initUserCourses() {
     const grid = document.getElementById('user-courses-grid');
     const tabs = document.querySelectorAll('.filter-tabs .tab');
+    let currentFilter = 'all';
 
     function renderCard(course) {
         const levelMap = {
@@ -41,10 +42,7 @@
         const levelLabel = course.level ? (levelMap[course.level] || course.level) : null;
         const thumb = course.thumbnail_url || './Public/images/img_TrangChu.png';
 
-        // Badge MIỄN PHÍ - dùng inline style hoàn toàn, không dùng class badge để tránh position:absolute của CSS
         const freeBadge = `<span class="tag-free">MIỄN PHÍ</span>`;
-
-        // Badge mức độ - chỉ hiển thị với khóa học miễn phí có level
         const levelBadge = levelLabel
             ? `<span class="tag-level-purple">${levelLabel.toUpperCase()}</span>`
             : '';
@@ -68,24 +66,51 @@
         </div>`;
     }
 
-    try {
-        // CHỈ lấy khóa học đã xuất bản và miễn phí (price = 0). VIP chỉ hiển thị ở khoa-hoc-vip.html
-        const allFetchedCourses = await window.loadCourses('published');
-        const allCourses = allFetchedCourses.filter(c => !c.price || Number(c.price) === 0);
+    async function fetchAndRender(filter, searchQuery = '') {
+        try {
+            console.log(`[khoa-hoc.html] fetchAndRender: filter=${filter}, searchQuery="${searchQuery}"`);
+            grid.innerHTML = `<div class="user-loading grid-col-all"><i class="fa-solid fa-spinner fa-spin"></i> Đang tìm kiếm...</div>`;
+            
+            // Lấy khóa học từ server (kèm search query)
+            const allFetchedCourses = await window.loadCourses('published', searchQuery);
+            console.log(`[khoa-hoc.html] API returned ${allFetchedCourses.length} courses`);
+            
+            // Lọc khóa học miễn phí (khoa-hoc.html chỉ hiện khóa học FREE)
+            const freeCourses = allFetchedCourses.filter(c => !c.price || Number(c.price) === 0);
+            const vipCount = allFetchedCourses.length - freeCourses.length;
 
-        const renderGrid = (filter) => {
-            let filtered = allCourses;
+            let filtered = freeCourses;
             if (filter !== 'all') {
-                filtered = allCourses.filter(c => c.level === filter);
+                filtered = freeCourses.filter(c => c.level === filter);
             }
 
             if (!filtered || filtered.length === 0) {
-                grid.innerHTML = '<div class="user-empty-state grid-col-all text-center-padded">Không có khóa học nào ở mức độ này.</div>';
+                let emptyMsg = searchQuery 
+                    ? `Không tìm thấy khóa học miễn phí nào khớp với "${searchQuery}"` 
+                    : 'Không có khóa học nào ở mức độ này.';
+                
+                // Nếu tìm thấy khóa học VIP nhưng không thấy khóa học free
+                if (searchQuery && vipCount > 0 && freeCourses.length === 0) {
+                    emptyMsg += `<br><p style="font-size:14px; margin-top:10px; color:#64748b;">
+                        Tìm thấy ${vipCount} khóa học VIP khớp với từ khóa. 
+                        Bạn có thể xem tại trang <a href="#" data-page="khoa-hoc-vip.html" style="color:#7c3aed; font-weight:700;">Khóa học VIP <i class="fa-solid fa-crown"></i></a>
+                    </p>`;
+                }
+
+                grid.innerHTML = `<div class="user-empty-state grid-col-all text-center-padded">${emptyMsg}</div>`;
+                
+                // Re-attach link inside empty message
+                grid.querySelectorAll('[data-page]').forEach(link => {
+                    link.addEventListener('click', e => {
+                        e.preventDefault();
+                        window.loadPage(link.getAttribute('data-page'));
+                    });
+                });
                 return;
             }
+            
             grid.innerHTML = filtered.map(renderCard).join('');
 
-            // Gắn sự kiện xem chi tiết
             grid.querySelectorAll('.btn-detail').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -93,22 +118,39 @@
                     window.loadPage('chi-tiet-kh.html');
                 });
             });
-        };
-
-        renderGrid('all');
-
-        // Tab filter events
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                renderGrid(tab.getAttribute('data-filter'));
-            });
-        });
-
-    } catch (err) {
-        console.error(err);
-        grid.innerHTML = '<div class="user-error-box-full">Lỗi khi tải khóa học.</div>';
+        } catch (err) {
+            console.error('[khoa-hoc.html] fetchAndRender error:', err);
+            grid.innerHTML = '<div class="user-error-box-full">Lỗi khi tải khóa học.</div>';
+        }
     }
+
+    // Khởi tạo lần đầu (sử dụng searchQuery nếu có)
+    await fetchAndRender(currentFilter, window.searchQuery);
+
+    // Lắng nghe sự kiện search từ navbar
+    const searchHandler = (e) => {
+        fetchAndRender(currentFilter, e.detail);
+    };
+    window.addEventListener('courseSearch', searchHandler);
+
+    // Xử lý khi tab thay đổi
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.getAttribute('data-filter');
+            fetchAndRender(currentFilter, window.searchQuery);
+        });
+    });
+
+    // Quan trọng: Gỡ bỏ event listener khi fragment bị gỡ bỏ để tránh memory leak/duplicate calls
+    // Tuy nhiên trong hệ thống SPA đơn giản này, ta có thể kiểm tra window.currentPage
+    const cleanupInterval = setInterval(() => {
+        if (window.currentPage !== 'khoa-hoc.html') {
+            window.removeEventListener('courseSearch', searchHandler);
+            clearInterval(cleanupInterval);
+        }
+    }, 1000);
+
 })();
 </script>
