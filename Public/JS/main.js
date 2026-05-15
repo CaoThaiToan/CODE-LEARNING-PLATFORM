@@ -3,6 +3,8 @@ const API_BASE = 'http://localhost:3000/api';
 
 // ── State ─────────────────────────────────────────────────
 let currentUser = null;
+window.currentPage = '';
+window.searchQuery = '';
 
 // ── Global Confirm Dialog ─────────────────────────────────
 window.showConfirmDialog = ({ title = 'Xác nhận', message = 'Bạn có chắc chắn không?', icon = 'fa-circle-exclamation', confirmText = 'Xác nhận', cancelText = 'Hủy', onConfirm }) => {
@@ -85,17 +87,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Restore session from localStorage
     const saved = localStorage.getItem('currentUser');
-    if (saved) currentUser = JSON.parse(saved);
+    if (saved) {
+        try {
+            currentUser = JSON.parse(saved);
+        } catch (e) {
+            console.error('Lỗi parse currentUser từ localStorage:', e);
+            localStorage.removeItem('currentUser');
+        }
+    }
 
     if (authButtons) renderNavbar();
+    initSearch();
 
+    // Call loadPage after all variables and functions are fully initialized
     const defaultPage = isAdminPage ? 'danh-sach-kh.html' : 'trang-chu.html';
-    loadPage(defaultPage);
 
     // Static nav/footer links
     document.querySelectorAll('.nav-item[data-page], .footer-col a[data-page]').forEach(link => {
         link.addEventListener('click', e => {
             e.preventDefault();
+            
+            // Clear search when navigating via main menu
+            const searchInput = document.querySelector('.search-box input');
+            if (searchInput) {
+                searchInput.value = '';
+                window.searchQuery = '';
+            }
+
             loadPage(link.getAttribute('data-page'));
         });
     });
@@ -187,9 +205,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ── Load Courses ──────────────────────────────────────
-    window.loadCourses = async (status) => {
-        const query = status ? `?status=${status}` : '';
-        const data  = await apiFetch(`/courses${query}`);
+    window.loadCourses = async (status, searchQ) => {
+        let queryParams = [];
+        if (status) queryParams.push(`status=${status}`);
+        if (searchQ) queryParams.push(`q=${encodeURIComponent(searchQ)}`);
+        
+        const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+        const data = await apiFetch(`/courses${queryString}`);
         return data.success ? data.data : [];
     };
 
@@ -285,14 +307,18 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ── Load Page (Fragment system) ───────────────────────
+    let isNavigating = false;
     async function loadPage(page) {
-        if (!contentArea) return;
+        if (!contentArea || isNavigating) return;
+        isNavigating = true;
+        window.currentPage = page;
+        console.log(`[main.js] Loading page: ${page}, searchQuery: "${window.searchQuery}"`);
         contentArea.innerHTML = `<div style="padding:120px;text-align:center;color:#7c3aed;font-size:18px;">Đang tải...</div>`;
 
         try {
             const isAdmin  = window.location.pathname.startsWith('/admin');
             const folder   = isAdmin ? 'Admin' : 'User';
-            const fileUrl  = `/views/Fragments/${folder}/${page}`;
+            const fileUrl  = `/views/Fragments/${folder}/${page}?t=${Date.now()}`; // Add timestamp to prevent caching
 
             // 1. Cập nhật trạng thái active cho menu bên trái (Sidebar)
             if (isAdmin) {
@@ -343,14 +369,49 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`✅ Loaded: ${page}`);
         } catch (e) {
             console.error('❌ Load page error:', e);
+            alert(`Lỗi tải trang: ${e.message}\nVui lòng kiểm tra Console (F12) để biết chi tiết.`);
             contentArea.innerHTML = `
-                <div style="padding:100px;color:#ef4444;text-align:center;">
-                    <h3>❌ Không load được trang</h3>
-                    <p><strong>${e.message}</strong></p>
+                <div style="padding:100px; background-color:#fef2f2; color:#ef4444; text-align:center; border: 2px solid #ef4444; border-radius: 8px; margin: 20px;">
+                    <h3 style="font-size: 24px; margin-bottom: 10px;">❌ Không load được trang (${page})</h3>
+                    <p style="font-size: 18px;"><strong>Lý do: ${e.message}</strong></p>
+                    <p style="margin-top: 15px; color: #666;">URL: ${fileUrl}</p>
                 </div>`;
+        } finally {
+            isNavigating = false;
         }
     }
 
     // Expose loadPage globally so fragments can call it
     window.loadPage = loadPage;
+
+    // ── Search Logic ──────────────────────────────────────
+    function initSearch() {
+        const searchInput = document.querySelector('.search-box input');
+        if (!searchInput) {
+            console.warn('[main.js] Search input not found!');
+            return;
+        }
+
+        let debounceTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            const query = e.target.value; // Giữ nguyên để lấy space nếu cần, trim sau
+            window.searchQuery = query.trim();
+            
+            console.log(`[main.js] Search input raw: "${query}"`);
+
+            debounceTimer = setTimeout(() => {
+                if (window.currentPage !== 'khoa-hoc.html') {
+                    console.log('[main.js] Redirecting to khoa-hoc.html');
+                    loadPage('khoa-hoc.html');
+                } else {
+                    console.log('[main.js] Already on page, triggering update');
+                    window.dispatchEvent(new CustomEvent('courseSearch', { detail: window.searchQuery }));
+                }
+            }, 350);
+        });
+    }
+
+    // Trigger initial page load
+    loadPage(defaultPage);
 });
