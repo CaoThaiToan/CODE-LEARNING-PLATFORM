@@ -1,56 +1,33 @@
-const db = require('../Config/db');
+const CourseModel = require('../Models/CourseModel');
 
-// ── GET /api/courses ──────────────────────────────────────
+// GET /api/courses
 const getAllCourses = async (req, res) => {
     try {
         const { status, q } = req.query;
-        console.log(`[API] getAllCourses - status: ${status}, q: "${q}"`); // Log để debug
-
-        let query = `
-            SELECT c.id, c.title, c.description, c.thumbnail_url, c.price, c.status, c.level, c.created_at,
-                   u.username AS author_username, u.full_name AS author_name
-            FROM courses c
-            LEFT JOIN users u ON u.id = c.author_id
-        `;
-        const params = [];
         const conditions = [];
+        const params = [];
 
         if (status) {
             conditions.push('c.status = ?');
             params.push(status);
         }
-
-        // Đảm bảo q có giá trị và không chỉ là khoảng trắng
         if (q && q.trim() !== '') {
             conditions.push('c.title LIKE ?');
             params.push(`%${q.trim()}%`);
         }
 
-        if (conditions.length > 0) {
-            query += ' WHERE ' + conditions.join(' AND ');
-        }
-
-        query += ' ORDER BY c.created_at DESC';
-
-        const [rows] = await db.query(query, params);
-        console.log(`[API] Found ${rows.length} courses`);
+        const [rows] = await CourseModel.findAll(conditions, params);
         return res.json({ success: true, data: rows });
     } catch (err) {
-        console.error('[getAllCourses Error]', err);
+        console.error('[getAllCourses]', err);
         return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
     }
 };
 
-// ── GET /api/courses/:id ──────────────────────────────────
+// GET /api/courses/:id
 const getCourseById = async (req, res) => {
     try {
-        const [rows] = await db.query(
-            `SELECT c.*, u.username AS author_username, u.full_name AS author_name,
-                    (SELECT COUNT(*) FROM enrollments e WHERE e.course_id = c.id) AS student_count
-             FROM courses c LEFT JOIN users u ON u.id = c.author_id
-             WHERE c.id = ?`,
-            [req.params.id]
-        );
+        const [rows] = await CourseModel.findById(req.params.id);
         if (rows.length === 0) {
             return res.status(404).json({ success: false, message: 'Khóa học không tồn tại.' });
         }
@@ -61,32 +38,19 @@ const getCourseById = async (req, res) => {
     }
 };
 
-// ── POST /api/courses  [Admin only] ──────────────────────
+// POST /api/courses  [Admin only]
 const createCourse = async (req, res) => {
     try {
-        const { title, description, thumbnail_url, price, status, level } = req.body;
-
+        const { title } = req.body;
         if (!title) {
             return res.status(400).json({ success: false, message: 'Tên khóa học không được để trống.' });
         }
 
-        const [result] = await db.query(
-            'INSERT INTO courses (author_id, title, description, thumbnail_url, price, status, level) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [
-                req.user.id,
-                title,
-                description || null,
-                thumbnail_url || null,
-                price || 0,
-                status || 'draft',
-                level || null
-            ]
-        );
-
+        const [result] = await CourseModel.create(req.user.id, req.body);
         return res.status(201).json({
             success: true,
             message: 'Tạo khóa học thành công!',
-            data: { id: result.insertId, title, status: status || 'draft' }
+            data: { id: result.insertId, title, status: req.body.status || 'draft' }
         });
     } catch (err) {
         console.error('[createCourse]', err);
@@ -94,14 +58,10 @@ const createCourse = async (req, res) => {
     }
 };
 
-// ── PUT /api/courses/:id  [Admin only] ───────────────────
+// PUT /api/courses/:id  [Admin only]
 const updateCourse = async (req, res) => {
     try {
-        const { title, description, thumbnail_url, price, status, level } = req.body;
-        const [result] = await db.query(
-            'UPDATE courses SET title=?, description=?, thumbnail_url=?, price=?, status=?, level=? WHERE id=?',
-            [title, description, thumbnail_url || null, price, status, level || null, req.params.id]
-        );
+        const [result] = await CourseModel.update(req.params.id, req.body);
         if (result.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'Khóa học không tồn tại.' });
         }
@@ -112,10 +72,10 @@ const updateCourse = async (req, res) => {
     }
 };
 
-// ── DELETE /api/courses/:id  [Admin only] ────────────────
+// DELETE /api/courses/:id  [Admin only]
 const deleteCourse = async (req, res) => {
     try {
-        const [result] = await db.query('DELETE FROM courses WHERE id = ?', [req.params.id]);
+        const [result] = await CourseModel.remove(req.params.id);
         if (result.affectedRows === 0) {
             return res.status(404).json({ success: false, message: 'Khóa học không tồn tại.' });
         }
