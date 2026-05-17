@@ -9,6 +9,7 @@ const lessonRoutes = require('./Routes/lessonRoutes');
 const userRoutes   = require('./Routes/userRoutes');
 const uploadRoutes = require('./Routes/uploadRoutes');
 const orderRoutes  = require('./Routes/orderRoutes');
+const quizRoutes   = require('./Routes/quizRoutes');
 
 // ── View Routes (serve HTML pages) ───────────────────────
 const viewRoutes = require('./Routes/viewRoutes');
@@ -38,6 +39,7 @@ app.use('/api/lessons', lessonRoutes);
 app.use('/api/users',   userRoutes);
 app.use('/api/upload',  uploadRoutes);
 app.use('/api/orders',  orderRoutes);
+app.use('/api/quizzes', quizRoutes);
 
 // ── View Routes ───────────────────────────────────────────
 app.use('/', viewRoutes);

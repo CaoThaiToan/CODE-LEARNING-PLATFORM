@@ -62,8 +62,18 @@
             <div id="quizContainer"></div>
 
             <button type="button" onclick="addQuestionField()" class="btn-submit-form btn-secondary-gray">
-                + Thêm câu hỏi mới
+                <i class="fa-solid fa-plus"></i> Thêm câu hỏi mới
             </button>
+
+            <div id="csv-upload-section" style="margin-top: 10px;">
+                <input type="file" id="quizCsvFile" accept=".csv" style="display: none;">
+                <button type="button" id="btn-trigger-csv" class="btn-submit-form" style="background: #0ea5e9;">
+                    <i class="fa-solid fa-file-csv"></i> Nhập nhanh từ file CSV
+                </button>
+                <p style="font-size: 12px; color: #666; margin-top: 5px;">
+                    * Tự động điền câu hỏi từ file CSV vào form bên dưới.
+                </p>
+            </div>
 
             <button type="button" id="btn-save-lesson" class="btn-submit-form">
                 <i class="fa-solid fa-cloud-upload"></i> <span id="btn-save-text">LƯU BÀI HỌC</span>
@@ -301,6 +311,76 @@
                 btnUpload.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Tải lên';
                 showToast('❌ ' + err.message, true);
             }
+        });
+    }
+
+    // ── Xử lý CSV Import (Frontend Parsing) ───────────────
+    const btnTrigger = document.getElementById('btn-trigger-csv');
+    const csvInput   = document.getElementById('quizCsvFile');
+
+    if (btnTrigger) {
+        btnTrigger.addEventListener('click', () => csvInput.click());
+
+        csvInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const text = event.target.result;
+                    const lines = text.split(/\r?\n/);
+                    if (lines.length < 2) return;
+
+                    // Hàm parse CSV đơn giản xử lý dấu phẩy trong ngoặc kép
+                    function parseCSVLine(line) {
+                        const result = [];
+                        let cur = '';
+                        let inQuote = false;
+                        for (let i = 0; i < line.length; i++) {
+                            const char = line[i];
+                            if (char === '"') inQuote = !inQuote;
+                            else if (char === ',' && !inQuote) {
+                                result.push(cur.trim());
+                                cur = '';
+                            } else cur += char;
+                        }
+                        result.push(cur.trim());
+                        return result;
+                    }
+
+                    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+                    let count = 0;
+
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        const values = parseCSVLine(lines[i]);
+                        
+                        // Map values to object
+                        const row = {};
+                        headers.forEach((h, idx) => row[h] = values[idx]);
+
+                        if (row.question) {
+                            const opts = [
+                                row.option_a || '',
+                                row.option_b || '',
+                                row.option_c || '',
+                                row.option_d || ''
+                            ];
+                            window.addQuestionField(row.question, opts, (row.answer || 'A').toUpperCase());
+                            count++;
+                        }
+                    }
+
+                    showToast(`✅ Đã nhập thành công ${count} câu hỏi vào form!`);
+                } catch (err) {
+                    console.error(err);
+                    showToast('❌ Lỗi định dạng file CSV!', true);
+                } finally {
+                    csvInput.value = '';
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
         });
     }
 
