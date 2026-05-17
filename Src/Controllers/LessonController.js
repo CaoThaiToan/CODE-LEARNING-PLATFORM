@@ -26,8 +26,13 @@ const getLessonById = async (req, res) => {
         const lesson = lessonRows[0];
 
         const [quizzes] = await LessonModel.findQuizzesByLesson(lesson.id);
+        const isAdmin   = req.user && req.user.role_id === 1;
+
         for (const quiz of quizzes) {
             const [options] = await LessonModel.findOptionsByQuiz(quiz.id);
+            if (!isAdmin) {
+                options.forEach(opt => delete opt.is_correct);
+            }
             quiz.options = options;
         }
         lesson.quizzes = quizzes;

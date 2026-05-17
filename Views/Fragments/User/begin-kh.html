@@ -212,39 +212,82 @@
         document.getElementById('btn-next-lesson').addEventListener('click', () => loadLesson(currentLessonIndex + 1));
     }
 
-    function submitDynamicQuiz(quizzes) {
-        let score = 0;
-        let feedbackHTML = '<div class="feedback-list" style="margin-top:15px;">';
-
+    async function submitDynamicQuiz(quizzes) {
+        const answers = [];
         quizzes.forEach((quiz, qIdx) => {
             const selected = document.querySelector(`input[name="q${qIdx}"]:checked`);
-            let isCorrect = false;
-            
             if (selected) {
-                isCorrect = selected.getAttribute('data-correct') === '1' || selected.getAttribute('data-correct') === 'true';
-            }
-
-            if (isCorrect) {
-                score++;
-                feedbackHTML += `<div style="color:#22c55e; margin-bottom:10px;"><i class="fas fa-check-circle"></i> Câu ${qIdx + 1}: Chính xác</div>`;
-            } else {
-                const correctOpt = quiz.options.find(o => o.is_correct === 1 || o.is_correct === true);
-                const correctText = correctOpt ? correctOpt.option_text : 'Không xác định';
-                feedbackHTML += `<div style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-times-circle"></i> Câu ${qIdx + 1}: Sai. Đáp án đúng là: ${correctText}</div>`;
+                answers.push({
+                    quiz_id: quiz.id,
+                    selected_option_id: parseInt(selected.value)
+                });
             }
         });
 
-        feedbackHTML += '</div>';
-        const percent = Math.round((score / quizzes.length) * 100);
+        if (answers.length < quizzes.length) {
+            if (!confirm('Bạn chưa trả lời hết các câu hỏi. Vẫn muốn nộp bài?')) return;
+        }
 
+        const btn = document.getElementById('btn-submit-quiz');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chấm điểm...';
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:3000/api/quizzes/submit', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ lesson_id: currentLessonDetail.id, answers })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                renderQuizResults(data, quizzes);
+            } else {
+                alert('Lỗi: ' + data.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Lỗi kết nối khi chấm điểm.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kiểm tra kết quả';
+        }
+    }
+
+    function renderQuizResults(data, quizzes) {
         const resultDiv = document.getElementById('quiz-result');
         resultDiv.style.display = 'block';
+        
+        let feedbackHTML = '<div class="feedback-list" style="margin-top:15px;">';
+        
+        quizzes.forEach((quiz, qIdx) => {
+            const res = data.results.find(r => r.quiz_id === quiz.id);
+            if (res && res.is_correct) {
+                feedbackHTML += `<div style="color:#22c55e; margin-bottom:10px;"><i class="fas fa-check-circle"></i> Câu ${qIdx + 1}: Chính xác</div>`;
+            } else {
+                const correctOpt = quiz.options.find(o => o.id === (res ? res.correct_option_id : null));
+                const correctText = correctOpt ? correctOpt.option_text : 'Chưa rõ';
+                feedbackHTML += `<div style="color:#ef4444; margin-bottom:10px;"><i class="fas fa-times-circle"></i> Câu ${qIdx + 1}: Sai. Đáp án đúng là: ${correctText}</div>`;
+            }
+        });
+        
+        feedbackHTML += '</div>';
+
         resultDiv.innerHTML = `
-            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px;">
-                <div style="font-size:24px; font-weight:bold; color: ${percent === 100 ? '#22c55e' : '#eab308'};">${percent}% (${score}/${quizzes.length})</div>
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size:24px; font-weight:bold; color: ${data.percent === 100 ? '#22c55e' : '#eab308'};">
+                    Kết quả: ${data.percent}% (${data.score}/${data.total})
+                </div>
                 ${feedbackHTML}
             </div>
         `;
+        
+        // Scroll to result
+        resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
 })();
