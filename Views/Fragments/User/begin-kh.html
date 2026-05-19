@@ -53,7 +53,7 @@
 
     let lessons = [];
     let currentLessonIndex = 0;
-    let currentLessonDetail = null;
+    let completedLessonIds = [];
 
     try {
         // Fetch course info (optional, just to get title)
@@ -74,6 +74,9 @@
             return;
         }
 
+        // Fetch user progress
+        await fetchProgress();
+
         // Init Sidebar
         renderSidebar();
 
@@ -85,17 +88,44 @@
         document.getElementById('main-lesson-content').innerHTML = `<div style="padding: 50px; text-align: center; color: #ef4444;">Lỗi khi tải dữ liệu bài học.</div>`;
     }
 
+    async function fetchProgress() {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:3000/api/users/progress/${courseId}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                completedLessonIds = data.data || [];
+                updateProgressBar();
+            }
+        } catch (err) {
+            console.error('Lỗi tải tiến độ:', err);
+        }
+    }
+
+    function updateProgressBar() {
+        if (lessons.length === 0) return;
+        const percent = Math.round((completedLessonIds.length / lessons.length) * 100);
+        document.getElementById('sidebar-progress-fill').style.width = `${percent}%`;
+        document.getElementById('sidebar-progress-text').textContent = `Hoàn thành ${completedLessonIds.length}/${lessons.length} bài học (${percent}%)`;
+    }
+
     function renderSidebar() {
         const listContainer = document.getElementById('sidebar-lesson-list');
         listContainer.innerHTML = '';
         
-        document.getElementById('sidebar-progress-text').textContent = `Hoàn thành 0/${lessons.length} bài học (0%)`;
+        updateProgressBar();
 
         lessons.forEach((lesson, index) => {
+            const isCompleted = completedLessonIds.includes(lesson.id);
             const li = document.createElement('li');
-            li.className = `lesson-item ${index === currentLessonIndex ? 'active' : ''}`;
+            li.className = `lesson-item ${index === currentLessonIndex ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
+            
+            const icon = isCompleted ? '<i class="fas fa-check-circle" style="color: #22c55e;"></i>' : '<i class="fas fa-play"></i>';
+            
             li.innerHTML = `
-                <div class="lesson-icon"><i class="fas fa-play"></i></div>
+                <div class="lesson-icon">${icon}</div>
                 <div class="lesson-info">
                     <span class="lesson-name">${index + 1}. ${lesson.title}</span>
                 </div>
@@ -189,6 +219,17 @@
         const prevDisabled = currentLessonIndex === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
         const nextDisabled = currentLessonIndex === lessons.length - 1 ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
 
+        // Nút đánh dấu hoàn thành cho bài học không có bài kiểm tra
+        let completeBtnHtml = '';
+        const isCompleted = completedLessonIds.includes(lesson.id);
+        if (!lesson.quizzes || lesson.quizzes.length === 0) {
+            if (isCompleted) {
+                completeBtnHtml = `<button class="nav-btn" disabled style="opacity:0.8; background:#22c55e; color:white;"><i class="fas fa-check"></i> Đã hoàn thành</button>`;
+            } else {
+                completeBtnHtml = `<button id="btn-mark-complete" class="nav-btn" style="background:#3b82f6; color:white;"><i class="fas fa-check"></i> Đánh dấu hoàn thành</button>`;
+            }
+        }
+
         document.getElementById('main-lesson-content').innerHTML = `
             ${videoHtml}
             <div class="lesson-detail">
@@ -198,18 +239,44 @@
                 ${theoryHtml}
                 ${quizHtml}
             </div>
-            <div class="lesson-nav" style="margin-top: 40px; display:flex; justify-content:space-between;">
+            <div class="lesson-nav" style="margin-top: 40px; display:flex; justify-content:space-between; align-items:center;">
                 <button id="btn-prev-lesson" class="nav-btn nav-prev" ${prevDisabled}><i class="fas fa-chevron-left"></i> Bài trước</button>
+                ${completeBtnHtml}
                 <button id="btn-next-lesson" class="nav-btn nav-next" ${nextDisabled}>Bài tiếp theo <i class="fas fa-chevron-right"></i></button>
             </div>
         `;
 
         if (lesson.quizzes && lesson.quizzes.length > 0) {
             document.getElementById('btn-submit-quiz').addEventListener('click', () => submitDynamicQuiz(lesson.quizzes));
+        } else if (!isCompleted) {
+            const markBtn = document.getElementById('btn-mark-complete');
+            if (markBtn) {
+                markBtn.addEventListener('click', async () => {
+                    markBtn.disabled = true;
+                    const originalHtml = markBtn.innerHTML;
+                    markBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+                    
+                    const success = await markLessonComplete(lesson.id);
+                    if (success) {
+                        markBtn.style.background = '#22c55e';
+                        markBtn.innerHTML = '<i class="fas fa-check"></i> Đã hoàn thành';
+                    } else {
+                        markBtn.disabled = false;
+                        markBtn.innerHTML = originalHtml;
+                        alert('Không thể đánh dấu hoàn thành. Vui lòng kiểm tra kết nối!');
+                    }
+                });
+            }
         }
 
         document.getElementById('btn-prev-lesson').addEventListener('click', () => loadLesson(currentLessonIndex - 1));
-        document.getElementById('btn-next-lesson').addEventListener('click', () => loadLesson(currentLessonIndex + 1));
+        document.getElementById('btn-next-lesson').addEventListener('click', async () => {
+            // Tự động đánh dấu hoàn thành nếu học viên bấm "Bài tiếp theo" và bài này không có Quiz
+            if (!isCompleted && (!lesson.quizzes || lesson.quizzes.length === 0)) {
+                await markLessonComplete(lesson.id);
+            }
+            loadLesson(currentLessonIndex + 1);
+        });
     }
 
     async function submitDynamicQuiz(quizzes) {
@@ -246,6 +313,11 @@
             const data = await res.json();
             if (data.success) {
                 renderQuizResults(data, quizzes);
+                
+                // Nếu điểm đạt >= 50% (hoặc tuỳ logic), đánh dấu bài học hoàn thành
+                if (data.percent >= 50) {
+                    await markLessonComplete(currentLessonDetail.id);
+                }
             } else {
                 alert('Lỗi: ' + data.message);
             }
@@ -255,6 +327,28 @@
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kiểm tra kết quả';
+        }
+    }
+
+    async function markLessonComplete(lessonId) {
+        if (completedLessonIds.includes(lessonId)) return true; // Đã hoàn thành rồi
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:3000/api/users/progress/${lessonId}`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                completedLessonIds.push(lessonId);
+                renderSidebar(); // Cập nhật lại UI sidebar
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error('Lỗi khi đánh dấu hoàn thành bài học:', err);
+            return false;
         }
     }
 
