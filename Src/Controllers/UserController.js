@@ -69,4 +69,29 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsers, getUserCourses, getMyCourses, deleteUser };
+// GET /api/users/progress/:courseId
+const getUserProgress = async (req, res) => {
+    try {
+        const courseId = req.params.courseId;
+        const [progressRows] = await UserModel.getCourseProgress(req.user.id, courseId);
+        const completedLessonIds = progressRows.map(row => row.lesson_id);
+        return res.json({ success: true, data: completedLessonIds });
+    } catch (err) {
+        console.error('[getUserProgress]', err);
+        return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
+    }
+};
+
+// POST /api/users/progress/:lessonId
+const markLessonCompleted = async (req, res) => {
+    try {
+        const lessonId = req.params.lessonId;
+        await UserModel.markLessonCompleted(req.user.id, lessonId);
+        return res.json({ success: true, message: 'Đã đánh dấu hoàn thành bài học.' });
+    } catch (err) {
+        console.error('[markLessonCompleted]', err);
+        return res.status(500).json({ success: false, message: 'Lỗi máy chủ.' });
+    }
+};
+
+module.exports = { getAllUsers, getUserCourses, getMyCourses, deleteUser, getUserProgress, markLessonCompleted };

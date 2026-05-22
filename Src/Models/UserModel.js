@@ -38,4 +38,28 @@ const softDelete = (userId, reason) =>
         [reason, userId]
     );
 
-module.exports = { findAll, findById, findEnrollmentsByUser, findMyEnrollments, findByIdWithRole, softDelete };
+const getCourseProgress = (userId, courseId) => 
+    db.query(`
+        SELECT p.lesson_id 
+        FROM user_progress p
+        JOIN lessons l ON l.id = p.lesson_id
+        WHERE p.user_id = ? AND l.course_id = ? AND p.is_completed = 1
+    `, [userId, courseId]);
+
+const markLessonCompleted = (userId, lessonId) => 
+    db.query(`
+        INSERT INTO user_progress (user_id, lesson_id, is_completed) 
+        VALUES (?, ?, 1) 
+        ON DUPLICATE KEY UPDATE is_completed = 1, updated_at = CURRENT_TIMESTAMP
+    `, [userId, lessonId]);
+
+module.exports = { 
+    findAll, 
+    findById, 
+    findEnrollmentsByUser, 
+    findMyEnrollments, 
+    findByIdWithRole, 
+    softDelete,
+    getCourseProgress,
+    markLessonCompleted
+};
