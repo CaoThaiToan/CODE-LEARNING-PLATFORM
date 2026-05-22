@@ -268,7 +268,7 @@ a { text-decoration: none; transition: 0.3s; }
     gap: 4px;
 }
 
-.lesson-name {
+.lesson-row .lesson-name {
     font-size: 0.925rem;
     font-weight: 600;
     color: var(--dark);
