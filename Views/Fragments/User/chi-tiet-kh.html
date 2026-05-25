@@ -97,7 +97,7 @@
         let priceLabel = isVip ? 'CÓ PHÍ' : 'Miễn phí';
         let priceValueHtml = isVip ? `<div class="price-value-large">${Number(course.price).toLocaleString('vi-VN')} ₫</div>` : '';
         let ctaText = 'BẮT ĐẦU HỌC NGAY';
-        let ctaAction = isVip ? 'window.loadPage("thanh-toan.html");' : 'window.loadPage("begin-kh.html");';
+        let ctaAction = isVip ? 'window.loadPage("thanh-toan.html");' : `window.enrollAndGo(${courseId});`;
         let ctaClass = 'btn-enroll';
 
         if (isEnrolled) {
@@ -179,6 +179,29 @@
 
         // Update Breadcrumb
         document.querySelector('.breadcrumb span').textContent = breadcrumbTitle;
+
+        // Define enrollAndGo
+        window.enrollAndGo = async function(id) {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Vui lòng đăng nhập để bắt đầu học!');
+                window.loadPage('login-register.html');
+                return;
+            }
+            try {
+                const res = await apiFetch(`/courses/${id}/enroll`, {
+                    method: 'POST'
+                });
+                if (res.success) {
+                    window.loadPage('begin-kh.html');
+                } else {
+                    alert('Lỗi đăng ký khóa học: ' + res.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi hệ thống khi đăng ký học.');
+            }
+        };
 
     } catch (err) {
         console.error(err);
