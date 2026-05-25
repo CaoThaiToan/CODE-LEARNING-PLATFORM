@@ -36,4 +36,14 @@ const update = (id, { title, description, thumbnail_url, price, status, level })
 const remove = (id) =>
     db.query('DELETE FROM courses WHERE id = ?', [id]);
 
-module.exports = { findAll, findById, create, update, remove };
+const findEnrollment = (userId, courseId) =>
+    db.query('SELECT id FROM enrollments WHERE user_id = ? AND course_id = ?', [userId, courseId]);
+
+const createEnrollment = (userId, courseId) =>
+    db.query(
+        "INSERT INTO enrollments (user_id, course_id, status, enrolled_at) VALUES (?, ?, 'active', NOW())",
+        [userId, courseId]
+    );
+
+module.exports = { findAll, findById, create, update, remove, findEnrollment, createEnrollment };
+

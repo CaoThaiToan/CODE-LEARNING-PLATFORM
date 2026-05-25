@@ -86,4 +86,38 @@ const deleteCourse = async (req, res) => {
     }
 };
 
-module.exports = { getAllCourses, getCourseById, createCourse, updateCourse, deleteCourse };
+// POST /api/courses/:id/enroll [User only]
+const enrollCourse = async (req, res) => {
+    try {
+        const courseId = req.params.id;
+        const userId = req.user.id;
+
+        // Verify course exists
+        const [courses] = await CourseModel.findById(courseId);
+        if (courses.length === 0) {
+            return res.status(404).json({ success: false, message: 'Khóa học không tồn tại.' });
+        }
+        const course = courses[0];
+        
+        // Ensure the course is free
+        if (Number(course.price) > 0) {
+            return res.status(400).json({ success: false, message: 'Khóa học này là khóa học trả phí. Vui lòng thanh toán để tham gia.' });
+        }
+
+        // Check if already enrolled
+        const [existing] = await CourseModel.findEnrollment(userId, courseId);
+        if (existing.length > 0) {
+            return res.json({ success: true, message: 'Bạn đã tham gia khóa học này.' });
+        }
+
+        // Create enrollment
+        await CourseModel.createEnrollment(userId, courseId);
+        return res.json({ success: true, message: 'Đăng ký khóa học miễn phí thành công!' });
+    } catch (err) {
+        console.error('[enrollCourse]', err);
+        return res.status(500).json({ success: false, message: 'Lỗi máy chủ khi đăng ký học.' });
+    }
+};
+
+module.exports = { getAllCourses, getCourseById, createCourse, updateCourse, deleteCourse, enrollCourse };
+

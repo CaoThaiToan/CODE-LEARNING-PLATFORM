@@ -10,6 +10,7 @@ const userRoutes   = require('./Routes/userRoutes');
 const uploadRoutes = require('./Routes/uploadRoutes');
 const orderRoutes  = require('./Routes/orderRoutes');
 const quizRoutes   = require('./Routes/quizRoutes');
+const commentRoutes = require('./Routes/commentRoutes');
 
 // ── View Routes (serve HTML pages) ───────────────────────
 const viewRoutes = require('./Routes/viewRoutes');
@@ -40,6 +41,7 @@ app.use('/api/users',   userRoutes);
 app.use('/api/upload',  uploadRoutes);
 app.use('/api/orders',  orderRoutes);
 app.use('/api/quizzes', quizRoutes);
+app.use('/api/comments', commentRoutes);
 
 // ── View Routes ───────────────────────────────────────────
 app.use('/', viewRoutes);
