@@ -1,4 +1,4 @@
-<div class="lesson-layout">
+﻿<div class="lesson-layout">
 
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -27,7 +27,7 @@
         <div class="topbar">
             <button class="close-btn" data-page="chi-tiet-kh.html"><i class="fas fa-times"></i></button>
             <h2 class="topbar-title" id="topbar-lesson-title">Đang tải...</h2>
-            <a href="#" class="qa-btn"><i class="far fa-comment-dots"></i> Hỏi đáp</a>
+            <a href="#" class="qa-btn" id="qa-toggle"><i class="far fa-comment-dots"></i> Hỏi đáp</a>
         </div>
 
         <div class="content-scroll" id="main-lesson-content">
@@ -36,6 +36,33 @@
                 <p>Đang tải nội dung bài học...</p>
             </div>
         </div>
+
+        <aside class="qa-panel" id="qa-panel" aria-hidden="true">
+            <div class="qa-panel-header">
+                <div>
+                    <p class="qa-eyebrow">Trợ giúp bài học</p>
+                    <h3>Hỏi đáp AI</h3>
+                </div>
+                <button class="qa-close" id="qa-close" type="button" aria-label="Đóng hỏi đáp">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="qa-messages" id="qa-messages">
+                <div class="qa-message qa-message-ai">
+                    <div class="qa-avatar"><i class="fa-solid fa-robot"></i></div>
+                    <div class="qa-bubble">Chọn bài học và nhập câu hỏi của bạn. AI sẽ trả lời dựa trên nội dung bài học hiện tại.</div>
+                </div>
+            </div>
+
+            <form class="qa-form" id="qa-form">
+                <textarea id="qa-input" rows="3" placeholder="Nhập câu hỏi về bài học..." required></textarea>
+                <button type="submit" id="qa-send">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Gửi
+                </button>
+            </form>
+        </aside>
     </main>
 </div>
 
@@ -54,7 +81,10 @@
     let lessons = [];
     let currentLessonIndex = 0;
     let completedLessonIds = [];
+    let currentLessonDetail = null;
     let isVip = false;
+
+    setupQAChat();
 
     try {
         // Fetch course info (optional, just to get title)
@@ -650,6 +680,94 @@
                 document.body.removeChild(input);
                 showToast('Đã sao chép liên kết chia sẻ khóa học!');
             });
+    }
+
+    function setupQAChat() {
+        const toggleBtn = document.getElementById('qa-toggle');
+        const panel = document.getElementById('qa-panel');
+        const closeBtn = document.getElementById('qa-close');
+        const form = document.getElementById('qa-form');
+        const input = document.getElementById('qa-input');
+        const messages = document.getElementById('qa-messages');
+
+        if (!toggleBtn || !panel || !closeBtn || !form || !input || !messages) return;
+
+        const openPanel = () => {
+            panel.classList.add('open');
+            panel.setAttribute('aria-hidden', 'false');
+            setTimeout(() => input.focus(), 120);
+        };
+
+        const closePanel = () => {
+            panel.classList.remove('open');
+            panel.setAttribute('aria-hidden', 'true');
+        };
+
+        toggleBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            panel.classList.contains('open') ? closePanel() : openPanel();
+        });
+
+        closeBtn.addEventListener('click', closePanel);
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const question = input.value.trim();
+            if (!question) return;
+
+            appendQAMessage('user', question);
+            input.value = '';
+
+            if (!currentLessonDetail) {
+                appendQAMessage('ai', 'Vui lòng chờ bài học tải xong rồi hỏi lại.');
+                return;
+            }
+
+            appendQAMessage('ai', 'AI đang suy nghĩ...');
+            const loadingMessage = messages.lastElementChild;
+
+            try {
+                const res = await fetch('http://localhost:3000/api/ai/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({
+                        lesson_id: currentLessonDetail.id,
+                        question
+                    })
+                });
+
+                const rawText = await res.text();
+                let data;
+                try {
+                    data = JSON.parse(rawText);
+                } catch {
+                    throw new Error(`Server không trả JSON. HTTP ${res.status}`);
+                }
+
+                if (loadingMessage) loadingMessage.remove();
+                appendQAMessage('ai', data.success ? data.answer : data.message);
+            } catch (err) {
+                console.error(err);
+                if (loadingMessage) loadingMessage.remove();
+                appendQAMessage('ai', `Không thể kết nối Gemini AI: ${err.message}`);
+            }
+        });
+
+        function appendQAMessage(role, text) {
+            const item = document.createElement('div');
+            item.className = `qa-message qa-message-${role}`;
+            const icon = role === 'user' ? 'fa-user' : 'fa-robot';
+            item.innerHTML = `
+                <div class="qa-avatar"><i class="fa-solid ${icon}"></i></div>
+                <div class="qa-bubble"></div>
+            `;
+            item.querySelector('.qa-bubble').textContent = text;
+            messages.appendChild(item);
+            messages.scrollTop = messages.scrollHeight;
+        }
     }
 
 })();
